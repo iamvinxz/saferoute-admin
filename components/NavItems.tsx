@@ -26,7 +26,7 @@ const NavItems = () => {
       name: "Notification",
       href: "/notification",
       icon: <Bell size={30} />,
-      active: isNavItemActive(pathname, "/maps"),
+      active: isNavItemActive(pathname, "/notification"),
       position: "top",
     },
   ];

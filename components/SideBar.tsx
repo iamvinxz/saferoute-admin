@@ -34,37 +34,59 @@ const SideBar = ({ name, href, icon, active }: SideBarItems) => {
   //   }
   // }, []);
 
+  console.log("is active here:");
+
   return (
     <section
       className={cn(
         isSidebarExtended ? `w-85` : `w-30`,
-        `bg-[#536f8188] transition-all duration-300`,
+        `bg-[#536f8188] transition-all duration-300 drop-shadow-xl`,
       )}
     >
       <button className="cursor-pointer ml-8 mt-8 " onClick={toggleSideBar}>
         <Menu size={27} />
       </button>
-      <aside className="mt-15">
+      <aside
+        className={cn(
+          !isSidebarExtended && `gap-13 items-center justify-center`,
+          `flex flex-col mt-17 transition-all duration-300 gap-10 `,
+        )}
+      >
         {isSidebarExtended
           ? navItems.map((item, index) => (
               <Link href={item.href} key={index}>
-                <div className="flex items-center gap-3 p-5 m-3 hover:bg-[#30303042] hover:text-white rounded-xl">
+                <div
+                  className={cn(
+                    `flex items-center gap-2 mx-3 p-3 text-[#171717] hover:bg-[#30303042] hover:text-white rounded-xl`,
+                    item.active && `bg-[#30303042] text-white`,
+                  )}
+                >
                   <div>{item.icon}</div>
                   <span>{item.name}</span>
                 </div>
               </Link>
             ))
           : navItems.map((item, index) => (
-              <TooltipProvider key={index}>
+              <TooltipProvider key={index} delayDuration={70}>
                 <Tooltip>
-                  <TooltipTrigger>
-                    <Link href={item.href}>
+                  <TooltipTrigger asChild>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        `flex items-center justify-center p-7 hover:bg-[#30303042] hover:text-white rounded-xl transition-all w-12 h-12`,
+                        item.active && `bg-[#30303042] text-white`,
+                      )}
+                    >
                       <div>
                         <div>{item.icon}</div>
                       </div>
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent side="left">
+                  <TooltipContent
+                    side="right"
+                    sideOffset={10}
+                    className="px-3 py-1.5 text-md"
+                  >
                     <span>{item.name}</span>
                   </TooltipContent>
                 </Tooltip>
