@@ -1,5 +1,5 @@
 import { usePathname } from "next/navigation";
-import { Home, LucideMapPinned, Bell } from "lucide-react";
+import { LayoutDashboard, LucideMapPinned, Bell } from "lucide-react";
 import React from "react";
 
 const NavItems = () => {
@@ -10,22 +10,22 @@ const NavItems = () => {
   };
   return [
     {
-      name: "Home",
+      name: "Dashboard",
       href: "/",
-      icon: <Home />,
+      icon: <LayoutDashboard size={30} />,
       active: pathname === "/",
     },
     {
-      name: "Maeps",
+      name: "Maps",
       href: "/maps",
-      icon: <LucideMapPinned />,
+      icon: <LucideMapPinned size={30} />,
       active: isNavItemActive(pathname, "/maps"),
       position: "top",
     },
     {
       name: "Notification",
       href: "/notification",
-      icon: <Bell />,
+      icon: <Bell size={30} />,
       active: isNavItemActive(pathname, "/maps"),
       position: "top",
     },
