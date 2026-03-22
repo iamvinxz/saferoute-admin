@@ -1,7 +1,7 @@
 import React from "react";
 
 const Notification = () => {
-  return <div>Notification</div>;
+  return <div className="w-full p-10">Notification</div>;
 };
 
 export default Notification;

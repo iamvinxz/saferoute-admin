@@ -11,14 +11,7 @@ import NavItems from "@/components/NavItems";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-interface SideBarItems {
-  name: string;
-  href: string;
-  icon: any;
-  active: boolean;
-}
-
-const SideBar = ({ name, href, icon, active }: SideBarItems) => {
+const SideBar = () => {
   const [isSidebarExtended, setIsSideBarExtended] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
   const navItems = NavItems();
@@ -26,15 +19,22 @@ const SideBar = ({ name, href, icon, active }: SideBarItems) => {
     setIsSideBarExtended(!isSidebarExtended);
   };
 
-  // useEffect(() => {
-  //   setHasMounted(true);
-  //   const savedState = localStorage.getItem("sidebar-extended");
-  //   if (savedState !== null) {
-  //     setIsSideBarExtended(JSON.parse(savedState));
-  //   }
-  // }, []);
+  useEffect(() => {
+    setHasMounted(true);
+    const savedState = localStorage.getItem("sidebar-extended");
+    if (savedState !== null) {
+      setIsSideBarExtended(JSON.parse(savedState));
+    }
+  }, []);
 
-  console.log("is active here:");
+  useEffect(() => {
+    if (hasMounted) {
+      localStorage.setItem(
+        "sidebar-extended",
+        JSON.stringify(isSidebarExtended),
+      );
+    }
+  }, [isSidebarExtended, hasMounted]);
 
   return (
     <section
@@ -52,7 +52,7 @@ const SideBar = ({ name, href, icon, active }: SideBarItems) => {
           `flex flex-col mt-17 transition-all duration-300 gap-10 `,
         )}
       >
-        {isSidebarExtended
+        {isSidebarExtended && hasMounted
           ? navItems.map((item, index) => (
               <Link href={item.href} key={index}>
                 <div
