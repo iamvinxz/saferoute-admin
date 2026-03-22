@@ -7,11 +7,7 @@ const Maps = () => {
     loading: () => <p>Loading map...</p>,
   });
 
-  return (
-    <div className="h-full w-full">
-      <Map />
-    </div>
-  );
+  return <Map />;
 };
 
 export default Maps;

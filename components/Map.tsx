@@ -1,5 +1,5 @@
 "use client";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -13,17 +13,25 @@ export default function Map() {
   });
   return (
     <MapContainer
-      center={[14.5995, 120.9842]}
-      zoom={13}
-      style={{ height: "100%    ", width: "100%", zIndex: -1 }}
+      center={[14.673275, 120.968989]}
+      zoom={16}
+      style={{ height: "100%    ", width: "100%" }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="© OpenStreetMap contributors"
       />
-      <Marker position={[14.5995, 120.9842]}>
-        <Popup>Hello Manila!</Popup>
-      </Marker>
+      <Circle
+        center={[14.673275, 120.968989]}
+        radius={900} // in meters
+        pathOptions={{
+          //   color: "blue",
+          fillColor: "lightblue",
+          fillOpacity: 0.3,
+        }}
+      >
+        <Popup>500m radius circle</Popup>
+      </Circle>
     </MapContainer>
   );
 }

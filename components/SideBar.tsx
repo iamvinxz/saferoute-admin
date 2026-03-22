@@ -49,7 +49,7 @@ const SideBar = () => {
       <aside
         className={cn(
           !isSidebarExtended && `gap-13 items-center justify-center`,
-          `flex flex-col mt-17 transition-all duration-300 gap-10 `,
+          `flex flex-col mt-17 transition-all duration-300 gap-10`,
         )}
       >
         {isSidebarExtended && hasMounted
@@ -85,7 +85,7 @@ const SideBar = () => {
                   <TooltipContent
                     side="right"
                     sideOffset={10}
-                    className="px-3 py-1.5 text-md"
+                    className="px-3 py-1.5 text-md z-1"
                   >
                     <span>{item.name}</span>
                   </TooltipContent>
