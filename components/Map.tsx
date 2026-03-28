@@ -1,10 +1,8 @@
 "use client";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import { useEffect, useState } from "react";
-import { LandmarkIcon } from "lucide-react";
 import GeoJsonFetch from "@/services/api/geoJsonFetch";
-import { renderToStaticMarkup } from "react-dom/server";
+import { locations } from "@/services/api/coordinates";
 import {
   MapContainer,
   TileLayer,
@@ -12,13 +10,8 @@ import {
   useMap,
   Marker,
   useMapEvents,
+  Popup,
 } from "react-leaflet";
-
-const landmarkIcon = L.divIcon({
-  html: renderToStaticMarkup(<LandmarkIcon color="blue" size={25} />),
-  className: "",
-  iconAnchor: [12, 12],
-});
 
 function ZoomTracker() {
   const [zoom, setZoom] = useState<number>(16);
@@ -89,7 +82,21 @@ export default function Map() {
         />
       )}
 
-      <Marker position={[14.6717, 120.9705]} icon={landmarkIcon}></Marker>
+      {locations &&
+        locations.map((loc, index) => (
+          <Marker
+            key={index}
+            position={[loc.coordinates?.lat, loc.coordinates?.lng]}
+            icon={loc.icon}
+          >
+            <Popup className="max-w-[200px]">
+              <div style={{ maxWidth: "150px" }} className="max-w-[150px]">
+                <p className="color-[#303030]">{loc.name}</p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+
       <ZoomTracker />
     </MapContainer>
   );
