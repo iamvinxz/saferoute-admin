@@ -10,7 +10,7 @@ export const locations = [
     },
   },
   {
-    name: "Barangay Tinajeros Health Center",
+    name: "Health Center",
     icon: healthCenter,
     coordinates: {
       lat: 14.671671704218502,
