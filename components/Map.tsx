@@ -3,51 +3,22 @@ import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import GeoJsonFetch from "@/services/api/geoJsonFetch";
 import { locations } from "@/services/api/coordinates";
+import ZoomTracker from "@/components/ZoomTracker";
 import {
   MapContainer,
   TileLayer,
   GeoJSON,
-  useMap,
   Marker,
-  useMapEvents,
   Popup,
+  useMap,
 } from "react-leaflet";
 
-function ZoomTracker() {
-  const [zoom, setZoom] = useState<number>(16);
+const maxBounds: [[number, number], [number, number]] = [
+  [14.616796295409431, 120.90597134427183], // SW corner
+  [14.718980127971527, 121.00881300073651], // NE corner
+];
 
-  const MIN_ZOOM = 0;
-  const MAX_ZOOM = 19;
-
-  const zoomPercentage = Math.round(
-    ((zoom - MIN_ZOOM) / (MAX_ZOOM - MIN_ZOOM)) * 100,
-  );
-
-  useMapEvents({
-    zoomend: (e) => {
-      setZoom(e.target.getZoom());
-    },
-  });
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        bottom: "20px",
-        left: "20px",
-        zIndex: 1000,
-        background: "white",
-        padding: "6px 12px",
-        borderRadius: "8px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-        fontSize: "14px",
-        fontWeight: "bold",
-      }}
-    >
-      Zoom: {zoomPercentage}%
-    </div>
-  );
-}
+const center: [number, number] = [14.673413900535, 120.9685888671883];
 
 export default function Map() {
   const [geoData, setGeoData] = useState<any>(null);
@@ -56,11 +27,25 @@ export default function Map() {
     GeoJsonFetch().then((data) => setGeoData(data));
   }, []);
 
+  function InvalidateSize() {
+    const map = useMap();
+
+    useEffect(() => {
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+    }, [map]);
+
+    return null;
+  }
+
   return (
     <MapContainer
-      center={[14.673275, 120.968989]}
-      zoom={16}
+      center={center}
+      zoom={17}
       maxZoom={19}
+      minZoom={15}
+      maxBounds={maxBounds}
       maxBoundsViscosity={1.0}
       style={{ height: "100%", width: "100%" }}
     >
@@ -68,8 +53,9 @@ export default function Map() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="OpenStreetMap"
         maxZoom={19}
+        minZoom={15}
       />
-
+      <InvalidateSize />
       {geoData && (
         <GeoJSON
           data={geoData}
@@ -82,6 +68,7 @@ export default function Map() {
         />
       )}
 
+      {/**pinned locations in map */}
       {locations &&
         locations.map((loc, index) => (
           <Marker
@@ -89,11 +76,7 @@ export default function Map() {
             position={[loc.coordinates?.lat, loc.coordinates?.lng]}
             icon={loc.icon}
           >
-            <Popup className="max-w-[200px]">
-              <div style={{ maxWidth: "150px" }} className="max-w-[150px]">
-                <p className="color-[#303030]">{loc.name}</p>
-              </div>
-            </Popup>
+            <Popup>{loc.name}</Popup>
           </Marker>
         ))}
 
