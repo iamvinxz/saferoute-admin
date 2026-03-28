@@ -3,7 +3,7 @@ import { useMapEvents } from "react-leaflet";
 const ZoomTracker = () => {
   const [zoom, setZoom] = useState<number>(16);
 
-  const MIN_ZOOM = 0;
+  const MIN_ZOOM = 15;
   const MAX_ZOOM = 19;
 
   const zoomPercentage = Math.round(
