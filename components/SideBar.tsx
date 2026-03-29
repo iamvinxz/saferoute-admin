@@ -40,7 +40,7 @@ const SideBar = () => {
     <section
       className={cn(
         isSidebarExtended ? `w-85` : `w-30`,
-        `bg-[#536f8188] transition-all duration-300 drop-shadow-xl`,
+        ` transition-all duration-300 drop-shadow-xl border-r shadow-xl`,
       )}
     >
       <button className="cursor-pointer ml-8 mt-8 " onClick={toggleSideBar}>
@@ -57,8 +57,8 @@ const SideBar = () => {
               <Link href={item.href} key={index}>
                 <div
                   className={cn(
-                    `flex items-center gap-2 mx-3 p-3 text-[#171717] hover:bg-[#30303042] hover:text-white rounded-xl`,
-                    item.active && `bg-[#30303042] text-white`,
+                    `flex items-center gap-2 mx-3 p-3 text-[#171717] rounded-xl hover:bg-blue-600 hover:text-white `,
+                    item.active && `bg-blue-600 text-white shadow-xl`,
                   )}
                 >
                   <div>{item.icon}</div>
@@ -73,8 +73,8 @@ const SideBar = () => {
                     <Link
                       href={item.href}
                       className={cn(
-                        `flex items-center justify-center p-7 hover:bg-[#30303042] hover:text-white rounded-xl transition-all w-12 h-12`,
-                        item.active && `bg-[#30303042] text-white`,
+                        `flex items-center justify-center p-7 hover:bg-blue-600 hover:text-white rounded-xl transition-all w-12 h-12 `,
+                        item.active && `bg-blue-600 text-white shadow-xl`,
                       )}
                     >
                       <div>
