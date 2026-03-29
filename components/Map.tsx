@@ -2,7 +2,7 @@
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import GeoJsonFetch from "@/services/api/geoJsonFetch";
-import { locations } from "@/services/api/coordinates";
+import { landMarks } from "@/services/api/landMarks";
 import ZoomTracker from "@/components/ZoomTracker";
 import {
   MapContainer,
@@ -11,13 +11,34 @@ import {
   Marker,
   Popup,
   useMap,
+  Polyline,
 } from "react-leaflet";
+
+interface Location {
+  name: string;
+  icon: L.DivIcon;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+}
 
 const maxBounds: [[number, number], [number, number]] = [
   [14.616796295409431, 120.90597134427183], // SW corner
   [14.718980127971527, 121.00881300073651], // NE corner
 ];
 
+function InvalidateSize() {
+  const map = useMap();
+
+  useEffect(() => {
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+  }, [map]);
+
+  return null;
+}
 const center: [number, number] = [14.673413900535, 120.9685888671883];
 
 export default function Map() {
@@ -26,18 +47,6 @@ export default function Map() {
   useEffect(() => {
     GeoJsonFetch().then((data) => setGeoData(data));
   }, []);
-
-  function InvalidateSize() {
-    const map = useMap();
-
-    useEffect(() => {
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 100);
-    }, [map]);
-
-    return null;
-  }
 
   return (
     <MapContainer
@@ -56,6 +65,7 @@ export default function Map() {
         minZoom={15}
       />
       <InvalidateSize />
+
       {geoData && (
         <GeoJSON
           data={geoData}
@@ -69,11 +79,11 @@ export default function Map() {
       )}
 
       {/**pinned locations in map */}
-      {locations &&
-        locations.map((loc, index) => (
+      {landMarks &&
+        landMarks.map((loc: Location, index) => (
           <Marker
             key={index}
-            position={[loc.coordinates?.lat, loc.coordinates?.lng]}
+            position={[loc.coordinates.lat, loc.coordinates.lng]}
             icon={loc.icon}
           >
             <Popup>{loc.name}</Popup>
