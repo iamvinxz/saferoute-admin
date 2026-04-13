@@ -1,12 +1,5 @@
-import Header from "@/components/Header";
-import React from "react";
+import { redirect } from "next/navigation";
 
-const Home = () => {
-  return (
-    <div className="w-full p-10">
-      <Header />
-    </div>
-  );
-};
-
-export default Home;
+export default function Home() {
+  redirect("/auth/login");
+}

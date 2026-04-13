@@ -3,8 +3,7 @@ import { Poppins, Geist } from "next/font/google";
 import "./globals.css";
 import SideBar from "@/components/SideBar";
 import { cn } from "@/lib/utils";
-
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+import LayoutProvider from "@/components/LayoutProvider";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -23,21 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={cn(
-        "h-full",
-        "antialiased",
-        poppins.variable,
-        "font-sans",
-        geist.variable,
-      )}
-    >
-      <body className="h-screen flex flex-col">
-        <div className="flex h-full">
-          <SideBar />
-          {children}
-        </div>
+    <html lang="en" className={cn("h-full", "antialiased", poppins.variable)}>
+      <body>
+        <LayoutProvider>{children}</LayoutProvider>
       </body>
     </html>
   );
