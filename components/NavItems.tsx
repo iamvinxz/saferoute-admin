@@ -11,7 +11,7 @@ const NavItems = () => {
   return [
     {
       name: "Dashboard",
-      href: "/",
+      href: "/dashboard",
       icon: <LayoutDashboard size={30} />,
       active: pathname === "/",
     },

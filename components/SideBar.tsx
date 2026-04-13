@@ -40,7 +40,7 @@ const SideBar = () => {
     <section
       className={cn(
         isSidebarExtended ? `w-85` : `w-30`,
-        ` transition-all duration-300 drop-shadow-xl border-r shadow-xl`,
+        ` transition-all duration-300 drop-shadow-xl border-r shadow-xl h-full`,
       )}
     >
       <button className="cursor-pointer ml-8 mt-8 " onClick={toggleSideBar}>
