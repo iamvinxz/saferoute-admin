@@ -1,17 +1,25 @@
-import React from "react";
+"use client";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/state/store";
 
 const Header = () => {
+  //global state
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
+  );
+
   return (
     <div className="w-full px-20">
       <div className="flex items-center justify-between">
         <div>
-          <p>Welcome, Admin!</p>
+          <p>Welcome, {user?.name}!</p>
           <h1 className="font-semibold text-xl text-blue-600">Dashboard</h1>
         </div>
 
         <div className="flex items-center gap-2">
           <div className="rounded-full bg-gray-200 w-10 h-10"></div>
-          <span>Admin</span>
+          <span>{user?.role}</span>
         </div>
       </div>
     </div>
