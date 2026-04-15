@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, Fragment } from "react";
 import { toast } from "sonner";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point } from "@turf/helpers";
@@ -12,8 +12,7 @@ import {
 
 interface Props {
   isRoutingMode: boolean;
-  routePoints: [number, number][];
-  routeCoords: [number, number][];
+  segments: { points: [number, number][]; coords: [number, number][] }[];
   onAddPoint: (point: [number, number]) => void;
   geoJsonData: GeoJSON.FeatureCollection;
 }
@@ -66,12 +65,10 @@ const ClickCapture = ({
 
 const RouteLayer = ({
   isRoutingMode,
-  routePoints,
-  routeCoords,
+  segments,
   onAddPoint,
   geoJsonData,
 }: Props) => {
-  console.log(routePoints);
   return (
     <>
       <CursorController isRoutingMode={isRoutingMode} />
@@ -81,28 +78,32 @@ const RouteLayer = ({
         geoJsonData={geoJsonData}
       />
 
-      {/* Waypoint markers */}
-      {routePoints.map((point, index) => (
-        <CircleMarker
-          key={index}
-          center={point}
-          radius={6}
-          pathOptions={{
-            color: "white",
-            fillColor: "#3b82f6",
-            fillOpacity: 1,
-            weight: 2,
-          }}
-        />
-      ))}
+      {segments.map((segment, segIndex) => (
+        <Fragment key={segIndex}>
+          {/* Waypoint markers per segment */}
+          {segment.points.map((point, index) => (
+            <CircleMarker
+              key={index}
+              center={point}
+              radius={6}
+              pathOptions={{
+                color: "white",
+                fillColor: "#e4795f",
+                fillOpacity: 1,
+                weight: 2,
+              }}
+            />
+          ))}
 
-      {/* OSRM route polyline */}
-      {routeCoords.length > 0 && (
-        <Polyline
-          positions={routeCoords}
-          pathOptions={{ color: "#e4795f", weight: 4, opacity: 0.8 }}
-        />
-      )}
+          {/* Polyline per segment */}
+          {segment.coords.length > 0 && (
+            <Polyline
+              positions={segment.coords}
+              pathOptions={{ color: "#e4795f", weight: 4, opacity: 0.8 }}
+            />
+          )}
+        </Fragment>
+      ))}
     </>
   );
 };
