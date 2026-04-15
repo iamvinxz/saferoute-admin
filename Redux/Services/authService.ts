@@ -1,5 +1,6 @@
-import { api } from "./ApiService";
-import { LOGIN } from "./Endpoints";
+import { Postpone } from "next/dist/server/app-render/dynamic-rendering";
+import { api } from "./APIService";
+import { LOGIN, LOGOUT } from "./Endpoints";
 
 export const authApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -13,32 +14,26 @@ export const authApi = api.injectEndpoints({
         body: credential,
       }),
     }),
+    logout: build.mutation<void, void>({
+      query: () => ({
+        url: LOGOUT,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
-type AuthControllerSignInResponse = authResponse;
-type AuthControllerSignInRequest = {
-  signIn: signIn;
-};
-
-type authResponse = {
-  response: {
-    code: number;
-    status: string;
-    body: sanitizedBody;
-    message: string;
+type AuthControllerSignInResponse = {
+  message: string;
+  user: {
+    id: string;
+    name: string;
+    role: string;
   };
 };
 
-type sanitizedBody = {
-  content: string;
-  token: string;
-};
-
-type signIn = {
-  phone: number;
+type AuthControllerSignInRequest = {
   email: string;
   password: string;
 };
-
-export const { useLoginMutation } = authApi;
+export const { useLoginMutation, useLogoutMutation } = authApi;
