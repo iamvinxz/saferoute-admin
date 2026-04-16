@@ -7,7 +7,7 @@ const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <Provider store={store}>
       {children}
-      <Toaster />
+      <Toaster position="top-right" duration={1500} />
     </Provider>
   );
 };
