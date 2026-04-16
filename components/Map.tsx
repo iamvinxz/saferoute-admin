@@ -14,6 +14,10 @@ import { fetchOSRMRoute } from "@/lib/fetchOSRMRoute";
 import InfoMessage from "./map/InfoMessage";
 import L from "leaflet";
 import { toast } from "sonner";
+import FloodReportSheet from "@/components/map/FloodIncidentSheet";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/state/store";
+import { addPoint, updateCoords, addSegment } from "@/state/slices/segment";
 
 const center: [number, number] = [14.673413900535, 120.9685888671883];
 const maxBounds: [[number, number], [number, number]] = [
@@ -23,15 +27,13 @@ const maxBounds: [[number, number], [number, number]] = [
 
 export default function Map() {
   //states
+  const dispatch = useDispatch();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isRoutingMode, setIsRoutingMode] = useState(false);
-  const [segments, setSegments] = useState<
-    {
-      points: [number, number][];
-      coords: [number, number][];
-    }[]
-  >([{ points: [], coords: [] }]);
+  const segments = useSelector((state: RootState) => state.segment.segments);
+
   const currentSegment = segments[segments.length - 1];
+
   const [focusTarget, setFocusTarget] = useState<{
     lat: number;
     lng: number;
@@ -58,50 +60,27 @@ export default function Map() {
   }, []);
 
   //handlers
-  const handleAddPoint = (point: [number, number]) => {
-    setSegments((prev) => {
-      const updated = [...prev];
-      updated[updated.length - 1] = {
-        ...updated[updated.length - 1],
-        points: [...updated[updated.length - 1].points, point],
-      };
-      return updated;
-    });
-  };
-
-  console.log("segments:", segments.length);
-
+  const handleAddPoint = (point: [number, number]) => dispatch(addPoint(point));
+  const handleUpdateCoords = (coords: [number, number][]) =>
+    dispatch(updateCoords(coords));
   const handleNewSegment = () => {
     if (currentSegment.points.length < 2) {
-      toast.info("Add at least 2 points before starting a new segment", {
+      toast.info("Add atleast 2 points before startng a new segment", {
         position: "top-right",
         duration: 1500,
         style: { background: "#b85545", color: "white" },
       });
       return;
     }
-    setSegments((prev) => [...prev, { points: [], coords: [] }]);
-  };
-
-  const handleUpdateCoords = (coords: [number, number][]) => {
-    setSegments((prev) => {
-      const updated = [...prev];
-      updated[updated.length - 1] = {
-        ...updated[updated.length - 1],
-        coords,
-      };
-      return updated;
-    });
+    dispatch(addSegment());
   };
 
   const handleToggleRouting = () => {
     setIsRoutingMode((prev) => !prev);
   };
 
-  console.log("Segments here", segments);
-
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full z-0">
       <MapContainer
         center={center}
         zoom={17}
@@ -136,27 +115,29 @@ export default function Map() {
           isRoutingMode={isRoutingMode}
           onAddPoint={handleAddPoint}
           geoJsonData={geoData}
-          segments={segments}
         />
 
         <LandMarksLayer />
         <InvalidateSize />
         <ZoomTracker />
         <FocusTrigger target={focusTarget} />
+        <FloodReportSheet isOpen={isRoutingMode} />
       </MapContainer>
 
       {isRoutingMode && (
-        <div ref={containerRef}>
-          <button
-            onClick={handleNewSegment}
-            className="absolute top-17 left-15 z-[1000] bg-white px-4 py-2 rounded-md shadow-md border text-sm font-medium"
-          >
-            + New Segment
-          </button>
-          <span className="absolute top-27 left-16 z-[1000]">
-            No. of Segments: {segments.length}
-          </span>
-        </div>
+        <>
+          <div ref={containerRef}>
+            <button
+              onClick={handleNewSegment}
+              className="absolute top-17 left-15 z-[1000] bg-white px-4 py-2 rounded-md shadow-md border text-sm font-medium"
+            >
+              + New Segment
+            </button>
+            <span className="absolute top-27 left-16 z-[1000]">
+              No. of Segments: {segments.length}
+            </span>
+          </div>
+        </>
       )}
 
       <ControllerTab onFocus={setFocusTarget} />

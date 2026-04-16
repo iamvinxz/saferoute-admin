@@ -16,7 +16,6 @@ interface InfoMessageProps {
 const InfoMessage = ({ onToggleRouting }: InfoMessageProps) => {
   //hooks
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -26,16 +25,14 @@ const InfoMessage = ({ onToggleRouting }: InfoMessageProps) => {
   }, []);
 
   const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      onToggleRouting();
-    }, 500);
+    onToggleRouting();
   };
 
   return (
     <div ref={containerRef} className="flex justify-center relative min-h-10">
       <div
-        className={`flex items-center gap-2 absolute top-20 z-1000 bg-white text-[#303030] p-5 rounded-lg shadow-md border animate-flip ${isClosing ? "animate-flip-out" : "animate-flip"}`}
+        className="flex items-center gap-2 absolute top-20 z-1000 bg-white text-[#303030] p-5 rounded-lg shadow-md border 
+           animate-flip"
       >
         <PenLine size={17} />
         <span className="text-[1rem] font-semibold tracking-wider">

@@ -2,17 +2,12 @@ import { useEffect, Fragment } from "react";
 import { toast } from "sonner";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point } from "@turf/helpers";
-import {
-  useMap,
-  useMapEvents,
-  Polyline,
-  Marker,
-  CircleMarker,
-} from "react-leaflet";
+import { useMap, useMapEvents, Polyline, CircleMarker } from "react-leaflet";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
 
 interface Props {
   isRoutingMode: boolean;
-  segments: { points: [number, number][]; coords: [number, number][] }[];
   onAddPoint: (point: [number, number]) => void;
   geoJsonData: GeoJSON.FeatureCollection;
 }
@@ -63,12 +58,8 @@ const ClickCapture = ({
   return null;
 };
 
-const RouteLayer = ({
-  isRoutingMode,
-  segments,
-  onAddPoint,
-  geoJsonData,
-}: Props) => {
+const RouteLayer = ({ isRoutingMode, onAddPoint, geoJsonData }: Props) => {
+  const segments = useSelector((state: RootState) => state.segment.segments);
   return (
     <>
       <CursorController isRoutingMode={isRoutingMode} />
@@ -80,7 +71,7 @@ const RouteLayer = ({
 
       {segments.map((segment, segIndex) => (
         <Fragment key={segIndex}>
-          {/* Waypoint markers per segment */}
+          {/* waypoint markers per segment */}
           {segment.points.map((point, index) => (
             <CircleMarker
               key={index}
@@ -95,7 +86,7 @@ const RouteLayer = ({
             />
           ))}
 
-          {/* Polyline per segment */}
+          {/* polyline per segment */}
           {segment.coords.length > 0 && (
             <Polyline
               positions={segment.coords}
