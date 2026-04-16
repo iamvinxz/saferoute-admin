@@ -10,10 +10,14 @@ import { useDispatch } from "react-redux";
 import { setUser } from "@/state/slices/authSlice";
 import type { AppDispatch } from "@/state/store";
 
-interface FormsFields {
-  email: string;
-  password: string;
-}
+type Props = {
+  index: number;
+  data: {
+    streetName: string;
+    depth: string;
+  };
+  onChange: (field: string, value: string) => void;
+};
 
 const FormsField = () => {
   const router = useRouter();
