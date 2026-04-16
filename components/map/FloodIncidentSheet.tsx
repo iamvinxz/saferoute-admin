@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup } from "@/components/ui/field";
 import { useRef, useState, useEffect } from "react";
 import L from "leaflet";
 import FormSheet from "@/components/map/FormSheet";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 
 type Props = {
@@ -33,8 +32,6 @@ const FloodReportSheet = ({ isOpen }: Props) => {
   const handleAnimationEnd = () => {
     if (!isOpen) setVisible(false);
   };
-
-  console.log("segments here", segments);
 
   return (
     <div

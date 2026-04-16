@@ -31,13 +31,17 @@ export default function Map() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isRoutingMode, setIsRoutingMode] = useState(false);
   const segments = useSelector((state: RootState) => state.segment.segments);
-
   const currentSegment = segments[segments.length - 1];
 
   const [focusTarget, setFocusTarget] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
+
+  const { imageUrl, ...rest } = currentSegment.floodReport;
+  const hasInvalid = Object.values(rest).some(
+    (item) => item == null || item.trim() == "",
+  );
 
   //rtk query
   const { data: geoData } = useGetGeoJsonQuery();
@@ -65,7 +69,14 @@ export default function Map() {
     dispatch(updateCoords(coords));
   const handleNewSegment = () => {
     if (currentSegment.points.length < 2) {
-      toast.info("Add atleast 2 points before startng a new segment", {
+      toast.info("Add atleast 2 points before startng a new segment.", {
+        position: "top-right",
+        duration: 1500,
+        style: { background: "#b85545", color: "white" },
+      });
+      return;
+    } else if (hasInvalid) {
+      toast.info("Provide the street and the depth of the flood.", {
         position: "top-right",
         duration: 1500,
         style: { background: "#b85545", color: "white" },
