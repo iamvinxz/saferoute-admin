@@ -11,20 +11,40 @@ interface Tool {
 
 interface Props {
   isRoutingMode: boolean;
+  isPinMode: boolean;
   onToggleRouting: () => void;
+  onTogglePin: () => void;
 }
 
-const ToolBox = ({ isRoutingMode, onToggleRouting }: Props) => {
+const ToolBox = ({
+  isRoutingMode,
+  isPinMode,
+  onToggleRouting,
+  onTogglePin,
+}: Props) => {
   //states
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const defaultTools: Tool[] = [
-    { icon: <MapPin size={22} />, label: "Drop a pin", onClick: () => {} },
+    {
+      icon: <MapPin size={22} />,
+      label: isPinMode ? "Stop Pinning" : "Drop Pin",
+      onClick: () => {
+        if (isRoutingMode) {
+          onToggleRouting();
+        }
+        onTogglePin();
+        setIsOpen(false);
+      },
+    },
     { icon: <Ruler size={22} />, label: "Measure distance", onClick: () => {} },
     {
       icon: <Route size={22} />,
-      label: isRoutingMode ? "Stop plotting" : "Plot route",
+      label: isRoutingMode ? "Stop Plotting" : "Plot Route",
       onClick: () => {
+        if (isPinMode) {
+          onTogglePin();
+        }
         onToggleRouting();
         setIsOpen(false);
       },

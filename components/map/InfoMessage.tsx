@@ -10,10 +10,18 @@ import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 
 interface InfoMessageProps {
+  isRoutingMode: boolean;
+  isPinMode: boolean;
   onToggleRouting: () => void;
+  onTogglePinMode: () => void;
 }
 
-const InfoMessage = ({ onToggleRouting }: InfoMessageProps) => {
+const InfoMessage = ({
+  isRoutingMode,
+  isPinMode,
+  onToggleRouting,
+  onTogglePinMode,
+}: InfoMessageProps) => {
   //hooks
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +33,11 @@ const InfoMessage = ({ onToggleRouting }: InfoMessageProps) => {
   }, []);
 
   const handleClose = () => {
-    onToggleRouting();
+    if (isRoutingMode) {
+      onToggleRouting();
+    } else if (isPinMode) {
+      onTogglePinMode();
+    }
   };
 
   return (
@@ -36,7 +48,11 @@ const InfoMessage = ({ onToggleRouting }: InfoMessageProps) => {
       >
         <PenLine size={17} />
         <span className="text-[1rem] font-semibold tracking-wider">
-          PLOT THE FLOODED STREET
+          {isRoutingMode
+            ? "PLOT THE FLOODED STREET"
+            : isPinMode
+              ? "DROP PIN ON THE MAP"
+              : null}
         </span>
       </div>
 
