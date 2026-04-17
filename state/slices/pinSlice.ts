@@ -1,35 +1,25 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type Pin = {
-  coords: [number, number][];
+  coords: [number, number];
   pinName: string;
+  description: string;
 };
 
 type PinState = {
   pins: Pin[];
 };
 
-const initialPin: Pin = {
-  coords: [],
-  pinName: "",
-};
-
 const initialState: PinState = {
-  pins: [initialPin],
+  pins: [],
 };
 
 const pinSlice = createSlice({
   name: "pin",
   initialState,
   reducers: {
-    addCoordToLastPin(state, action: PayloadAction<[number, number]>) {
-      if (state.pins.length === 0) return;
-      const last = state.pins[state.pins.length - 1];
-      last.coords.push(action.payload);
-    },
-
-    startNewPin(state) {
-      state.pins.push({ coords: [], pinName: "" });
+    addPin(state, action: PayloadAction<[number, number]>) {
+      state.pins.push({ coords: action.payload, pinName: "", description: "" });
     },
 
     setPinName(state, action: PayloadAction<{ index: number; name: string }>) {
@@ -38,12 +28,21 @@ const pinSlice = createSlice({
       pin.pinName = action.payload.name;
     },
 
+    setDescription(
+      state,
+      action: PayloadAction<{ index: number; description: string }>,
+    ) {
+      const pin = state.pins[action.payload.index];
+      if (!pin) return;
+      pin.description = action.payload.description;
+    },
+
     removePin(state, action: PayloadAction<number>) {
       state.pins.splice(action.payload, 1);
     },
   },
 });
 
-export const { addCoordToLastPin, startNewPin, setPinName, removePin } =
+export const { addPin, setPinName, setDescription, removePin } =
   pinSlice.actions;
 export default pinSlice.reducer;
