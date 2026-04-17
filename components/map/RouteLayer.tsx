@@ -1,72 +1,28 @@
-import { useEffect, Fragment } from "react";
-import { toast } from "sonner";
-import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
-import { point } from "@turf/helpers";
-import { useMap, useMapEvents, Polyline, CircleMarker } from "react-leaflet";
-import { useSelector } from "react-redux";
+import { Fragment } from "react";
+import { Polyline, CircleMarker } from "react-leaflet";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
+import ClickCapture from "@/components/map/ClickCapture";
+import CursorController from "@/components/map/CursorController";
+import { addPoint } from "@/state/slices/segment";
 
 interface Props {
   isRoutingMode: boolean;
-  onAddPoint: (point: [number, number]) => void;
   geoJsonData: GeoJSON.FeatureCollection;
 }
 
-const CursorController = ({ isRoutingMode }: { isRoutingMode: boolean }) => {
-  const map = useMap();
-
-  useEffect(() => {
-    const container = map.getContainer();
-    container.style.cursor = isRoutingMode ? "crosshair" : "";
-  }, [isRoutingMode, map]);
-
-  return null;
-};
-
-const ClickCapture = ({
-  isRoutingMode,
-  onAddPoint,
-  geoJsonData,
-}: {
-  isRoutingMode: boolean;
-  onAddPoint: (point: [number, number]) => void;
-  geoJsonData: GeoJSON.FeatureCollection;
-}) => {
-  useMapEvents({
-    click(e) {
-      if (!isRoutingMode) return;
-      const clicked = point([e.latlng.lng, e.latlng.lat]);
-
-      const isInside = geoJsonData.features.some((feature) =>
-        booleanPointInPolygon(
-          clicked,
-          feature as GeoJSON.Feature<GeoJSON.Polygon>,
-        ),
-      );
-
-      if (!isInside) {
-        toast.info("Plot within Barangay only", {
-          position: "top-right",
-          duration: 1500,
-          style: { background: "#b85545", color: "white" },
-        });
-        return;
-      }
-      onAddPoint([e.latlng.lat, e.latlng.lng]);
-    },
-  });
-  return null;
-};
-
-const RouteLayer = ({ isRoutingMode, onAddPoint, geoJsonData }: Props) => {
+const RouteLayer = ({ isRoutingMode, geoJsonData }: Props) => {
   const segments = useSelector((state: RootState) => state.segment.segments);
+  const dispatch = useDispatch();
+  const handleAddPoint = (point: [number, number]) => dispatch(addPoint(point));
+
   return (
     <>
       <CursorController isRoutingMode={isRoutingMode} />
       <ClickCapture
-        isRoutingMode={isRoutingMode}
-        onAddPoint={onAddPoint}
+        onClickMode={isRoutingMode}
         geoJsonData={geoJsonData}
+        onMapClick={handleAddPoint}
       />
 
       {segments.map((segment, segIndex) => (
