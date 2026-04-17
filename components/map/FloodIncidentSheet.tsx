@@ -6,19 +6,21 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 
 type Props = {
-  isOpen: boolean;
+  isRoutingMode: boolean;
+  isPinMode: boolean;
 };
 
-const FloodReportSheet = ({ isOpen }: Props) => {
+const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
   const segments = useSelector((state: RootState) => state.segment.segments);
+  const pins = useSelector((state: RootState) => state.pin.pins);
   const [visible, setVisible] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isRoutingMode || isPinMode) {
       setVisible(true);
     }
-  }, [isOpen]);
+  }, [isRoutingMode, isPinMode]);
 
   useEffect(() => {
     if (divRef.current) {
@@ -27,29 +29,37 @@ const FloodReportSheet = ({ isOpen }: Props) => {
     }
   }, [visible]);
 
-  if (!visible) return null;
-
   const handleAnimationEnd = () => {
-    if (!isOpen) setVisible(false);
+    if (!isRoutingMode && !isPinMode) setVisible(false);
   };
+
+  if (!visible) return null;
 
   return (
     <div
       ref={divRef}
       onAnimationEnd={handleAnimationEnd}
       className={`absolute bottom-0 left-340 z-1000 flex h-full w-1/4 flex-col gap-5 border-r border-gray-200 bg-white p-6 ${
-        isOpen ? "drawer-slide-in" : "drawer-slide-out"
+        isRoutingMode || isPinMode ? "drawer-slide-in" : "drawer-slide-out"
       }`}
     >
       {/* Header */}
       <div>
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium text-gray-900">
-            Flood street report
+            {isRoutingMode
+              ? "FLOOD STREET REPORT"
+              : isPinMode
+                ? "PIN REPORT"
+                : null}
           </h2>
         </div>
         <p className="mt-1 text-xs text-gray-400">
-          Document flood conditions for emergency routing
+          {isRoutingMode
+            ? "Please provide the details for flood report."
+            : isPinMode
+              ? "Please provide the details for pinned locations."
+              : null}
         </p>
       </div>
 
@@ -57,14 +67,30 @@ const FloodReportSheet = ({ isOpen }: Props) => {
 
       {/* Upload zone */}
       <div className="flex flex-col gap-3 overflow-y-auto">
-        {segments.map((segment, index) => (
-          <div key={index} className="rounded-xl border border-gray-100 p-4">
-            <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
-              Segment {index + 1}
-            </p>
-            <FormSheet index={index} floodReport={segment.floodReport} />
-          </div>
-        ))}
+        {isRoutingMode
+          ? segments.map((segment, index) => (
+              <div
+                key={index}
+                className="rounded-xl border border-gray-100 p-4"
+              >
+                <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                  Segment {index + 1}
+                </p>
+                <FormSheet index={index} floodReport={segment.floodReport} />
+              </div>
+            ))
+          : isPinMode
+            ? pins.map((pin, index) => (
+                <div
+                  key={index}
+                  className="rounded-xl border border-gray-100 p-4"
+                >
+                  <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    Pinned Location {index + 1}
+                  </p>
+                </div>
+              ))
+            : null}
       </div>
 
       <Button className="mt-auto w-full rounded-lg bg-gray-900 py-2.5 text-sm font-medium text-white hover:bg-gray-700">
