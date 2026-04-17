@@ -138,7 +138,11 @@ export default function Map() {
         <InvalidateSize />
         <ZoomTracker />
         <FocusTrigger target={focusTarget} />
-        <FloodReportSheet isOpen={isRoutingMode} />
+        <FloodReportSheet
+          key={isRoutingMode ? "routing" : "pin"}
+          isRoutingMode={isRoutingMode}
+          isPinMode={isPinMode}
+        />
       </MapContainer>
 
       {isRoutingMode && (
