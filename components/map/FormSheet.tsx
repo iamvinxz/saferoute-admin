@@ -2,26 +2,19 @@ import { useRef, useState } from "react";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FloodReport, updateFloorReport } from "@/state/slices/segment";
+import { arrowDown, arrowUp } from "@/lib/icon";
 import { useDispatch } from "react-redux";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type Props = {
   index: number;
   floodReport: FloodReport;
-};
-
-const depthHint = (val: string): { label: string; hint: string } => {
-  const num = parseFloat(val);
-  if (isNaN(num)) return { label: "", hint: "Enter depth in meters or feet" };
-  if (num < 0.3)
-    return { label: "Ankle-Deep", hint: "Passable for most vehicles" };
-  if (num < 0.6)
-    return {
-      label: "Knee-Deep",
-      hint: "Caution — low-clearance vehicles affected",
-    };
-  if (num < 1.0)
-    return { label: "Chest-Deep", hint: "Dangerous — avoid if possible" };
-  return { label: "Critical", hint: "Extreme flooding — road closed" };
 };
 
 const FormSheet = ({ index, floodReport }: Props) => {
@@ -29,6 +22,8 @@ const FormSheet = ({ index, floodReport }: Props) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
+  const level = ["Ankle-Deep", "Knee-Deep", "Chest-Deep", "Critical"];
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -118,10 +113,10 @@ const FormSheet = ({ index, floodReport }: Props) => {
           </FieldLabel>
           <Input
             type="text"
-            placeholder="e.g. Rizal Avenue"
+            placeholder="e.g. Crispin Street"
             value={floodReport.streetName}
             onChange={(e) => handleChange(index, "streetName", e.target.value)}
-            className="rounded-lg border-gray-200 bg-gray-50 text-sm placeholder:text-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+            className="rounded-lg border-gray-200 bg-gray-50 text-sm placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
           />
         </Field>
       </FieldGroup>
@@ -131,13 +126,39 @@ const FormSheet = ({ index, floodReport }: Props) => {
           <FieldLabel className="text-xs font-medium uppercase tracking-wide text-gray-500">
             Flood depth
           </FieldLabel>
-          <Input
-            type="text"
-            placeholder="e.g. 0.5 m"
-            value={floodReport.depth}
-            onChange={(e) => handleChange(index, "depth", e.target.value)}
-            className="rounded-lg border-gray-200 bg-gray-50 text-sm placeholder:text-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-          />
+          <DropdownMenu onOpenChange={setIsDropDownOpen}>
+            <DropdownMenuTrigger asChild>
+              <div className="flex items-center">
+                <button className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm text-gray-400 hover:border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100">
+                  {floodReport.depth || "Select flood depth"}
+                </button>
+                {isDropDownOpen ? (
+                  <span
+                    dangerouslySetInnerHTML={{ __html: arrowUp }}
+                    className="absolute right-15"
+                  />
+                ) : (
+                  <span
+                    dangerouslySetInnerHTML={{ __html: arrowDown }}
+                    className="absolute right-15"
+                  />
+                )}
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                {level.map((level) => (
+                  <DropdownMenuItem
+                    key={level}
+                    onClick={() => handleChange(index, "depth", level)}
+                    className="text-gray-400"
+                  >
+                    {level}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <span className="mt-1 text-[11px] text-gray-400">
             <span className="font-semibold">Enter depth in meters or feet</span>
           </span>
