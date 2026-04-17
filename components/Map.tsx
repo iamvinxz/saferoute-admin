@@ -17,7 +17,8 @@ import { toast } from "sonner";
 import FloodReportSheet from "@/components/map/FloodIncidentSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
-import { addPoint, updateCoords, addSegment } from "@/state/slices/segment";
+import { updateCoords, addSegment } from "@/state/slices/segment";
+import PinLayer from "./map/PinLayer";
 
 const center: [number, number] = [14.673413900535, 120.9685888671883];
 const maxBounds: [[number, number], [number, number]] = [
@@ -29,7 +30,8 @@ export default function Map() {
   //states
   const dispatch = useDispatch();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isRoutingMode, setIsRoutingMode] = useState(false);
+  const [isPinMode, setIsPinMode] = useState<boolean>(false);
+  const [isRoutingMode, setIsRoutingMode] = useState<boolean>(false);
   const segments = useSelector((state: RootState) => state.segment.segments);
   const currentSegment = segments[segments.length - 1];
 
@@ -56,6 +58,7 @@ export default function Map() {
     });
   }, [currentSegment.points]);
 
+  //prevents penetrations of click on panels
   useEffect(() => {
     if (containerRef.current) {
       L.DomEvent.disableClickPropagation(containerRef.current);
@@ -64,7 +67,6 @@ export default function Map() {
   }, []);
 
   //handlers
-  const handleAddPoint = (point: [number, number]) => dispatch(addPoint(point));
   const handleUpdateCoords = (coords: [number, number][]) =>
     dispatch(updateCoords(coords));
   const handleNewSegment = () => {
@@ -84,6 +86,10 @@ export default function Map() {
 
   const handleToggleRouting = () => {
     setIsRoutingMode((prev) => !prev);
+  };
+
+  const handleTogglePinning = () => {
+    setIsPinMode((prev) => !prev);
   };
 
   return (
@@ -116,13 +122,17 @@ export default function Map() {
           />
         )}
 
-        {isRoutingMode && <InfoMessage onToggleRouting={handleToggleRouting} />}
+        {(isRoutingMode || isPinMode) && (
+          <InfoMessage
+            isRoutingMode={isRoutingMode}
+            isPinMode={isPinMode}
+            onToggleRouting={handleToggleRouting}
+            onTogglePinMode={handleTogglePinning}
+          />
+        )}
 
-        <RouteLayer
-          isRoutingMode={isRoutingMode}
-          onAddPoint={handleAddPoint}
-          geoJsonData={geoData}
-        />
+        <RouteLayer isRoutingMode={isRoutingMode} geoJsonData={geoData} />
+        <PinLayer isPinMode={isPinMode} geoJsonData={geoData} />
 
         <LandMarksLayer />
         <InvalidateSize />
@@ -136,21 +146,22 @@ export default function Map() {
           <div ref={containerRef}>
             <button
               onClick={handleNewSegment}
-              className="absolute top-17 left-15 z-[1000] bg-white px-4 py-2 rounded-md shadow-md border text-sm font-medium"
+              className="absolute top-17 left-15 z-1000 bg-white px-4 py-2 rounded-md shadow-md border text-sm font-medium"
             >
               + New Segment
             </button>
-            <span className="absolute top-27 left-16 z-[1000]">
+            <span className="absolute top-27 left-16 z-1000">
               No. of Segments: {segments.length}
             </span>
           </div>
         </>
       )}
-
       <ControllerTab onFocus={setFocusTarget} />
       <ToolBox
         isRoutingMode={isRoutingMode}
+        isPinMode={isPinMode}
         onToggleRouting={handleToggleRouting}
+        onTogglePin={handleTogglePinning}
       />
     </div>
   );
