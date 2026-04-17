@@ -1,10 +1,9 @@
-import { Fragment } from "react";
 import { RootState } from "@/state/store";
 import { useDispatch, useSelector } from "react-redux";
 import ClickCapture from "./ClickCapture";
 import { Marker } from "react-leaflet";
-import { addCoordToLastPin } from "@/state/slices/pinSlice";
 import { mapPinIcon } from "@/lib/mapIcons";
+import { addPin } from "@/state/slices/pinSlice";
 
 type Prop = {
   isPinMode: boolean;
@@ -14,8 +13,9 @@ type Prop = {
 const PinLayer = ({ isPinMode, geoJsonData }: Prop) => {
   const dispatch = useDispatch();
   const pins = useSelector((state: RootState) => state.pin.pins);
-  const handleAddCoords = (coord: [number, number]) =>
-    dispatch(addCoordToLastPin(coord));
+  const handleAddCoords = (coord: [number, number]) => dispatch(addPin(coord));
+
+  console.log("Pins here: ", pins);
 
   return (
     <>
@@ -24,16 +24,8 @@ const PinLayer = ({ isPinMode, geoJsonData }: Prop) => {
         geoJsonData={geoJsonData}
         onMapClick={handleAddCoords}
       />
-      {pins.map((pin, pinIndex) => (
-        <Fragment key={pinIndex}>
-          {pin.coords.map((coord, index) => (
-            <Marker
-              key={index}
-              position={[coord[0], coord[1]]}
-              icon={mapPinIcon}
-            />
-          ))}
-        </Fragment>
+      {pins.map((pin, index) => (
+        <Marker key={index} position={pin.coords} icon={mapPinIcon} />
       ))}
     </>
   );
