@@ -4,6 +4,7 @@ export type FloodReport = {
   imageUrl: string;
   streetName: string;
   depth: string;
+  description: string;
 };
 
 type Segment = {
@@ -19,7 +20,7 @@ type SegmentState = {
 const initialSegment: Segment = {
   points: [],
   coords: [],
-  floodReport: { imageUrl: "", streetName: "", depth: "" },
+  floodReport: { imageUrl: "", streetName: "", depth: "", description: "" },
 };
 
 const initialState: SegmentState = {
@@ -45,11 +46,16 @@ const segmentSlice = createSlice({
         ...initialSegment,
         points: [],
         coords: [],
-        floodReport: { imageUrl: "", streetName: "", depth: "" },
+        floodReport: {
+          imageUrl: "",
+          streetName: "",
+          depth: "",
+          description: "",
+        },
       });
     },
 
-    updateFloorReport(
+    updateFloodReport(
       state,
       action: PayloadAction<{
         index: number;
@@ -63,7 +69,7 @@ const segmentSlice = createSlice({
   },
 });
 
-export const { addPoint, updateCoords, updateFloorReport, addSegment } =
+export const { addPoint, updateCoords, updateFloodReport, addSegment } =
   segmentSlice.actions;
 
 export default segmentSlice.reducer;
