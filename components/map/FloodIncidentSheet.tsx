@@ -2,8 +2,11 @@ import { Button } from "@/components/ui/button";
 import { useRef, useState, useEffect } from "react";
 import L from "leaflet";
 import FormSheet from "@/components/map/FormSheet";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
+import { updateFloodReport } from "@/state/slices/segment";
+import { setDescription, setPinName } from "@/state/slices/pinSlice";
+import { FloodReport } from "@/state/slices/segment";
 
 type Props = {
   isRoutingMode: boolean;
@@ -11,6 +14,7 @@ type Props = {
 };
 
 const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
+  const dispatch = useDispatch();
   const segments = useSelector((state: RootState) => state.segment.segments);
   const pins = useSelector((state: RootState) => state.pin.pins);
   const [visible, setVisible] = useState(false);
@@ -67,30 +71,55 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
 
       {/* Upload zone */}
       <div className="flex flex-col gap-3 overflow-y-auto">
-        {isRoutingMode
-          ? segments.map((segment, index) => (
-              <div
-                key={index}
-                className="rounded-xl border border-gray-100 p-4"
-              >
-                <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                  Segment {index + 1}
-                </p>
-                <FormSheet index={index} floodReport={segment.floodReport} />
-              </div>
-            ))
-          : isPinMode
-            ? pins.map((pin, index) => (
-                <div
-                  key={index}
-                  className="rounded-xl border border-gray-100 p-4"
-                >
-                  <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                    Pinned Location {index + 1}
-                  </p>
-                </div>
-              ))
-            : null}
+        {isRoutingMode ? (
+          segments.map((segment, index) => (
+            <div key={index} className="rounded-xl border border-gray-100 p-4">
+              <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                Segment {index + 1}
+              </p>
+              <FormSheet
+                values={segment.floodReport}
+                onChange={(field, value) =>
+                  dispatch(
+                    updateFloodReport({
+                      index,
+                      field: field as keyof FloodReport,
+                      value,
+                    }),
+                  )
+                }
+                visibleFields={[
+                  "imageUrl",
+                  "streetName",
+                  "depth",
+                  "description",
+                ]}
+              />
+            </div>
+          ))
+        ) : pins.length === 0 ? (
+          <p className="text-xs text-gray-400 text-center mt-4">
+            Click on the map to add a pin.
+          </p>
+        ) : (
+          pins.map((pin, index) => (
+            <div key={index} className="rounded-xl border border-gray-100 p-4">
+              <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                Pinned Location {index + 1}
+              </p>
+              <FormSheet
+                values={{ pinName: pin.pinName, description: pin.description }}
+                onChange={(value) =>
+                  dispatch(
+                    setPinName({ index, name: value }),
+                    setDescription({ index, description: value }),
+                  )
+                }
+                visibleFields={["imageUrl", "pinName", "description"]}
+              />
+            </div>
+          ))
+        )}
       </div>
 
       <Button className="mt-auto w-full rounded-lg bg-gray-900 py-2.5 text-sm font-medium text-white hover:bg-gray-700">
