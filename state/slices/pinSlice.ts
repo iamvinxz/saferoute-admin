@@ -1,11 +1,11 @@
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 
 type Pin = {
-  id: string;
   imageUrl: string;
   coords: [number, number];
   pinName: string;
   description: string;
+  created_at?: string;
 };
 
 type PinState = {
@@ -22,7 +22,6 @@ const pinSlice = createSlice({
   reducers: {
     addPin(state, action: PayloadAction<[number, number]>) {
       state.pins.push({
-        id: nanoid(),
         imageUrl: "",
         coords: action.payload,
         pinName: "",
@@ -31,33 +30,45 @@ const pinSlice = createSlice({
     },
 
     //note: change the nanoid() after
-    setImage(state, action: PayloadAction<{ id: string; imageUrl: string }>) {
-      const pin = state.pins.find((p) => p.id === action.payload.id);
+    setImage(
+      state,
+      action: PayloadAction<{ index: number; imageUrl: string }>,
+    ) {
+      const pin = state.pins[action.payload.index];
       if (!pin) return;
       pin.imageUrl = action.payload.imageUrl;
     },
 
-    setPinName(state, action: PayloadAction<{ id: string; name: string }>) {
-      const pin = state.pins.find((p) => p.id === action.payload.id);
+    setPinName(state, action: PayloadAction<{ index: number; name: string }>) {
+      const pin = state.pins[action.payload.index];
       if (!pin) return;
       pin.pinName = action.payload.name;
     },
 
     setDescription(
       state,
-      action: PayloadAction<{ id: string; description: string }>,
+      action: PayloadAction<{ index: number; description: string }>,
     ) {
-      const pin = state.pins.find((p) => p.id === action.payload.id);
+      const pin = state.pins[action.payload.index];
       if (!pin) return;
       pin.description = action.payload.description;
     },
 
-    removePin(state, action: PayloadAction<string>) {
-      state.pins = state.pins.filter((pin) => pin.id !== action.payload);
+    removePin(state, action: PayloadAction<number>) {
+      state.pins = state.pins.filter((_, pin) => pin !== action.payload);
+    },
+    clearPins(state) {
+      state.pins = [];
     },
   },
 });
 
-export const { addPin, setImage, setPinName, setDescription, removePin } =
-  pinSlice.actions;
+export const {
+  addPin,
+  setImage,
+  setPinName,
+  setDescription,
+  removePin,
+  clearPins,
+} = pinSlice.actions;
 export default pinSlice.reducer;

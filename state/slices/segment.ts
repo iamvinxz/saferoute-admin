@@ -11,6 +11,7 @@ type Segment = {
   points: [number, number][];
   coords: [number, number][];
   floodReport: FloodReport;
+  created_at?: string;
 };
 
 type SegmentState = {
@@ -66,10 +67,27 @@ const segmentSlice = createSlice({
       const { index, field, value } = action.payload;
       state.segments[index].floodReport[field] = value;
     },
+
+    removeSegment(state, action: PayloadAction<number>) {
+      if (state.segments.length == 1) return;
+      state.segments = state.segments.filter(
+        (_, segment) => segment !== action.payload,
+      );
+    },
+
+    clearSegment(state) {
+      state.segments = [];
+    },
   },
 });
 
-export const { addPoint, updateCoords, updateFloodReport, addSegment } =
-  segmentSlice.actions;
+export const {
+  addPoint,
+  updateCoords,
+  updateFloodReport,
+  addSegment,
+  removeSegment,
+  clearSegment,
+} = segmentSlice.actions;
 
 export default segmentSlice.reducer;
