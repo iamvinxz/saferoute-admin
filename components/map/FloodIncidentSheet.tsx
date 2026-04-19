@@ -4,7 +4,7 @@ import L from "leaflet";
 import FormSheet from "@/components/map/FormSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
-import { updateFloodReport } from "@/state/slices/segment";
+import { removeSegment, updateFloodReport } from "@/state/slices/segment";
 import {
   setDescription,
   setPinName,
@@ -41,7 +41,8 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
     }
   }, [visible]);
 
-  const handleRemovePin = (id: string) => dispatch(removePin(id));
+  const handleRemovePin = (index: number) => dispatch(removePin(index));
+  const handleRemoveSegment = (index: number) => dispatch(removeSegment(index));
 
   const handleAnimationEnd = () => {
     if (!isRoutingMode && !isPinMode) setVisible(false);
@@ -90,7 +91,7 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
                 </p>
                 <span
                   dangerouslySetInnerHTML={{ __html: x }}
-                  onClick={() => {}}
+                  onClick={() => handleRemoveSegment(index)}
                 />
               </div>
               <FormSheet
@@ -127,7 +128,7 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
                 <span
                   dangerouslySetInnerHTML={{ __html: x }}
                   className="hover:cursor-pointer"
-                  onClick={() => handleRemovePin(pin.id)}
+                  onClick={() => handleRemovePin(index)}
                 />
                 {/* <span
                   dangerouslySetInnerHTML={{ __html: eye }}
@@ -143,10 +144,10 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
                 onChange={(field, value) =>
                   dispatch(
                     field === "pinName"
-                      ? setPinName({ id: pin.id, name: value })
+                      ? setPinName({ index, name: value })
                       : field === "imageUrl"
-                        ? setImage({ id: pin.id, imageUrl: value })
-                        : setDescription({ id: pin.id, description: value }),
+                        ? setImage({ index, imageUrl: value })
+                        : setDescription({ index, description: value }),
                   )
                 }
                 visibleFields={["imageUrl", "pinName", "description"]}
