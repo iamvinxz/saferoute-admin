@@ -5,7 +5,7 @@ import FormSheet from "@/components/map/FormSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { updateFloodReport } from "@/state/slices/segment";
-import { setDescription, setPinName } from "@/state/slices/pinSlice";
+import { setDescription, setPinName, setImage } from "@/state/slices/pinSlice";
 import { FloodReport } from "@/state/slices/segment";
 
 type Props = {
@@ -113,7 +113,9 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
                   dispatch(
                     field == "pinName"
                       ? setPinName({ index, name: value })
-                      : setDescription({ index, description: value }),
+                      : field == "imageUrl"
+                        ? setImage({ imageUrl: value })
+                        : setDescription({ index, description: value }),
                   )
                 }
                 visibleFields={["imageUrl", "pinName", "description"]}
