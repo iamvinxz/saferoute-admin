@@ -1,6 +1,7 @@
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 
 type Pin = {
+  id: string;
   imageUrl: string;
   coords: [number, number];
   pinName: string;
@@ -21,6 +22,7 @@ const pinSlice = createSlice({
   reducers: {
     addPin(state, action: PayloadAction<[number, number]>) {
       state.pins.push({
+        id: nanoid(),
         imageUrl: "",
         coords: action.payload,
         pinName: "",
@@ -29,28 +31,29 @@ const pinSlice = createSlice({
     },
 
     //note: change the nanoid() after
-    setImage(state, action: PayloadAction<{ imageUrl: string }>) {
-      const pin = state.pins[state.pins.length - 1];
+    setImage(state, action: PayloadAction<{ id: string; imageUrl: string }>) {
+      const pin = state.pins.find((p) => p.id === action.payload.id);
+      if (!pin) return;
       pin.imageUrl = action.payload.imageUrl;
     },
 
-    setPinName(state, action: PayloadAction<{ index: number; name: string }>) {
-      const pin = state.pins[action.payload.index];
+    setPinName(state, action: PayloadAction<{ id: string; name: string }>) {
+      const pin = state.pins.find((p) => p.id === action.payload.id);
       if (!pin) return;
       pin.pinName = action.payload.name;
     },
 
     setDescription(
       state,
-      action: PayloadAction<{ index: number; description: string }>,
+      action: PayloadAction<{ id: string; description: string }>,
     ) {
-      const pin = state.pins[action.payload.index];
+      const pin = state.pins.find((p) => p.id === action.payload.id);
       if (!pin) return;
       pin.description = action.payload.description;
     },
 
-    removePin(state, action: PayloadAction<number>) {
-      state.pins.splice(action.payload, 1);
+    removePin(state, action: PayloadAction<string>) {
+      state.pins = state.pins.filter((pin) => pin.id !== action.payload);
     },
   },
 });
