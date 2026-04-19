@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useDispatch } from "react-redux";
 
 type Field = "imageUrl" | "streetName" | "depth" | "description" | "pinName";
 

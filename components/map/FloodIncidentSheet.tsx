@@ -109,10 +109,11 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
               </p>
               <FormSheet
                 values={{ pinName: pin.pinName, description: pin.description }}
-                onChange={(value) =>
+                onChange={(field, value) =>
                   dispatch(
-                    setPinName({ index, name: value }),
-                    setDescription({ index, description: value }),
+                    field == "pinName"
+                      ? setPinName({ index, name: value })
+                      : setDescription({ index, description: value }),
                   )
                 }
                 visibleFields={["imageUrl", "pinName", "description"]}
