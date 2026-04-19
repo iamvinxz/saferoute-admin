@@ -5,8 +5,14 @@ import FormSheet from "@/components/map/FormSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { updateFloodReport } from "@/state/slices/segment";
-import { setDescription, setPinName, setImage } from "@/state/slices/pinSlice";
+import {
+  setDescription,
+  setPinName,
+  setImage,
+  removePin,
+} from "@/state/slices/pinSlice";
 import { FloodReport } from "@/state/slices/segment";
+import { eye, x } from "@/lib/icon";
 
 type Props = {
   isRoutingMode: boolean;
@@ -20,6 +26,8 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
   const [visible, setVisible] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
 
+  console.log("pins here", pins);
+
   useEffect(() => {
     if (isRoutingMode || isPinMode) {
       setVisible(true);
@@ -32,6 +40,8 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
       L.DomEvent.disableScrollPropagation(divRef.current);
     }
   }, [visible]);
+
+  const handleRemovePin = (id: string) => dispatch(removePin(id));
 
   const handleAnimationEnd = () => {
     if (!isRoutingMode && !isPinMode) setVisible(false);
@@ -104,18 +114,33 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
         ) : (
           pins.map((pin, index) => (
             <div key={index} className="rounded-xl border border-gray-100 p-4">
-              <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                Pinned Location {index + 1}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                  Pinned Location {index + 1}
+                </p>
+                <span
+                  dangerouslySetInnerHTML={{ __html: x }}
+                  className="hover:cursor-pointer"
+                  onClick={() => handleRemovePin(pin.id)}
+                />
+                {/* <span
+                  dangerouslySetInnerHTML={{ __html: eye }}
+                  className="hover:cursor-pointer"
+                /> */}
+              </div>
               <FormSheet
-                values={{ pinName: pin.pinName, description: pin.description }}
+                values={{
+                  imageUrl: pin.imageUrl,
+                  pinName: pin.pinName,
+                  description: pin.description,
+                }}
                 onChange={(field, value) =>
                   dispatch(
-                    field == "pinName"
-                      ? setPinName({ index, name: value })
-                      : field == "imageUrl"
-                        ? setImage({ imageUrl: value })
-                        : setDescription({ index, description: value }),
+                    field === "pinName"
+                      ? setPinName({ id: pin.id, name: value })
+                      : field === "imageUrl"
+                        ? setImage({ id: pin.id, imageUrl: value })
+                        : setDescription({ id: pin.id, description: value }),
                   )
                 }
                 visibleFields={["imageUrl", "pinName", "description"]}
