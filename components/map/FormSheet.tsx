@@ -10,17 +10,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useDispatch } from "react-redux";
 
-type Field = "imageUrl" | "streetName" | "depth" | "description" | "pinName";
+type FormField =
+  | "imageUrl"
+  | "streetName"
+  | "depth"
+  | "description"
+  | "pinName";
 
 type Props = {
-  values: Partial<Record<Field, string>>;
-  onChange: (field: Field, value: string) => void;
-  visibleFields?: Field[];
+  values: Partial<Record<FormField, string>>;
+  onChange: (field: FormField, value: string) => void;
+  visibleFields?: FormField[];
 };
 
-const DEFAULT_FIELDS: Field[] = [
+const DEFAULT_FIELDS: FormField[] = [
   "imageUrl",
   "streetName",
   "depth",
@@ -39,7 +43,7 @@ const FormSheet = ({
   const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
   const level = ["Ankle-Deep", "Knee-Deep", "Chest-Deep", "Critical"];
 
-  const show = (field: Field) => visibleFields.includes(field);
+  const show = (field: FormField) => visibleFields.includes(field);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
