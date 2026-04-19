@@ -84,9 +84,15 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
         {isRoutingMode ? (
           segments.map((segment, index) => (
             <div key={index} className="rounded-xl border border-gray-100 p-4">
-              <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                Segment {index + 1}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                  Segment {index + 1}
+                </p>
+                <span
+                  dangerouslySetInnerHTML={{ __html: x }}
+                  onClick={() => {}}
+                />
+              </div>
               <FormSheet
                 values={segment.floodReport}
                 onChange={(field, value) =>
