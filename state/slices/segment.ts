@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type FloodReport = {
-  imageUrl: string;
   streetName: string;
   depth: string;
   description: string;
@@ -20,7 +19,7 @@ type SegmentState = {
 const initialSegment: Segment = {
   points: [],
   coords: [],
-  floodReport: { imageUrl: "", streetName: "", depth: "", description: "" },
+  floodReport: { streetName: "", depth: "", description: "" },
 };
 
 const initialState: SegmentState = {
@@ -47,7 +46,6 @@ const segmentSlice = createSlice({
         points: [],
         coords: [],
         floodReport: {
-          imageUrl: "",
           streetName: "",
           depth: "",
           description: "",

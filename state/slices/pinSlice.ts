@@ -1,7 +1,6 @@
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 
 type Pin = {
-  imageUrl: string;
   coords: [number, number];
   pinName: string;
   description: string;
@@ -21,21 +20,10 @@ const pinSlice = createSlice({
   reducers: {
     addPin(state, action: PayloadAction<[number, number]>) {
       state.pins.push({
-        imageUrl: "",
         coords: action.payload,
         pinName: "",
         description: "",
       });
-    },
-
-    //note: change the nanoid() after
-    setImage(
-      state,
-      action: PayloadAction<{ index: number; imageUrl: string }>,
-    ) {
-      const pin = state.pins[action.payload.index];
-      if (!pin) return;
-      pin.imageUrl = action.payload.imageUrl;
     },
 
     setPinName(state, action: PayloadAction<{ index: number; name: string }>) {
@@ -62,12 +50,6 @@ const pinSlice = createSlice({
   },
 });
 
-export const {
-  addPin,
-  setImage,
-  setPinName,
-  setDescription,
-  removePin,
-  clearPins,
-} = pinSlice.actions;
+export const { addPin, setPinName, setDescription, removePin, clearPins } =
+  pinSlice.actions;
 export default pinSlice.reducer;

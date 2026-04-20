@@ -5,12 +5,7 @@ import FormSheet from "@/components/map/FormSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { removeSegment, updateFloodReport } from "@/state/slices/segment";
-import {
-  setDescription,
-  setPinName,
-  setImage,
-  removePin,
-} from "@/state/slices/pinSlice";
+import { setDescription, setPinName, removePin } from "@/state/slices/pinSlice";
 import { FloodReport } from "@/state/slices/segment";
 import { eye, x } from "@/lib/icon";
 
@@ -26,7 +21,7 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
   const [visible, setVisible] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
 
-  console.log("pins here", pins);
+  console.log("segment here", segments);
 
   useEffect(() => {
     if (isRoutingMode || isPinMode) {
@@ -105,12 +100,7 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
                     }),
                   )
                 }
-                visibleFields={[
-                  "imageUrl",
-                  "streetName",
-                  "depth",
-                  "description",
-                ]}
+                visibleFields={["streetName", "depth", "description"]}
               />
             </div>
           ))
@@ -137,7 +127,6 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
               </div>
               <FormSheet
                 values={{
-                  imageUrl: pin.imageUrl,
                   pinName: pin.pinName,
                   description: pin.description,
                 }}
@@ -145,12 +134,10 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
                   dispatch(
                     field === "pinName"
                       ? setPinName({ index, name: value })
-                      : field === "imageUrl"
-                        ? setImage({ index, imageUrl: value })
-                        : setDescription({ index, description: value }),
+                      : setDescription({ index, description: value }),
                   )
                 }
-                visibleFields={["imageUrl", "pinName", "description"]}
+                visibleFields={["pinName", "description"]}
               />
             </div>
           ))
