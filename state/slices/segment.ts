@@ -11,7 +11,6 @@ type Segment = {
   points: [number, number][];
   coords: [number, number][];
   floodReport: FloodReport;
-  created_at?: string;
 };
 
 type SegmentState = {

@@ -5,7 +5,6 @@ type Pin = {
   coords: [number, number];
   pinName: string;
   description: string;
-  created_at?: string;
 };
 
 type PinState = {
