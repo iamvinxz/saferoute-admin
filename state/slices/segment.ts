@@ -23,7 +23,7 @@ const initialSegment: Segment = {
 };
 
 const initialState: SegmentState = {
-  segments: [initialSegment],
+  segments: [],
 };
 
 const segmentSlice = createSlice({
@@ -32,17 +32,18 @@ const segmentSlice = createSlice({
   reducers: {
     addPoint(state, action: PayloadAction<[number, number]>) {
       const last = state.segments[state.segments.length - 1];
+      if (!last) return;
       last.points.push(action.payload);
     },
 
     updateCoords(state, action: PayloadAction<[number, number][]>) {
       const last = state.segments[state.segments.length - 1];
+      if (!last) return;
       last.coords = action.payload;
     },
 
     addSegment(state) {
       state.segments.push({
-        ...initialSegment,
         points: [],
         coords: [],
         floodReport: {
@@ -66,10 +67,7 @@ const segmentSlice = createSlice({
     },
 
     removeSegment(state, action: PayloadAction<number>) {
-      if (state.segments.length == 1) return;
-      state.segments = state.segments.filter(
-        (_, segment) => segment !== action.payload,
-      );
+      state.segments.splice(action.payload, 1);
     },
 
     clearSegment(state) {
