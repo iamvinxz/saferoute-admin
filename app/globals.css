@@ -187,3 +187,10 @@ body {
     @apply font-sans;
   }
 }
+
+.cursor-crosshair .leaflet-interactive,   /* geojson layers */
+.cursor-crosshair .leaflet-grab,          /*map area*/
+.cursor-crosshair .leaflet-touch-drag,    /*touch/click*/
+.cursor-crosshair .leaflet-container {
+  cursor: crosshair !important;
+}
