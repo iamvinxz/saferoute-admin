@@ -7,7 +7,7 @@ import { RootState } from "@/state/store";
 import { removeSegment, updateFloodReport } from "@/state/slices/segment";
 import { setDescription, setPinName, removePin } from "@/state/slices/pinSlice";
 import { FloodReport } from "@/state/slices/segment";
-import { eye, x } from "@/lib/icon";
+import { x } from "@/lib/icon";
 
 type Props = {
   isRoutingMode: boolean;
@@ -20,8 +20,6 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
   const pins = useSelector((state: RootState) => state.pin.pins);
   const [visible, setVisible] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
-
-  console.log("segment here", segments);
 
   useEffect(() => {
     if (isRoutingMode || isPinMode) {
@@ -78,35 +76,44 @@ const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
       {/* Upload zone */}
       <div className="flex flex-col gap-3 overflow-y-auto">
         {isRoutingMode ? (
-          segments.map((segment, index) => (
-            <div key={index} className="rounded-xl border border-gray-100 p-4">
-              <div className="flex items-center justify-between">
-                <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                  Segment {index + 1}
-                </p>
-                <span
-                  dangerouslySetInnerHTML={{ __html: x }}
-                  onClick={() => handleRemoveSegment(index)}
+          segments.length === 0 ? (
+            <p className="text-xs text-gray-400 text-center mt-4">
+              Click on the map to create a segment.
+            </p>
+          ) : (
+            segments.map((segment, index) => (
+              <div
+                key={index}
+                className="rounded-xl border border-gray-100 p-4"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    Segment {index + 1}
+                  </p>
+                  <span
+                    dangerouslySetInnerHTML={{ __html: x }}
+                    onClick={() => handleRemoveSegment(index)}
+                  />
+                </div>
+                <FormSheet
+                  values={segment.floodReport}
+                  onChange={(field, value) =>
+                    dispatch(
+                      updateFloodReport({
+                        index,
+                        field: field as keyof FloodReport,
+                        value,
+                      }),
+                    )
+                  }
+                  visibleFields={["streetName", "depth", "description"]}
                 />
               </div>
-              <FormSheet
-                values={segment.floodReport}
-                onChange={(field, value) =>
-                  dispatch(
-                    updateFloodReport({
-                      index,
-                      field: field as keyof FloodReport,
-                      value,
-                    }),
-                  )
-                }
-                visibleFields={["streetName", "depth", "description"]}
-              />
-            </div>
-          ))
+            ))
+          )
         ) : pins.length === 0 ? (
           <p className="text-xs text-gray-400 text-center mt-4">
-            Click on the map to add a pin.
+            Click on the map to drop a pin.
           </p>
         ) : (
           pins.map((pin, index) => (
