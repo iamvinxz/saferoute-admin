@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import ClickCapture from "@/components/map/ClickCapture";
 import CursorController from "@/components/map/CursorController";
-import { addPoint } from "@/state/slices/segment";
+import { addPoint, addSegment } from "@/state/slices/segment";
 
 interface Props {
   isRoutingMode: boolean;
@@ -14,11 +14,19 @@ interface Props {
 const RouteLayer = ({ isRoutingMode, geoJsonData }: Props) => {
   const segments = useSelector((state: RootState) => state.segment.segments);
   const dispatch = useDispatch();
-  const handleAddPoint = (point: [number, number]) => dispatch(addPoint(point));
+  const handleAddPoint = (point: [number, number]) => {
+    if (segments.length === 0) {
+      dispatch(addSegment());
+    }
+    dispatch(addPoint(point));
+  };
 
   return (
     <>
-      <CursorController isRoutingMode={isRoutingMode} />
+      <CursorController
+        isRoutingMode={isRoutingMode}
+        geoJsonData={geoJsonData}
+      />
       <ClickCapture
         onClickMode={isRoutingMode}
         geoJsonData={geoJsonData}
