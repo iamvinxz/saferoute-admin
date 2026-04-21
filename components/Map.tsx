@@ -32,31 +32,33 @@ export default function Map() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPinMode, setIsPinMode] = useState<boolean>(false);
   const [isRoutingMode, setIsRoutingMode] = useState<boolean>(false);
-  const segments = useSelector((state: RootState) => state.segment.segments);
-  const currentSegment = segments[segments.length - 1];
+  const segments = useSelector((state: RootState) => state.segment.segments); //empty segment
+  const currentSegment = segments[segments.length - 1]; //initial undefine
 
   const [focusTarget, setFocusTarget] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
 
-  const { imageUrl, ...rest } = currentSegment.floodReport;
-  const hasInvalid = Object.values(rest).some(
-    (item) => item == null || item.trim() == "",
-  );
+  const hasInvalid = currentSegment
+    ? Object.values(currentSegment.floodReport).some(
+        (item) => item == null || item.trim() === "",
+      )
+    : false;
 
   //rtk query
   const { data: geoData } = useGetGeoJsonQuery();
 
   //side effects
   useEffect(() => {
+    if (!currentSegment) return;
     const points = currentSegment.points;
     if (points.length < 2) return;
 
     fetchOSRMRoute(points).then((coords) => {
       handleUpdateCoords(coords);
     });
-  }, [currentSegment.points]);
+  }, [currentSegment?.points]);
 
   //prevents penetrations of click on panels
   useEffect(() => {
@@ -69,7 +71,9 @@ export default function Map() {
   //handlers
   const handleUpdateCoords = (coords: [number, number][]) =>
     dispatch(updateCoords(coords));
+
   const handleNewSegment = () => {
+    if (!currentSegment) return;
     if (currentSegment.points.length < 2) {
       toast.info("Add atleast 2 points before startng a new segment.", {
         style: { background: "#b85545", color: "white" },
