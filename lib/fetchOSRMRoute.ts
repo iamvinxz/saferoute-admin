@@ -5,7 +5,7 @@ export const fetchOSRMRoute = async (
 
   // OSRM expects lng,lat not lat,lng
   const coords = points.map(([lat, lng]) => `${lng},${lat}`).join(";");
-  const url = `http://localhost:5000/route/v1/foot/${coords}?overview=full&geometries=geojson`;
+  const url = `${process.env.NEXT_PUBLIC_OSRM_URI}/route/v1/foot/${coords}?overview=full&geometries=geojson`;
 
   const res = await fetch(url);
   const data = await res.json();
