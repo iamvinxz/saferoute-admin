@@ -4,9 +4,9 @@ import type { NextRequest } from "next/server";
 const PROTECTED_ROUTES = ["/dashboard", "/maps", "/notification"];
 const AUTH_ROUTES = ["/auth/login"];
 
-export function proxy(req: NextRequest) {
+export default function proxy(req: NextRequest) {
   //retrieve the token in the cookies
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("accessToken")?.value;
   const { pathname } = req.nextUrl;
 
   const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
