@@ -16,12 +16,6 @@ type SegmentState = {
   segments: Segment[];
 };
 
-const initialSegment: Segment = {
-  points: [],
-  coords: [],
-  floodReport: { streetName: "", depth: "", description: "" },
-};
-
 const initialState: SegmentState = {
   segments: [],
 };
