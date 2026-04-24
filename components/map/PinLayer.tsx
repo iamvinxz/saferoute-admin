@@ -2,7 +2,7 @@ import { RootState } from "@/state/store";
 import { useDispatch, useSelector } from "react-redux";
 import ClickCapture from "@/components/map/ClickCapture";
 import { Marker } from "react-leaflet";
-import { mapPinIcon } from "@/lib/icon";
+import { mapPinIcon } from "@/lib/leafletIcon";
 import { addPin } from "@/state/slices/pinSlice";
 import { toast } from "sonner";
 
