@@ -2,6 +2,9 @@
 import { useState } from "react";
 import { X, LayoutGrid, MapPin, Ruler, Route } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RootState } from "@/state/store";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleIsPinMode, toggleIsRouting } from "@/state/slices/modeSlice";
 
 interface Tool {
   icon: React.ReactNode;
@@ -9,21 +12,12 @@ interface Tool {
   onClick: () => void;
 }
 
-interface Props {
-  isRoutingMode: boolean;
-  isPinMode: boolean;
-  onToggleRouting: () => void;
-  onTogglePin: () => void;
-}
-
-const ToolBox = ({
-  isRoutingMode,
-  isPinMode,
-  onToggleRouting,
-  onTogglePin,
-}: Props) => {
+const ToolBox = () => {
   //states
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
+  const isPinMode = useSelector((state: RootState) => state.mode.isPinMode);
 
   const defaultTools: Tool[] = [
     {
@@ -31,9 +25,9 @@ const ToolBox = ({
       label: isPinMode ? "Stop Pinning" : "Drop Pin",
       onClick: () => {
         if (isRoutingMode) {
-          onToggleRouting();
+          dispatch(toggleIsRouting());
         }
-        onTogglePin();
+        dispatch(toggleIsPinMode());
         setIsOpen(false);
       },
     },
@@ -43,9 +37,9 @@ const ToolBox = ({
       label: isRoutingMode ? "Stop Plotting" : "Plot Route",
       onClick: () => {
         if (isPinMode) {
-          onTogglePin();
+          dispatch(toggleIsPinMode());
         }
-        onToggleRouting();
+        dispatch(toggleIsRouting());
         setIsOpen(false);
       },
     },
