@@ -30,8 +30,8 @@ export default function Map() {
   //states
   const dispatch = useDispatch();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isPinMode, setIsPinMode] = useState<boolean>(false);
-  const [isRoutingMode, setIsRoutingMode] = useState<boolean>(false);
+  const isPinMode = useSelector((state: RootState) => state.mode.isPinMode);
+  const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
   const segments = useSelector((state: RootState) => state.segment.segments); //empty segment
   const currentSegment = segments[segments.length - 1]; //initial undefine
 
@@ -88,14 +88,6 @@ export default function Map() {
     dispatch(addSegment());
   };
 
-  const handleToggleRouting = () => {
-    setIsRoutingMode((prev) => !prev);
-  };
-
-  const handleTogglePinning = () => {
-    setIsPinMode((prev) => !prev);
-  };
-
   return (
     <div className="relative w-full h-full z-0">
       <MapContainer
@@ -126,27 +118,16 @@ export default function Map() {
           />
         )}
 
-        {(isRoutingMode || isPinMode) && (
-          <InfoMessage
-            isRoutingMode={isRoutingMode}
-            isPinMode={isPinMode}
-            onToggleRouting={handleToggleRouting}
-            onTogglePinMode={handleTogglePinning}
-          />
-        )}
+        {(isRoutingMode || isPinMode) && <InfoMessage />}
 
-        <RouteLayer isRoutingMode={isRoutingMode} geoJsonData={geoData} />
-        <PinLayer isPinMode={isPinMode} geoJsonData={geoData} />
+        <RouteLayer geoJsonData={geoData} />
+        <PinLayer geoJsonData={geoData} />
 
         <LandMarksLayer />
         <InvalidateSize />
         <ZoomTracker />
         <FocusTrigger target={focusTarget} />
-        <FloodReportSheet
-          key={isRoutingMode ? "routing" : "pin"}
-          isRoutingMode={isRoutingMode}
-          isPinMode={isPinMode}
-        />
+        <FloodReportSheet />
       </MapContainer>
 
       {isRoutingMode && (
@@ -165,12 +146,7 @@ export default function Map() {
         </>
       )}
       <ControllerTab onFocus={setFocusTarget} />
-      <ToolBox
-        isRoutingMode={isRoutingMode}
-        isPinMode={isPinMode}
-        onToggleRouting={handleToggleRouting}
-        onTogglePin={handleTogglePinning}
-      />
+      <ToolBox />
     </div>
   );
 }

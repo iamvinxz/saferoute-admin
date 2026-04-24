@@ -7,12 +7,12 @@ import CursorController from "@/components/map/CursorController";
 import { addPoint, addSegment } from "@/state/slices/segment";
 
 interface Props {
-  isRoutingMode: boolean;
   geoJsonData: GeoJSON.FeatureCollection;
 }
 
-const RouteLayer = ({ isRoutingMode, geoJsonData }: Props) => {
+const RouteLayer = ({ geoJsonData }: Props) => {
   const segments = useSelector((state: RootState) => state.segment.segments);
+  const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
   const dispatch = useDispatch();
   const handleAddPoint = (point: [number, number]) => {
     if (segments.length === 0) {

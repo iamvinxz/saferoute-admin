@@ -6,24 +6,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import L from "leaflet";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/state/store";
+import { toggleIsPinMode, toggleIsRouting } from "@/state/slices/modeSlice";
 
-interface InfoMessageProps {
-  isRoutingMode: boolean;
-  isPinMode: boolean;
-  onToggleRouting: () => void;
-  onTogglePinMode: () => void;
-}
-
-const InfoMessage = ({
-  isRoutingMode,
-  isPinMode,
-  onToggleRouting,
-  onTogglePinMode,
-}: InfoMessageProps) => {
+const InfoMessage = () => {
   //hooks
   const containerRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+  const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
+  const isPinMode = useSelector((state: RootState) => state.mode.isPinMode);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -34,9 +28,9 @@ const InfoMessage = ({
 
   const handleClose = () => {
     if (isRoutingMode) {
-      onToggleRouting();
-    } else if (isPinMode) {
-      onTogglePinMode();
+      dispatch(toggleIsRouting());
+    } else {
+      dispatch(toggleIsPinMode());
     }
   };
 

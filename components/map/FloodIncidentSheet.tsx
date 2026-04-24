@@ -9,14 +9,11 @@ import { setDescription, setPinName, removePin } from "@/state/slices/pinSlice";
 import { FloodReport } from "@/state/slices/segment";
 import { x } from "@/lib/icon";
 
-type Props = {
-  isRoutingMode: boolean;
-  isPinMode: boolean;
-};
-
-const FloodReportSheet = ({ isRoutingMode, isPinMode }: Props) => {
+const FloodReportSheet = () => {
   const dispatch = useDispatch();
   const segments = useSelector((state: RootState) => state.segment.segments);
+  const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
+  const isPinMode = useSelector((state: RootState) => state.mode.isPinMode);
   const pins = useSelector((state: RootState) => state.pin.pins);
   const [visible, setVisible] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);

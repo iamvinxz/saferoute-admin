@@ -7,13 +7,13 @@ import { addPin } from "@/state/slices/pinSlice";
 import { toast } from "sonner";
 
 type Prop = {
-  isPinMode: boolean;
   geoJsonData: GeoJSON.FeatureCollection;
 };
 
-const PinLayer = ({ isPinMode, geoJsonData }: Prop) => {
+const PinLayer = ({ geoJsonData }: Prop) => {
   const dispatch = useDispatch();
   const pins = useSelector((state: RootState) => state.pin.pins);
+  const isPinMode = useSelector((state: RootState) => state.mode.isPinMode);
   const currentPin = pins[pins.length - 1];
 
   //handlers
