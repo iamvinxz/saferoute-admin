@@ -9,14 +9,11 @@ import { useLoginMutation } from "@/Redux/Services/authService";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/state/slices/authSlice";
 import type { AppDispatch } from "@/state/store";
+import Cookies from "js-cookie";
 
-type Props = {
-  index: number;
-  data: {
-    streetName: string;
-    depth: string;
-  };
-  onChange: (field: string, value: string) => void;
+type FormsFields = {
+  email: string;
+  password: string;
 };
 
 const FormsField = () => {
@@ -37,10 +34,14 @@ const FormsField = () => {
         password: data.password,
       }).unwrap();
 
+      Cookies.set("accessToken", credentials.token, { expires: 7 });
+      console.log(credentials);
       dispatch(setUser(credentials.user));
 
       router.push("/dashboard");
-    } catch (error) {}
+    } catch (error: any) {
+      console.log("login error:", error.message);
+    }
   };
 
   return (
