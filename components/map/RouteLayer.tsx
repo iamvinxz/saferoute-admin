@@ -1,10 +1,11 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Polyline, CircleMarker } from "react-leaflet";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import ClickCapture from "@/components/map/ClickCapture";
 import CursorController from "@/components/map/CursorController";
-import { addPoint, addSegment } from "@/state/slices/segment";
+import { addPoint, addSegment, updateCoords } from "@/state/slices/segment";
+import { fetchOSRMRoute } from "@/lib/fetchOSRMRoute";
 
 interface Props {
   geoJsonData: GeoJSON.FeatureCollection;
@@ -12,14 +13,30 @@ interface Props {
 
 const RouteLayer = ({ geoJsonData }: Props) => {
   const segments = useSelector((state: RootState) => state.segment.segments);
+  const currentSegment = segments[segments.length - 1]; //initial undefin
   const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
   const dispatch = useDispatch();
+
+  //side effects
+  useEffect(() => {
+    if (!currentSegment) return;
+    const points = currentSegment.points;
+    if (points.length < 2) return;
+
+    fetchOSRMRoute(points).then((coords) => {
+      handleUpdateCoords(coords);
+    });
+  }, [currentSegment?.points]);
+
   const handleAddPoint = (point: [number, number]) => {
     if (segments.length === 0) {
       dispatch(addSegment());
     }
     dispatch(addPoint(point));
   };
+
+  const handleUpdateCoords = (coords: [number, number][]) =>
+    dispatch(updateCoords(coords));
 
   return (
     <>
