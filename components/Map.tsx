@@ -10,14 +10,13 @@ import FocusTrigger from "@/components/map/FocusTrigger";
 import { useEffect, useRef, useState } from "react";
 import ToolBox from "@/components/map/ToolBox";
 import RouteLayer from "./map/RouteLayer";
-import { fetchOSRMRoute } from "@/lib/fetchOSRMRoute";
 import InfoMessage from "./map/InfoMessage";
 import L from "leaflet";
 import { toast } from "sonner";
 import FloodReportSheet from "@/components/map/FloodIncidentSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
-import { updateCoords, addSegment } from "@/state/slices/segment";
+import { addSegment } from "@/state/slices/segment";
 import PinLayer from "./map/PinLayer";
 
 const center: [number, number] = [14.673413900535, 120.9685888671883];
@@ -49,17 +48,6 @@ export default function Map() {
   //rtk query
   const { data: geoData } = useGetGeoJsonQuery();
 
-  //side effects
-  useEffect(() => {
-    if (!currentSegment) return;
-    const points = currentSegment.points;
-    if (points.length < 2) return;
-
-    fetchOSRMRoute(points).then((coords) => {
-      handleUpdateCoords(coords);
-    });
-  }, [currentSegment?.points]);
-
   //prevents penetrations of click on panels
   useEffect(() => {
     if (containerRef.current) {
@@ -69,9 +57,6 @@ export default function Map() {
   }, []);
 
   //handlers
-  const handleUpdateCoords = (coords: [number, number][]) =>
-    dispatch(updateCoords(coords));
-
   const handleNewSegment = () => {
     if (!currentSegment) return;
     if (currentSegment.points.length < 2) {
