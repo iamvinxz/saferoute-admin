@@ -1,16 +1,10 @@
 "use client";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { addSegment, updateFloodReport } from "@/state/slices/segment";
 import { MapPin, Droplets, FileText, Navigation } from "lucide-react";
-
-type Props = {
-  streetName: string;
-  depth: string;
-  description: string;
-  imageUrl?: string;
-  reportedAt?: string;
-};
+import { toggleIsRouting } from "@/state/slices/modeSlice";
+import { RootState } from "@/state/store";
 
 const depthColors: Record<string, string> = {
   "Ankle-Deep": "text-yellow-600 bg-yellow-50 border-yellow-200",
@@ -19,36 +13,48 @@ const depthColors: Record<string, string> = {
   Critical: "text-red-800 bg-red-100 border-red-300",
 };
 
-const ReportDetails = ({
-  streetName,
-  depth,
-  description,
-  imageUrl,
-  reportedAt,
-}: Props) => {
+const ReportDetails = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const report = useSelector((state: RootState) => state.report);
+  const segments = useSelector((state: RootState) => state.segment.segments);
 
   const handleCreateSegment = () => {
-    dispatch(addSegment()); // ✅ adds first segment
+    dispatch(addSegment());
+    const lastIndex = segments.length; //capture last index
     dispatch(
-      updateFloodReport({ index: 0, field: "streetName", value: streetName }),
+      updateFloodReport({
+        index: lastIndex,
+        field: "streetName",
+        value: report.streetName,
+      }),
     );
-    dispatch(updateFloodReport({ index: 0, field: "depth", value: depth }));
     dispatch(
-      updateFloodReport({ index: 0, field: "description", value: description }),
+      updateFloodReport({
+        index: lastIndex,
+        field: "depth",
+        value: report.depth,
+      }),
     );
-    router.push("/maps"); // ✅ redirect to map
+    dispatch(
+      updateFloodReport({
+        index: lastIndex,
+        field: "description",
+        value: report.description,
+      }),
+    );
+    dispatch(toggleIsRouting());
+    router.push("/maps");
   };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden w-full">
       {/* Image */}
-      {imageUrl && (
+      {report.imageUrl && (
         <div className="relative w-full h-48">
           <img
-            src={imageUrl}
-            alt={streetName}
+            src={report.imageUrl}
+            alt={report.streetName}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
@@ -78,7 +84,7 @@ const ReportDetails = ({
               Street Name
             </p>
             <p className="text-sm font-medium text-gray-800 mt-0.5">
-              {streetName}
+              {report.streetName}
             </p>
           </div>
         </div>
@@ -94,10 +100,10 @@ const ReportDetails = ({
             </p>
             <span
               className={`inline-block mt-1 text-xs font-medium px-2.5 py-1 rounded-full border ${
-                depthColors[depth] ?? depthColors["Knee-Deep"]
+                depthColors[report.depth] ?? depthColors["Knee-Deep"]
               }`}
             >
-              {depth}
+              {report.depth}
             </span>
           </div>
         </div>
@@ -112,15 +118,15 @@ const ReportDetails = ({
               Description
             </p>
             <p className="text-sm text-gray-600 mt-0.5 leading-relaxed">
-              {description}
+              {report.description}
             </p>
           </div>
         </div>
 
         {/* Reported At */}
-        {reportedAt && (
-          <p className="text-xs text-gray-400">Reported: {reportedAt}</p>
-        )}
+        {/* {report.reportedAt && (
+          <p className="text-xs text-gray-400">Reported: {report.reportedAt}</p>
+        )} */}
 
         <hr className="border-gray-100" />
 
