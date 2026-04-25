@@ -1,11 +1,6 @@
 import FloodReportCard from "./FloodReportCard";
-import { FloodReport } from "@/state/slices/segment";
 
-type Props = {
-  onSelect: (report: FloodReport) => void; // ✅
-};
-
-const FloodReports = ({ onSelect }: Props) => {
+const FloodReports = () => {
   const reports = [
     {
       streetName: "J.P Rizal Ave",
@@ -31,25 +26,11 @@ const FloodReports = ({ onSelect }: Props) => {
   ];
 
   return (
-    <div className="space-y-4">
-      {/* Alert Banner */}
-      {/* <div className="flex items-center gap-2 bg-orange-50 border border-orange-100 rounded-xl px-4 py-3">
-        <AlertTriangle className="w-4 h-4 text-orange-500 shrink-0" />
-        <p className="text-xs text-orange-700 font-medium">
-          {reports.length} active flood reports in your area
-        </p>
-      </div> */}
-
-      {/* Cards */}
-      <div className="grid grid-cols-1 gap-3">
-        {reports.map((report, index) => (
-          <FloodReportCard
-            key={index}
-            {...report}
-            onClick={() => onSelect(report)}
-          />
-        ))}
-      </div>
+    <div className="space-y-6">
+      {reports.map((report, index) => {
+        const reportIndexed = { ...report, index };
+        return <FloodReportCard key={index} {...reportIndexed} />;
+      })}
     </div>
   );
 };
