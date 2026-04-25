@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { MapPin, Droplets, Clock } from "lucide-react";
 import { eye } from "@/lib/icon";
+import { useDispatch } from "react-redux";
+import { setReport } from "@/state/slices/selectedReport";
 
 const depthColors: Record<string, { bg: string; text: string; badge: string }> =
   {
@@ -27,22 +29,23 @@ const depthColors: Record<string, { bg: string; text: string; badge: string }> =
   };
 
 type FloodReportCardProps = {
+  index: number;
   streetName: string;
   depth: string;
   description: string;
   imageUrl?: string;
   reportedAt?: string;
-  onClick?: () => void;
 };
 
 const FloodReportCard = ({
+  index,
   streetName,
   depth,
   description,
   imageUrl,
   reportedAt,
-  onClick,
 }: FloodReportCardProps) => {
+  const dispatch = useDispatch();
   const colors = depthColors[depth] ?? depthColors["Knee-Deep"];
 
   return (
@@ -91,7 +94,11 @@ const FloodReportCard = ({
           <span
             dangerouslySetInnerHTML={{ __html: eye }}
             className="hover:cursor-pointer"
-            onClick={onClick}
+            onClick={() =>
+              dispatch(
+                setReport({ index, streetName, depth, description, imageUrl }),
+              )
+            }
           />
         </div>
       </div>
