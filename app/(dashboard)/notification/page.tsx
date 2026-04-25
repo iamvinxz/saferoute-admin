@@ -3,13 +3,12 @@ import FloodReports from "@/components/notification/FloodReports";
 import SOSsignal from "@/components/notification/SOSsignal";
 import { useState } from "react";
 import ReportDetails from "../../../components/notification/ReportDetails";
-import { FloodReport } from "@/state/slices/segment";
+import { RootState } from "@/state/store";
+import { useSelector } from "react-redux";
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState<"flood" | "sos">("flood");
-  const [selectedReport, setSelectedReport] = useState<FloodReport | null>(
-    null,
-  );
+  const selectedReport = useSelector((state: RootState) => state.report);
 
   return (
     <>
@@ -41,6 +40,7 @@ const Notification = () => {
         </div>
 
         {/* Content Box */}
+
         <div
           className={`mr-20 pt-4 pb-4 px-5 rounded-br-md rounded-bl-md shadow-sm max-h-180 overflow-auto ${
             activeTab === "flood"
@@ -50,7 +50,7 @@ const Notification = () => {
         >
           {activeTab === "flood" ? (
             <div>
-              <FloodReports onSelect={(report) => setSelectedReport(report)} />
+              <FloodReports />
             </div>
           ) : (
             <div>
@@ -59,13 +59,9 @@ const Notification = () => {
           )}
         </div>
       </div>
-      {selectedReport && (
-        <ReportDetails
-          streetName={selectedReport.streetName}
-          depth={selectedReport.depth}
-          description={selectedReport.description}
-        />
-      )}
+      <div className="mr-20 pt-24 px-5">
+        {selectedReport && <ReportDetails />}
+      </div>
     </>
   );
 };
