@@ -1,4 +1,3 @@
-import { Postpone } from "next/dist/server/app-render/dynamic-rendering";
 import { api } from "./APIService";
 import { LOGIN, LOGOUT } from "./Endpoints";
 
@@ -25,6 +24,7 @@ export const authApi = api.injectEndpoints({
 
 type AuthControllerSignInResponse = {
   message: string;
+  token: string;
   user: {
     id: string;
     name: string;
