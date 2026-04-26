@@ -5,10 +5,13 @@ import { useState } from "react";
 import ReportDetails from "../../../components/notification/ReportDetails";
 import { RootState } from "@/state/store";
 import { useSelector } from "react-redux";
+import NoContent from "@/components/notification/noContent";
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState<"flood" | "sos">("flood");
   const selectedReport = useSelector((state: RootState) => state.report);
+
+  console.log("selected", selectedReport);
 
   return (
     <>
@@ -60,7 +63,7 @@ const Notification = () => {
         </div>
       </div>
       <div className="mr-20 pt-24 px-5">
-        {selectedReport && <ReportDetails />}
+        {selectedReport.index !== -1 ? <ReportDetails /> : <NoContent />}
       </div>
     </>
   );
