@@ -15,6 +15,7 @@ const depthColors: Record<string, string> = {
 
 const ReportDetails = () => {
   const dispatch = useDispatch();
+  const isRouting = useSelector((state: RootState) => state.mode.isRouting);
   const router = useRouter();
   const report = useSelector((state: RootState) => state.report);
   const segments = useSelector((state: RootState) => state.segment.segments);
@@ -43,7 +44,7 @@ const ReportDetails = () => {
         value: report.description,
       }),
     );
-    dispatch(toggleIsRouting());
+    if (!isRouting) dispatch(toggleIsRouting());
     router.push("/maps");
   };
 
