@@ -36,6 +36,16 @@ const segmentSlice = createSlice({
       last.coords = action.payload;
     },
 
+    // setImage(
+    //   state,
+    //   action: PayloadAction<{ index: number; imageUrl: string }>,
+    // ) {
+    //   const { index, imageUrl } = action.payload;
+    //   const segment = state.segments[index];
+    //   if (!segment) return;
+    //   segment.floodReport.imageUrl = imageUrl;
+    // },
+
     addSegment(state) {
       state.segments.push({
         points: [],
