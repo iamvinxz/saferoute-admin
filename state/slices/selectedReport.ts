@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type Report = {
-  index?: number;
+  index: number;
   imageUrl?: string;
   streetName: string;
   depth: string;
@@ -10,6 +10,7 @@ type Report = {
 };
 
 const initialState: Report = {
+  index: -1,
   imageUrl: "",
   streetName: "",
   depth: "",
@@ -23,8 +24,11 @@ const selectedReport = createSlice({
     setReport(_state, action: PayloadAction<Report>) {
       return action.payload;
     },
+    clearReport(state) {
+      return initialState;
+    },
   },
 });
 
-export const { setReport } = selectedReport.actions;
+export const { setReport, clearReport } = selectedReport.actions;
 export default selectedReport.reducer;
