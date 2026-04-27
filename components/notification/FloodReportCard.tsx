@@ -35,6 +35,7 @@ type FloodReportCardProps = {
   description: string;
   imageUrl?: string;
   reportedAt?: string;
+  coordinates?: [number, number];
 };
 
 const FloodReportCard = ({
@@ -44,6 +45,7 @@ const FloodReportCard = ({
   description,
   imageUrl,
   reportedAt,
+  coordinates,
 }: FloodReportCardProps) => {
   const dispatch = useDispatch();
   const colors = depthColors[depth] ?? depthColors["Knee-Deep"];
@@ -96,7 +98,14 @@ const FloodReportCard = ({
             className="hover:cursor-pointer"
             onClick={() =>
               dispatch(
-                setReport({ index, streetName, depth, description, imageUrl }),
+                setReport({
+                  index,
+                  streetName,
+                  depth,
+                  description,
+                  imageUrl,
+                  coordinates,
+                }),
               )
             }
           />
