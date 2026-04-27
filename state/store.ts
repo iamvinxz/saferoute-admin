@@ -5,6 +5,7 @@ import segmentReducer from "@/state/slices/segment";
 import pinReducer from "@/state/slices/pinSlice";
 import modeReducer from "@/state/slices/modeSlice";
 import reportReducer from "@/state/slices/selectedReport";
+import sosReducer from "@/state/slices/sosSignal";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     pin: pinReducer,
     mode: modeReducer,
     report: reportReducer,
+    sos: sosReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware),
