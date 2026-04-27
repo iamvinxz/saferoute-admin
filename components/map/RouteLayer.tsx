@@ -6,6 +6,7 @@ import ClickCapture from "@/components/map/ClickCapture";
 import CursorController from "@/components/map/CursorController";
 import { addPoint, addSegment, updateCoords } from "@/state/slices/segment";
 import { fetchOSRMRoute } from "@/lib/fetchOSRMRoute";
+import { toast } from "sonner";
 
 interface Props {
   geoJsonData: GeoJSON.FeatureCollection;
@@ -32,6 +33,15 @@ const RouteLayer = ({ geoJsonData }: Props) => {
     if (segments.length === 0) {
       dispatch(addSegment());
     }
+
+    // Check if current segment already has 2 points
+    if (currentSegment && currentSegment.points.length >= 2) {
+      toast.info("Max of 2 plots allowed", {
+        style: { background: "#b85545", color: "white" },
+      });
+      return;
+    }
+
     dispatch(addPoint(point));
   };
 
@@ -44,6 +54,7 @@ const RouteLayer = ({ geoJsonData }: Props) => {
         isRoutingMode={isRoutingMode}
         geoJsonData={geoJsonData}
       />
+
       <ClickCapture
         onClickMode={isRoutingMode}
         geoJsonData={geoJsonData}
