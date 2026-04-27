@@ -6,6 +6,7 @@ import { toggleIsRouting } from "@/state/slices/modeSlice";
 import { RootState } from "@/state/store";
 import { trash } from "@/lib/icon";
 import { clearReport } from "@/state/slices/selectedReport";
+import dynamic from "next/dynamic";
 
 const depthColors: Record<string, string> = {
   "Ankle-Deep": "text-yellow-600 bg-yellow-50 border-yellow-200",
@@ -13,6 +14,14 @@ const depthColors: Record<string, string> = {
   "Chest-Deep": "text-red-600 bg-red-50 border-red-200",
   Critical: "text-red-800 bg-red-100 border-red-300",
 };
+
+//disables ssr and force map to render in browser
+const MapOverview = dynamic(
+  () => import("@/components/notification/mapOverview"),
+  {
+    ssr: false,
+  },
+);
 
 const ReportDetails = () => {
   const dispatch = useDispatch();
@@ -51,11 +60,14 @@ const ReportDetails = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden w-full">
+    <div className="grid grid-2 gap-4">
       <div>
+        <MapOverview />
+      </div>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden w-full">
         {/* Image */}
         {report.imageUrl && (
-          <div className="relative w-full h-48">
+          <div className="relative w-full h-43">
             <img
               src={report.imageUrl}
               alt={report.streetName}
@@ -65,13 +77,13 @@ const ReportDetails = () => {
           </div>
         )}
 
-        <div className="p-5 space-y-5">
+        <div className="p-5 space-y-3">
           {/* Title */}
           <div>
             <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">
               Flood Report Details
             </p>
-            <h2 className="text-lg font-semibold text-gray-800">
+            <h2 className="text-md font-semibold text-gray-800">
               Incident Overview
             </h2>
           </div>
