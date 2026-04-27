@@ -1,10 +1,14 @@
 "use client";
 import { useState } from "react";
-import { X, LayoutGrid, MapPin, Ruler, Route } from "lucide-react";
+import { X, LayoutGrid, MapPin, OctagonAlert, Route } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RootState } from "@/state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleIsPinMode, toggleIsRouting } from "@/state/slices/modeSlice";
+import {
+  triggerConfirmation,
+  triggerSOSsignal,
+} from "@/state/slices/sosSignal";
 
 interface Tool {
   icon: React.ReactNode;
@@ -18,6 +22,9 @@ const ToolBox = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
   const isPinMode = useSelector((state: RootState) => state.mode.isPinMode);
+  const isSosSignal = useSelector(
+    (state: RootState) => state.sos.triggerSosSignal,
+  );
 
   const defaultTools: Tool[] = [
     {
@@ -31,7 +38,6 @@ const ToolBox = () => {
         setIsOpen(false);
       },
     },
-    { icon: <Ruler size={22} />, label: "Measure distance", onClick: () => {} },
     {
       icon: <Route size={22} />,
       label: isRoutingMode ? "Stop Plotting" : "Plot Route",
@@ -43,10 +49,14 @@ const ToolBox = () => {
         setIsOpen(false);
       },
     },
+    {
+      icon: <OctagonAlert size={22} />,
+      label: isSosSignal ? "Disable SOS Signal" : "Enable SOS Signal",
+      onClick: () => {
+        dispatch(triggerConfirmation());
+      },
+    },
   ];
-
-  //handlers
-
   return (
     <div className="absolute bottom-10 right-10 z-1000 flex flex-col items-end gap-3">
       {/* Tool items — pop up when open */}
