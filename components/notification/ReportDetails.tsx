@@ -153,11 +153,11 @@ const ReportDetails = () => {
               className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
             >
               <Navigation className="w-4 h-4" />
-              Create Segment
+              Approve
             </button>
             <button className="w-full flex  items-center  justify-center bg-red-600 text-white font-medium text-sm rounded-xl hover:bg-red-500">
               <span dangerouslySetInnerHTML={{ __html: trash }} />
-              Delete
+              Reject
             </button>
           </div>
         </div>
