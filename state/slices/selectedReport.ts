@@ -7,6 +7,7 @@ type Report = {
   depth: string;
   description: string;
   reportedAt?: string;
+  coordinates: [number, number] | undefined;
 };
 
 const initialState: Report = {
@@ -15,6 +16,7 @@ const initialState: Report = {
   streetName: "",
   depth: "",
   description: "",
+  coordinates: undefined,
 };
 
 const selectedReport = createSlice({
@@ -24,7 +26,7 @@ const selectedReport = createSlice({
     setReport(_state, action: PayloadAction<Report>) {
       return action.payload;
     },
-    clearReport(state) {
+    clearReport(_state) {
       return initialState;
     },
   },
