@@ -5,7 +5,6 @@ const PROTECTED_ROUTES = ["/dashboard", "/maps", "/notification"];
 const AUTH_ROUTES = ["/auth/login"];
 
 export default function proxy(req: NextRequest) {
-  //retrieve the token in the cookies
   const token = req.cookies.get("accessToken")?.value;
   const { pathname } = req.nextUrl;
 
