@@ -11,15 +11,18 @@ export const authApi = api.injectEndpoints({
         url: LOGIN,
         method: "POST",
         body: credential,
+        credentials: "include",
       }),
     }),
     logout: build.mutation<void, void>({
       query: () => ({
         url: LOGOUT,
         method: "POST",
+        credentials: "include",
       }),
     }),
   }),
+  overrideExisting: true,
 });
 
 type AuthControllerSignInResponse = {
