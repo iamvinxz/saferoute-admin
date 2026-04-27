@@ -9,7 +9,6 @@ import { useLoginMutation } from "@/Redux/Services/authService";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/state/slices/authSlice";
 import type { AppDispatch } from "@/state/store";
-import Cookies from "js-cookie";
 
 type FormsFields = {
   email: string;
@@ -34,8 +33,11 @@ const FormsField = () => {
         password: data.password,
       }).unwrap();
 
-      Cookies.set("accessToken", credentials.token, { expires: 7 });
       console.log(credentials);
+
+      // Set token in cookie for middleware
+      document.cookie = `accessToken=${credentials.token}; path=/; SameSite=Strict`;
+
       dispatch(setUser(credentials.user));
 
       router.push("/dashboard");
