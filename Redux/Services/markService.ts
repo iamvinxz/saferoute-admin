@@ -96,12 +96,15 @@ type MarkControllerSegmentResponse = {
 };
 
 type MarkControllerGetAllSegmentResponse = {
-  _id: string;
-  points: [number, number][];
-  coords: [number, number][];
-  floodReport: FloodReport;
-  createdAt: string;
-  updatedAt: string;
+  message: string;
+  segment: [
+    {
+      _id: number;
+      points: [number, number][];
+      coords: [number, number][];
+      floodReport: FloodReport;
+    },
+  ];
 };
 
 export const {
