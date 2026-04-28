@@ -21,8 +21,6 @@ const PinLayer = ({ geoJsonData }: Prop) => {
   const { data, isLoading } = useGetAllPinQuery();
   const allPins = data?.pins ?? [];
 
-  console.log("pin data here", allPins);
-
   //handlers
   const handleAddCoords = (coord: [number, number]) => {
     if (currentPin) {
