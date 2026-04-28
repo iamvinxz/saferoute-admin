@@ -5,7 +5,7 @@ import { useState } from "react";
 import ReportDetails from "../../../components/notification/ReportDetails";
 import { RootState } from "@/state/store";
 import { useSelector } from "react-redux";
-import NoContent from "@/components/notification/noContent";
+import NoContentDisplay from "@/components/notification/NoContentDisplay";
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState<"flood" | "sos">("flood");
@@ -63,7 +63,7 @@ const Notification = () => {
         </div>
       </div>
       <div className="mr-20 pt-24 px-5">
-        {selectedReport.index !== -1 ? <ReportDetails /> : <NoContent />}
+        {selectedReport.index !== -1 ? <ReportDetails /> : <NoContentDisplay />}
       </div>
     </>
   );
