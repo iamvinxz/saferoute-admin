@@ -34,11 +34,13 @@ export const markApi = api.injectEndpoints({
         method: "POST",
         body: segments,
       }),
+      invalidatesTags: ["Segments"],
     }),
     getAllSegment: build.query<MarkControllerGetAllSegmentResponse, void>({
       query: () => ({
         url: GET_ALL_SEGMENT_LOCATIONS,
       }),
+      providesTags: ["Segments"],
     }),
   }),
   overrideExisting: true,
@@ -97,7 +99,7 @@ type MarkControllerSegmentResponse = {
 
 type MarkControllerGetAllSegmentResponse = {
   message: string;
-  segment: [
+  segments: [
     {
       _id: number;
       points: [number, number][];
