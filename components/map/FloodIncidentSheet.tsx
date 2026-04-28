@@ -47,13 +47,19 @@ const FloodReportSheet = () => {
 
   const handleSubmit = async () => {
     try {
-      for (const pin of pins) {
-        await createPin({
-          latitude: pin.coords[0],
-          longitude: pin.coords[1],
-          pinName: pin.pinName,
-          description: pin.description,
-        }).unwrap();
+      if (pins) {
+        for (const pin of pins) {
+          await createPin({
+            latitude: pin.coords[0],
+            longitude: pin.coords[1],
+            pinName: pin.pinName,
+            description: pin.description,
+          }).unwrap();
+        }
+      } else {
+        toast.error("Drop a pin first.", {
+          style: { background: "#b85545", color: "white" },
+        });
       }
 
       toast.success("Pinned location created!");
