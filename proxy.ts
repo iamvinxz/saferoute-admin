@@ -5,7 +5,8 @@ const PROTECTED_ROUTES = ["/dashboard", "/maps", "/notification"];
 const AUTH_ROUTES = ["/auth/login"];
 
 export default function proxy(req: NextRequest) {
-  const token = req.cookies.get("accessToken")?.value;
+  const token = req.cookies.get("token")?.value;
+  // const token = true;
   const { pathname } = req.nextUrl;
 
   const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
