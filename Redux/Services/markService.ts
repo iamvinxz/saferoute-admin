@@ -3,6 +3,7 @@ import {
   CREATE_PIN,
   CREATE_SEGMENT,
   GET_ALL_PINNED_LOCATIONS,
+  GET_ALL_SEGMENT_LOCATIONS,
 } from "./Endpoints";
 
 export const markApi = api.injectEndpoints({
@@ -32,6 +33,11 @@ export const markApi = api.injectEndpoints({
         url: CREATE_SEGMENT,
         method: "POST",
         body: segments,
+      }),
+    }),
+    getAllSegment: build.query<MarkControllerGetAllSegmentResponse, void>({
+      query: () => ({
+        url: GET_ALL_SEGMENT_LOCATIONS,
       }),
     }),
   }),
@@ -89,8 +95,18 @@ type MarkControllerSegmentResponse = {
   updatedAt: string;
 };
 
+type MarkControllerGetAllSegmentResponse = {
+  _id: string;
+  points: [number, number][];
+  coords: [number, number][];
+  floodReport: FloodReport;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export const {
   useGetAllPinQuery,
   useCreatePinMutation,
   useCreateSegmentMutation,
+  useGetAllSegmentQuery,
 } = markApi;
