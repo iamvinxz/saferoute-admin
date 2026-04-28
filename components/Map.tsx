@@ -219,7 +219,7 @@ export default function Map() {
       {sosConfirmation &&
         sosSignal &&
         createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50">
             <div className="bg-white rounded-xl p-8.5 w-80 flex flex-col gap-4">
               <div className="flex flex-col items-center gap-2 text-center">
                 <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
