@@ -33,11 +33,6 @@ const FormsField = () => {
         password: data.password,
       }).unwrap();
 
-      console.log(credentials);
-
-      // Set token in cookie for middleware
-      document.cookie = `accessToken=${credentials.token}; path=/; SameSite=Strict`;
-
       dispatch(setUser(credentials.user));
 
       router.push("/dashboard");
