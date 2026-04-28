@@ -50,10 +50,6 @@ const SideBar = () => {
     try {
       await logout().unwrap();
 
-      // Clear token from cookies
-      document.cookie =
-        "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-
       dispatch(clearUser());
       router.push("/auth/login");
     } catch (error) {
