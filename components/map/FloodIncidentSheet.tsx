@@ -4,7 +4,11 @@ import L from "leaflet";
 import FormSheet from "@/components/map/FormSheet";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
-import { removeSegment, updateFloodReport } from "@/state/slices/segment";
+import {
+  clearSegment,
+  removeSegment,
+  updateFloodReport,
+} from "@/state/slices/segment";
 import {
   setDescription,
   setPinName,
@@ -13,9 +17,12 @@ import {
 } from "@/state/slices/pinSlice";
 import { FloodReport } from "@/state/slices/segment";
 import { x } from "@/lib/icon";
-import { useCreatePinMutation } from "@/Redux/Services/markService";
+import {
+  useCreatePinMutation,
+  useCreateSegmentMutation,
+} from "@/Redux/Services/markService";
 import { toast } from "sonner";
-import { toggleIsPinMode } from "@/state/slices/modeSlice";
+import { toggleIsPinMode, toggleIsRouting } from "@/state/slices/modeSlice";
 
 const FloodReportSheet = () => {
   const dispatch = useDispatch();
@@ -27,7 +34,10 @@ const FloodReportSheet = () => {
   const divRef = useRef<HTMLDivElement>(null);
 
   //rtk query
-  const [createPin, { isLoading }] = useCreatePinMutation();
+  const [createPin, { isLoading: isCreatingPinLoading }] =
+    useCreatePinMutation();
+  const [createSegment, { isLoading: isCreatingSegmentLoading }] =
+    useCreateSegmentMutation();
 
   useEffect(() => {
     if (isRoutingMode || isPinMode) {
@@ -51,38 +61,82 @@ const FloodReportSheet = () => {
 
   if (!visible) return null;
 
+  console.log("segments here:", segments);
+
   const handleSubmit = async () => {
     try {
-      if (pins.length === 0) {
-        toast.error("Drop a pin first.", {
-          style: { background: "#b85545", color: "white" },
+      if (isPinMode) {
+        //pin mode
+        if (pins.length === 0) {
+          toast.error("Drop a pin first.", {
+            style: { background: "#b85545", color: "white" },
+          });
+          return;
+        }
+
+        const unnamedPin = pins.find((pin) => !pin.pinName?.trim());
+        if (unnamedPin) {
+          toast.error("Please fill up all pin names before submitting.", {
+            style: { background: "#b85545", color: "white" },
+          });
+          return;
+        }
+
+        for (const pin of pins) {
+          await createPin({
+            latitude: pin.coords[0],
+            longitude: pin.coords[1],
+            pinName: pin.pinName,
+            description: pin.description,
+          }).unwrap();
+        }
+
+        toast.success("Pinned location created!", {
+          style: { background: "#61b728", color: "white" },
         });
-        return;
+
+        dispatch(toggleIsPinMode());
+        dispatch(clearPins());
       }
 
-      const unnamedPin = pins.find((pin) => !pin.pinName?.trim());
-      if (unnamedPin) {
-        toast.error("Please fill up all pin names before submitting.", {
-          style: { background: "#b85545", color: "white" },
+      //routing mode
+      if (isRoutingMode) {
+        if (segments.length === 0) {
+          toast.error("Create at least one segment first.", {
+            style: { background: "#b85545", color: "white" },
+          });
+          return;
+        }
+
+        const invalidSegment = segments.find(
+          (segment) =>
+            segment.points.length === 0 || segment.coords.length === 0,
+        );
+
+        if (invalidSegment) {
+          toast.error("All segments must have points and coordinates.", {
+            style: { background: "#b85545", color: "white" },
+          });
+          return;
+        }
+
+        for (const segment of segments) {
+          await createSegment({
+            points: segment.points,
+            coords: segment.coords,
+            streetName: segment.floodReport.streetName,
+            floodDepth: segment.floodReport.depth.toLowerCase(),
+            description: segment.floodReport.description,
+          }).unwrap();
+        }
+
+        toast.success("Flood report created!", {
+          style: { background: "#61b728", color: "white" },
         });
-        return;
+
+        dispatch(toggleIsRouting());
+        dispatch(clearSegment());
       }
-
-      for (const pin of pins) {
-        await createPin({
-          latitude: pin.coords[0],
-          longitude: pin.coords[1],
-          pinName: pin.pinName,
-          description: pin.description,
-        }).unwrap();
-      }
-
-      toast.success("Pinned location created!", {
-        style: { background: "#61b728", color: "white" },
-      });
-
-      dispatch(toggleIsPinMode());
-      dispatch(clearPins());
     } catch (error) {
       console.error(error);
     }
@@ -194,10 +248,12 @@ const FloodReportSheet = () => {
 
       <Button
         onClick={handleSubmit}
-        disabled={isLoading}
+        disabled={isCreatingPinLoading && isCreatingSegmentLoading}
         className="mt-auto w-full rounded-lg bg-gray-900 py-2.5 text-sm font-medium text-white hover:bg-gray-700"
       >
-        {isLoading ? "Submitting" : "Submit report"}
+        {isPinMode && (isCreatingPinLoading ? "Submitting Pin" : "Create Pin")}
+        {isRoutingMode &&
+          (isCreatingSegmentLoading ? "Creating Segment" : "Create Segment")}
       </Button>
     </div>
   );
