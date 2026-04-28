@@ -1,8 +1,14 @@
 import { api } from "./APIService";
-import { CREATE_PIN } from "./Endpoints";
+import { CREATE_PIN, GET_ALL_PINNED_LOCATIONS } from "./Endpoints";
 
 export const markApi = api.injectEndpoints({
   endpoints: (build) => ({
+    getAllPin: build.query<MarkControllerPinResponse, void>({
+      query: () => ({
+        url: GET_ALL_PINNED_LOCATIONS,
+      }),
+      providesTags: ["Pins"],
+    }),
     createPin: build.mutation<
       MarkControllerPinResponse,
       MarkControllerPinRequest
@@ -12,8 +18,10 @@ export const markApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      invalidatesTags: ["Pins"],
     }),
   }),
+  overrideExisting: true,
 });
 
 type MarkControllerPinRequest = {
@@ -25,14 +33,16 @@ type MarkControllerPinRequest = {
 
 type MarkControllerPinResponse = {
   message: string;
-  pin: {
-    coords: [number, number];
-    pinName: string;
-    description: string;
-    _id: string;
-    createdAt: string;
-    updatedAt: string;
-  };
+  pins: [
+    {
+      coords: [number, number];
+      pinName: string;
+      description: string;
+      _id: string;
+      createdAt: string;
+      updatedAt: string;
+    },
+  ];
 };
 
-export const { useCreatePinMutation } = markApi;
+export const { useGetAllPinQuery, useCreatePinMutation } = markApi;
