@@ -62,7 +62,9 @@ const FloodReportSheet = () => {
         });
       }
 
-      toast.success("Pinned location created!");
+      toast.success("Pinned location created!", {
+        style: { background: "#83ff30" },
+      });
     } catch (error) {
       console.error(error);
     }
