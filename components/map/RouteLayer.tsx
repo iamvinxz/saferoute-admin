@@ -7,6 +7,7 @@ import CursorController from "@/components/map/CursorController";
 import { addPoint, addSegment, updateCoords } from "@/state/slices/segment";
 import { fetchOSRMRoute } from "@/lib/fetchOSRMRoute";
 import { toast } from "sonner";
+import { useGetAllSegmentQuery } from "@/Redux/Services/markService";
 
 interface Props {
   geoJsonData: GeoJSON.FeatureCollection;
@@ -17,6 +18,10 @@ const RouteLayer = ({ geoJsonData }: Props) => {
   const currentSegment = segments[segments.length - 1]; //initial undefin
   const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
   const dispatch = useDispatch();
+
+  //rtk query
+  const { data: segmentLocations, isLoading: isSegmentLocationsLoading } =
+    useGetAllSegmentQuery();
 
   //side effects
   useEffect(() => {
@@ -71,7 +76,7 @@ const RouteLayer = ({ geoJsonData }: Props) => {
               radius={6}
               pathOptions={{
                 color: "white",
-                fillColor: "#e4795f",
+                fillColor: "#ff0000",
                 fillOpacity: 1,
                 weight: 2,
               }}
@@ -82,10 +87,18 @@ const RouteLayer = ({ geoJsonData }: Props) => {
           {segment.coords.length > 0 && (
             <Polyline
               positions={segment.coords}
-              pathOptions={{ color: "#e4795f", weight: 4, opacity: 0.8 }}
+              pathOptions={{ color: "#ff0000", weight: 4, opacity: 0.8 }}
             />
           )}
         </Fragment>
+      ))}
+
+      {segmentLocations?.segments.map((segment, index) => (
+        <Polyline
+          key={index}
+          positions={segment.coords}
+          pathOptions={{ color: "#ff0000", weight: 4, opacity: 0.8 }}
+        />
       ))}
     </>
   );
