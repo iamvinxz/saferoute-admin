@@ -14,7 +14,7 @@ interface Props {
   geoJsonData: GeoJSON.FeatureCollection;
 }
 
-const getDepthColors = (depth: string) => {
+export const getDepthColors = (depth: string) => {
   const match = Object.keys(depthColors).find(
     (key) => key.toLowerCase() === depth.toLowerCase(),
   );
