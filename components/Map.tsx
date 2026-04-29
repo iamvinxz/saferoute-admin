@@ -131,6 +131,7 @@ export default function Map() {
         <ZoomTracker />
         <FocusTrigger target={focusTarget} />
         <FloodReportSheet />
+        <ControllerTab onFocus={setFocusTarget} />
 
         {/**sos indictor */}
         {sosSignal && (
@@ -167,7 +168,6 @@ export default function Map() {
           </div>
         </>
       )}
-      <ControllerTab onFocus={setFocusTarget} />
       <ToolBox />
       {sosConfirmation &&
         createPortal(
