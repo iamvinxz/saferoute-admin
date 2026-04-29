@@ -61,8 +61,6 @@ const FloodReportSheet = () => {
 
   if (!visible) return null;
 
-  console.log("segments here:", segments);
-
   const handleSubmit = async () => {
     try {
       if (isPinMode) {
