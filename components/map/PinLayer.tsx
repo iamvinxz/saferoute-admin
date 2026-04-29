@@ -63,13 +63,22 @@ const PinLayer = ({ geoJsonData }: Prop) => {
                 {pin.pinName}
               </h3>
 
-              {pin.description && (
-                <div className="mt-1">
-                  <span className="text-xs text-[#303030] leading-relaxed wrap-break-words">
-                    {pin.description}
-                  </span>
-                </div>
-              )}
+              <div className="flex flex-col space-y-1">
+                <span className="text-xs text-[#636363] leading-relaxed wrap-break-words">
+                  {pin.description}
+                </span>
+
+                <span className="text-xs text-[#797878]">
+                  {new Date(pin.createdAt).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                </span>
+              </div>
             </div>
           </Popup>
         </Marker>
