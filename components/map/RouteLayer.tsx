@@ -51,8 +51,8 @@ const RouteLayer = ({ geoJsonData }: Props) => {
     }
 
     // Check if current segment already has 2 points
-    if (currentSegment && currentSegment.points.length >= 2) {
-      toast.info("Max of 2 plots allowed", {
+    if (currentSegment && currentSegment.points.length >= 3) {
+      toast.info("Max of 3 plots allowed", {
         style: { background: "#b85545", color: "white" },
       });
       return;
