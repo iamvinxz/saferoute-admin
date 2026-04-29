@@ -138,12 +138,6 @@ const ReportDetails = () => {
               </p>
             </div>
           </div>
-
-          {/* Reported At */}
-          {/* {report.reportedAt && (
-          <p className="text-xs text-gray-400">Reported: {report.reportedAt}</p>
-        )} */}
-
           <hr className="border-gray-100" />
 
           {/* Create Segment Button */}
