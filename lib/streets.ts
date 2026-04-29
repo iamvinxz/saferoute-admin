@@ -54,7 +54,7 @@ export const streets = [
     name: "Celia St.",
   },
   {
-    name: "Governor Wenceslao Pascual Avenue St.",
+    name: "Governor Wenceslao Pascual Avenue",
   },
   {
     name: "B. Rivera St.",
