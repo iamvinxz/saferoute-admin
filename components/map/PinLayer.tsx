@@ -50,9 +50,27 @@ const PinLayer = ({ geoJsonData }: Prop) => {
       {allPins.map((pin, index) => (
         <Marker key={index} position={pin.coords} icon={mapPinIcon}>
           <Popup>
-            <h3 className="font-bold text-[#303030]">{pin.pinName}</h3>
-            <hr />
-            <span className="text-sm text-[#303030]">{pin.description}</span>
+            <div className="min-w-45 max-w-70">
+              <h3
+                className={`font-semibold text-[#303030] leading-tight warap-break-words ${
+                  pin.pinName.length > 20
+                    ? "text-sm"
+                    : pin.pinName.length > 12
+                      ? "text-base"
+                      : "text-lg"
+                }`}
+              >
+                {pin.pinName}
+              </h3>
+
+              {pin.description && (
+                <div className="mt-1">
+                  <span className="text-xs text-[#303030] leading-relaxed wrap-break-words">
+                    {pin.description}
+                  </span>
+                </div>
+              )}
+            </div>
           </Popup>
         </Marker>
       ))}
