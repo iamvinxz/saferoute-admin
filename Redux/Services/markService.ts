@@ -79,7 +79,7 @@ type FloodReport = {
   reportedBy: string;
   description: string;
   floodDepth: string;
-  streeName: string;
+  streetName: string;
   _id: string; // id of floodreport
   createdAt: string;
   updatedAt: string;
