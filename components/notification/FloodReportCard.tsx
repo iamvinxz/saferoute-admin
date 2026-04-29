@@ -4,29 +4,31 @@ import { eye } from "@/lib/icon";
 import { useDispatch } from "react-redux";
 import { setReport } from "@/state/slices/selectedReport";
 
-const depthColors: Record<string, { bg: string; text: string; badge: string }> =
-  {
-    "Ankle-Deep": {
-      bg: "bg-yellow-50",
-      text: "text-yellow-700",
-      badge: "bg-yellow-100",
-    },
-    "Knee-Deep": {
-      bg: "bg-orange-50",
-      text: "text-orange-700",
-      badge: "bg-orange-100",
-    },
-    "Chest-Deep": {
-      bg: "bg-red-50",
-      text: "text-red-700",
-      badge: "bg-red-100",
-    },
-    Critical: {
-      bg: "bg-red-100",
-      text: "text-red-800",
-      badge: "bg-red-200",
-    },
-  };
+export const depthColors: Record<
+  string,
+  { bg: string; text: string; badge: string }
+> = {
+  "Ankle-Deep": {
+    bg: "bg-yellow-50",
+    text: "text-yellow-700",
+    badge: "bg-yellow-100",
+  },
+  "Knee-Deep": {
+    bg: "bg-orange-50",
+    text: "text-orange-700",
+    badge: "bg-orange-100",
+  },
+  "Chest-Deep": {
+    bg: "bg-red-50",
+    text: "text-red-700",
+    badge: "bg-red-100",
+  },
+  Critical: {
+    bg: "bg-red-100",
+    text: "text-red-800",
+    badge: "bg-red-200",
+  },
+};
 
 type FloodReportCardProps = {
   index: number;
