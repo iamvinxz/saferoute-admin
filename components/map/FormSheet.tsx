@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { streets } from "@/lib/streets";
 
 type FormField = "streetName" | "depth" | "description" | "pinName";
 
@@ -32,6 +33,7 @@ const FormSheet = ({
   visibleFields = DEFAULT_FIELDS,
 }: Props) => {
   const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
+  const [selectStreetName, setIsSelectStreetName] = useState<boolean>(false);
   const level = ["Ankle-Deep", "Knee-Deep", "Chest-Deep", "Critical"];
 
   const show = (field: FormField) => visibleFields.includes(field);
@@ -62,13 +64,39 @@ const FormSheet = ({
             <FieldLabel className="text-xs font-medium uppercase tracking-wide text-gray-500">
               Street name
             </FieldLabel>
-            <Input
-              type="text"
-              placeholder="e.g. Crispin Street"
-              value={values.streetName ?? ""}
-              onChange={(e) => onChange("streetName", e.target.value)}
-              className="rounded-lg border-gray-200 bg-gray-50 text-sm placeholder:text-gray-400"
-            />
+            <DropdownMenu onOpenChange={setIsSelectStreetName}>
+              <DropdownMenuTrigger asChild>
+                <div className="flex items-center cursor-pointer rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm hover:border-gray-300">
+                  <div className="w-full text-left text-gray-400">
+                    {values.streetName || "Select Street Name"}
+                  </div>
+                  {selectStreetName ? (
+                    <span
+                      dangerouslySetInnerHTML={{ __html: arrowUp }}
+                      className="absolute right-15"
+                    />
+                  ) : (
+                    <span
+                      dangerouslySetInnerHTML={{ __html: arrowDown }}
+                      className="absolute right-15"
+                    />
+                  )}
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="max-h-64 overflow-y-auto">
+                <DropdownMenuGroup>
+                  {streets.map((street, index) => (
+                    <DropdownMenuItem
+                      key={index}
+                      onClick={() => onChange("streetName", street.name)}
+                      className="text-gray-500"
+                    >
+                      {street.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </Field>
         </FieldGroup>
       )}
@@ -82,10 +110,10 @@ const FormSheet = ({
             </FieldLabel>
             <DropdownMenu onOpenChange={setIsDropDownOpen}>
               <DropdownMenuTrigger asChild>
-                <div className="flex items-center">
-                  <button className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm text-gray-400 hover:border-gray-300">
+                <div className="flex items-center cursor-pointer rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm text-gray-400 hover:border-gray-300">
+                  <div className="w-full">
                     {values.depth || "Select flood depth"}
-                  </button>
+                  </div>
                   {isDropDownOpen ? (
                     <span
                       dangerouslySetInnerHTML={{ __html: arrowUp }}
@@ -99,13 +127,13 @@ const FormSheet = ({
                   )}
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="max-h-48 overflow-y-auto">
                 <DropdownMenuGroup>
                   {level.map((l) => (
                     <DropdownMenuItem
                       key={l}
                       onClick={() => onChange("depth", l)}
-                      className="text-gray-400"
+                      className="text-gray-500"
                     >
                       {l}
                     </DropdownMenuItem>
