@@ -134,11 +134,23 @@ const RouteLayer = ({ geoJsonData }: Props) => {
                 </span>
               </div>
 
-              {segment.floodReport.description && (
-                <span className="text-xs text-gray-500 leading-relaxed">
-                  {segment.floodReport.description}
-                </span>
-              )}
+              <span className="text-xs text-[#797878] leading-relaxed">
+                {segment.floodReport.description}
+              </span>
+
+              <p className="text-[#797878] text-xs">
+                {new Date(segment.floodReport.createdAt).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  },
+                )}
+              </p>
             </div>
           </Popup>
         </Polyline>
