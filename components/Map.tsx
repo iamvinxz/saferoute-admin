@@ -10,7 +10,7 @@ import ControllerTab from "@/components/map/ControllerTab";
 import FocusTrigger from "@/components/map/FocusTrigger";
 import { useEffect, useRef, useState } from "react";
 import ToolBox from "@/components/map/ToolBox";
-import RouteLayer from "./map/RouteLayer";
+import RouteLayer, { getDepthColors } from "./map/RouteLayer";
 import InfoMessage from "./map/InfoMessage";
 import L from "leaflet";
 import { toast } from "sonner";
@@ -30,6 +30,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { useGetAllSegmentQuery } from "@/Redux/Services/markService";
+import { depthColors } from "./notification/FloodReportCard";
 
 export const center: [number, number] = [14.673413900535, 120.9685888671883];
 export const maxBounds: [[number, number], [number, number]] = [
@@ -41,6 +43,7 @@ export default function Map() {
   //states
   const dispatch = useDispatch();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [viewFloodedStreets, setViewFloodedStreets] = useState<boolean>(false);
   const isPinMode = useSelector((state: RootState) => state.mode.isPinMode);
   const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
   const segments = useSelector((state: RootState) => state.segment.segments); //empty segment
@@ -65,6 +68,8 @@ export default function Map() {
 
   //rtk query
   const { data: geoData } = useGetGeoJsonQuery();
+  const { data: floodedStreet, isLoading: isFloodedStreetLoading } =
+    useGetAllSegmentQuery();
 
   //prevents penetrations of click on panels
   useEffect(() => {
@@ -168,8 +173,70 @@ export default function Map() {
         </>
       )}
 
-      <ControllerTab onFocus={setFocusTarget} />
+      <ControllerTab
+        onFocus={setFocusTarget}
+        onToggle={() => setViewFloodedStreets((prev) => !prev)}
+      />
       <ToolBox />
+
+      {viewFloodedStreets && (
+        <div className="bg-white shadow-md absolute top-17 right-5 z-400 w-50 rounded-md min-w-100 max-w-120 h-130 px-3 pb-3 overflow-y-auto">
+          <div className="font-medium text-sm sticky top-0 bg-white pt-7 pl-2 pb-4">
+            <span className="text-[#464646] font-semibold text-md">
+              Flooded Street
+            </span>
+          </div>
+          {floodedStreet?.segments.map((street, _index) => {
+            const middleCoordinate = Math.trunc(street.coords.length / 2); //get the middle coordinate
+            return (
+              <div
+                key={street._id}
+                className="border-t border-gray-200 px-3 py-2 w-full overflow-y-hidden select-none hover:bg-gray-100"
+                onClick={() =>
+                  setFocusTarget({
+                    lat: street.coords[middleCoordinate][0],
+                    lng: street.coords[middleCoordinate][1],
+                  })
+                }
+              >
+                <div className="flex items-center gap-4">
+                  <p className="font-medium text-sm text-[#303030]">
+                    {street.floodReport.streetName}
+                  </p>
+                  <span
+                    className={`inline-block text-xs font-medium px-1.5 py-0.5 rounded-full border                            
+                      ${getDepthColors(street.floodReport.floodDepth).badge}
+                      ${getDepthColors(street.floodReport.floodDepth).text}
+                    `}
+                  >
+                    {street.floodReport.floodDepth}
+                  </span>
+                </div>
+
+                <span className="text-xs text-[#797878]">
+                  {street.floodReport.description}
+                </span>
+                <div>
+                  <span className="text-xs text-[#797878]">
+                    {new Date(street.floodReport.createdAt).toLocaleString(
+                      "en-US",
+                      {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                      },
+                    )}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {sosConfirmation &&
         createPortal(
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50">
