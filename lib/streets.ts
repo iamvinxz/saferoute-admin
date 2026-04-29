@@ -3,138 +3,135 @@ export const streets = [
     name: "Goldendale Ave",
   },
   {
-    name: "Saint James",
+    name: "Saint James St.",
   },
   {
-    name: "Sisa Ext",
+    name: "Sisa Ext.",
   },
   {
-    name: "Platinum",
+    name: "Platinum St.",
   },
   {
-    name: "Plutonium",
+    name: "Plutonium St.",
   },
   {
-    name: "Arasity",
+    name: "Arasity St.",
   },
   {
-    name: "Doña Victoria",
+    name: "Doña Victoria St.",
   },
   {
-    name: "Magnesium",
+    name: "Magnesium St.",
   },
   {
-    name: "Iron",
+    name: "Iron St.",
   },
   {
-    name: "Cobalt",
+    name: "Cobalt St.",
   },
   {
-    name: "Titanium",
+    name: "Titanium St.",
   },
   {
-    name: "Zinc",
+    name: "Zinc St.",
   },
   {
-    name: "Tungsten",
+    name: "Tungsten St.",
   },
   {
-    name: "Silver",
+    name: "Silver St.",
   },
   {
-    name: "Copper",
+    name: "Copper St.",
   },
   {
-    name: "Mercury",
+    name: "Mercury St.",
   },
   {
-    name: "Nickel",
+    name: "Nickel St.",
   },
   {
-    name: "Celia",
+    name: "Celia St.",
   },
   {
-    name: "Governor Wenceslao Pascual Avenue",
+    name: "Governor Wenceslao Pascual Avenue St.",
   },
   {
-    name: "B. Rivera",
+    name: "B. Rivera St.",
   },
   {
-    name: "Crispin",
+    name: "Crispin St.",
   },
   {
-    name: "D. Dela Cruz",
+    name: "D. Dela Cruz St.",
   },
   {
-    name: "A. Dizon",
+    name: "A. Dizon St.",
   },
   {
-    name: "Sarmiento",
+    name: "Sarmiento St.",
   },
   {
-    name: "Sanchez",
+    name: "Sanchez St.",
   },
   {
-    name: "Colonel Espiritu",
+    name: "Colonel Espiritu St.",
   },
   {
-    name: "Colonel Espiritu Ext",
+    name: "Colonel Espiritu Ext.",
   },
   {
-    name: "Kab Martin",
+    name: "Kab Martin St.",
   },
   {
-    name: "Mesina",
+    name: "Mesina St.",
   },
   {
-    name: "Sevilla",
+    name: "Sevilla St.",
   },
   {
-    name: "Talilong",
+    name: "Talilong St.",
   },
   {
-    name: "Kaybasco",
+    name: "Kaybasco St.",
   },
   {
-    name: "Villarba",
+    name: "Villarba St.",
   },
   {
-    name: "Bustamante",
+    name: "Bustamante St.",
   },
   {
-    name: "M.H Del Pilar",
+    name: "M.H Del Pilar St.",
   },
   {
-    name: "Sanciangco",
+    name: "Sanciangco St.",
   },
   {
-    name: "Mañalac",
+    name: "Mañalac St.",
   },
   {
-    name: "Sociego",
+    name: "Sociego St.",
   },
   {
-    name: "Trabajo",
+    name: "Trabajo St.",
   },
   {
-    name: "Ezperanza",
+    name: "Ezperanza St.",
   },
   {
-    name: "Actividad",
+    name: "Actividad St.",
   },
   {
-    name: "Concha",
+    name: "Concha St.",
   },
   {
-    name: "Mejorada",
+    name: "Mejorada St.",
   },
   {
-    name: "Perla",
+    name: "Perla St.",
   },
   {
-    name: "Kaingin Road",
-  },
-  {
-    name: "",
+    name: "Kaingin Road St.",
   },
 ];
