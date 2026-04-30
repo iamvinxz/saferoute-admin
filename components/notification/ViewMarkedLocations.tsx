@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { getDepthColors } from "@/components/map/RouteLayer";
-import { loading, search, x } from "@/lib/icon";
+import { edit, loading, search, x } from "@/lib/icon";
 import {
   useDeletePinMutation,
   useDeleteSegmentMutation,
@@ -119,14 +119,19 @@ const ViewMarkedLocations = ({ onFocus }: Props) => {
                       {street.floodReport.floodDepth}
                     </span>
                   </div>
-
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: deleteId === street._id ? loading : x,
-                    }}
-                    className="hover:cursor-pointer"
-                    onClick={() => handleDeleteSegment(street._id)}
-                  />
+                  <div className="flex items-center">
+                    <span
+                      dangerouslySetInnerHTML={{ __html: edit }}
+                      className="hover:cursor-pointer"
+                    />
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: deleteId === street._id ? loading : x,
+                      }}
+                      className="hover:cursor-pointer"
+                      onClick={() => handleDeleteSegment(street._id)}
+                    />
+                  </div>
                 </div>
 
                 <p className="text-xs text-[#797878] leading-tight mt-2 mb-1 w-63">
@@ -165,13 +170,19 @@ const ViewMarkedLocations = ({ onFocus }: Props) => {
                 <p className="font-medium text-sm text-[#303030]">
                   {pin.pinName}
                 </p>
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: deleteId === pin._id ? loading : x,
-                  }}
-                  className="hover:cursor-pointer"
-                  onClick={() => handleDeletePin(pin._id)}
-                />
+                <div className="flex items-center">
+                  <span
+                    dangerouslySetInnerHTML={{ __html: edit }}
+                    className="hover:cursor-pointer"
+                  />
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: deleteId === pin._id ? loading : x,
+                    }}
+                    className="hover:cursor-pointer"
+                    onClick={() => handleDeletePin(pin._id)}
+                  />
+                </div>
               </div>
 
               <span className="text-xs text-[#797878]">{pin.description}</span>
