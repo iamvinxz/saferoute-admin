@@ -55,11 +55,11 @@ const ControllerTab = ({ onFocus, onToggle }: Props) => {
           ))}
         </div>
         <button
-          className="bg-white px-3 py-2 rounded-md shadow-md relative right-5 flex items-center gap-2 hover:bg-blue-50 hover:shadow-lg cursor-pointer w-60"
+          className="bg-white px-3 py-2 rounded-md shadow-md relative right-5 flex items-center gap-2 hover:bg-blue-50 hover:shadow-lg cursor-pointer"
           onClick={() => onToggle()}
         >
           <span dangerouslySetInnerHTML={{ __html: floodedStreet }} />
-          <span className="text-sm font-medium">View Flooded Streets</span>
+          <span className="text-sm font-medium">View Marked Locations</span>
         </button>
       </div>
     </>
