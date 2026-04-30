@@ -37,7 +37,9 @@ const LandMarksLayer = () => {
           position={[loc.coordinates.lat, loc.coordinates.lng]}
           icon={loc.icon}
         >
-          <Popup>{loc.name}</Popup>
+          <Popup>
+            <p className="text-sm font-semibold text-[#303030]">{loc.name}</p>
+          </Popup>
         </Marker>
       ))}
     </>
