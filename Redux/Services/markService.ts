@@ -2,12 +2,14 @@ import { api } from "./APIService";
 import {
   CREATE_PIN,
   CREATE_SEGMENT,
+  DELETE_SEGMENT,
   GET_ALL_PINNED_LOCATIONS,
   GET_ALL_SEGMENT_LOCATIONS,
 } from "./Endpoints";
 
 export const markApi = api.injectEndpoints({
   endpoints: (build) => ({
+    //pins
     getAllPin: build.query<MarkControllerPinResponse, void>({
       query: () => ({
         url: GET_ALL_PINNED_LOCATIONS,
@@ -25,6 +27,7 @@ export const markApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Pins"],
     }),
+    //segments
     createSegment: build.mutation<
       MarkControllerSegmentResponse,
       MarkControllerSegmentRequest
@@ -41,6 +44,17 @@ export const markApi = api.injectEndpoints({
         url: GET_ALL_SEGMENT_LOCATIONS,
       }),
       providesTags: ["Segments"],
+    }),
+    deleteSegment: build.mutation<
+      MarkControllerDeleteSingleSegmentResponse,
+      MarkControllerDeleteSingleSegmentRequest
+    >({
+      query: ({ id }) => ({
+        url: DELETE_SEGMENT,
+        method: "DELETE",
+        params: { id },
+      }),
+      invalidatesTags: ["Segments"],
     }),
   }),
   overrideExisting: true,
@@ -101,7 +115,7 @@ type MarkControllerGetAllSegmentResponse = {
   message: string;
   segments: [
     {
-      _id: number;
+      _id: string;
       points: [number, number][];
       coords: [number, number][];
       floodReport: FloodReport;
@@ -109,9 +123,19 @@ type MarkControllerGetAllSegmentResponse = {
   ];
 };
 
+type MarkControllerDeleteSingleSegmentRequest = {
+  id: string;
+};
+
+type MarkControllerDeleteSingleSegmentResponse = {
+  message: string;
+  deletedSegmentId: string;
+};
+
 export const {
   useGetAllPinQuery,
   useCreatePinMutation,
   useCreateSegmentMutation,
   useGetAllSegmentQuery,
+  useDeleteSegmentMutation,
 } = markApi;
