@@ -111,7 +111,7 @@ const RouteLayer = ({ geoJsonData }: Props) => {
           pathOptions={{ color: "#ff0000", weight: 4, opacity: 0.8 }}
         >
           <Popup>
-            <div className="min-w-50 max-w-70">
+            <div className="min-w-50 max-w-60">
               <div className="flex items-center justify-between">
                 <span
                   className={`font-bold text-[#303030] leading-tight wrap-break-words ${
@@ -125,7 +125,7 @@ const RouteLayer = ({ geoJsonData }: Props) => {
                   {segment.floodReport.streetName}
                 </span>
                 <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap shrink-0
+                  className={`text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap
                     ${getDepthColors(segment.floodReport.floodDepth).badge}
                     ${getDepthColors(segment.floodReport.floodDepth).text}
                   `}
@@ -134,9 +134,11 @@ const RouteLayer = ({ geoJsonData }: Props) => {
                 </span>
               </div>
 
-              <span className="text-xs text-[#797878] leading-relaxed">
-                {segment.floodReport.description}
-              </span>
+              {segment.floodReport.description ? (
+                <span className="text-xs text-[#797878] leading-relaxed inline-block mt-1">
+                  {segment.floodReport.description}
+                </span>
+              ) : null}
 
               <p className="text-[#797878] text-xs">
                 {new Date(segment.floodReport.createdAt).toLocaleDateString(
