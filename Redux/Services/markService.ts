@@ -2,6 +2,7 @@ import { api } from "./APIService";
 import {
   CREATE_PIN,
   CREATE_SEGMENT,
+  DELETE_PIN,
   DELETE_SEGMENT,
   GET_ALL_PINNED_LOCATIONS,
   GET_ALL_SEGMENT_LOCATIONS,
@@ -24,6 +25,17 @@ export const markApi = api.injectEndpoints({
         url: CREATE_PIN,
         method: "POST",
         body: pin,
+      }),
+      invalidatesTags: ["Pins"],
+    }),
+    deletePin: build.mutation<
+      MarkControllerDeleteSinglePinResponse,
+      MarkControllerDeleteSinglePinRequest
+    >({
+      query: ({ id }) => ({
+        url: DELETE_PIN,
+        method: "DELETE",
+        params: { id },
       }),
       invalidatesTags: ["Pins"],
     }),
@@ -123,6 +135,11 @@ type MarkControllerGetAllSegmentResponse = {
   ];
 };
 
+type MarkControllerDeleteSinglePinRequest =
+  MarkControllerDeleteSingleSegmentRequest;
+type MarkControllerDeleteSinglePinResponse =
+  MarkControllerDeleteSingleSegmentResponse;
+
 type MarkControllerDeleteSingleSegmentRequest = {
   id: string;
 };
@@ -138,4 +155,5 @@ export const {
   useCreateSegmentMutation,
   useGetAllSegmentQuery,
   useDeleteSegmentMutation,
+  useDeletePinMutation,
 } = markApi;
