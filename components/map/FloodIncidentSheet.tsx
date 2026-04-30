@@ -171,7 +171,7 @@ const FloodReportSheet = () => {
       <hr className="border-gray-100" />
 
       {/* Upload zone */}
-      <div className="flex flex-col gap-3 overflow-y-auto">
+      <div className="flex flex-col gap-3 overflow-y-auto hide-scrollbar-visible-on-hover">
         {isRoutingMode ? (
           segments.length === 0 ? (
             <p className="text-xs text-gray-400 text-center mt-4">
