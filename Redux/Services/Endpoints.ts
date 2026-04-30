@@ -5,3 +5,4 @@ export const CREATE_PIN = "/api/mark/createPin";
 export const CREATE_SEGMENT = "/api/mark/createSegment";
 export const GET_ALL_SEGMENT_LOCATIONS = "/api/mark/segment/all";
 export const DELETE_SEGMENT = "/api/mark/segment/deleteSingleSegment";
+export const DELETE_PIN = "/api/mark/pin/deleteSinglePin";
