@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getDepthColors } from "@/components/map/RouteLayer";
 import { loading, search, x } from "@/lib/icon";
 import {
+  useDeletePinMutation,
   useDeleteSegmentMutation,
   useGetAllPinQuery,
   useGetAllSegmentQuery,
@@ -23,8 +24,8 @@ const ViewMarkedLocations = ({ onFocus }: Props) => {
     useGetAllPinQuery();
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [deleteSegment, { isLoading: deleteIsLoading }] =
-    useDeleteSegmentMutation();
+  const [deleteSegment] = useDeleteSegmentMutation();
+  const [deletePin] = useDeletePinMutation();
 
   //handlers
   const handleDeleteSegment = async (id: string) => {
@@ -32,6 +33,20 @@ const ViewMarkedLocations = ({ onFocus }: Props) => {
       setDeleteId(id);
       await deleteSegment({ id }).unwrap();
       toast.success("Segment deleted successfully", {
+        style: { background: "#61b728", color: "white" },
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setDeleteId(null);
+    }
+  };
+
+  const handleDeletePin = async (id: string) => {
+    try {
+      setDeleteId(id);
+      await deletePin({ id }).unwrap();
+      toast.success("Pinned location deleted successfully", {
         style: { background: "#61b728", color: "white" },
       });
     } catch (error) {
@@ -146,10 +161,17 @@ const ViewMarkedLocations = ({ onFocus }: Props) => {
                 })
               }
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between">
                 <p className="font-medium text-sm text-[#303030]">
                   {pin.pinName}
                 </p>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: deleteId === pin._id ? loading : x,
+                  }}
+                  className="hover:cursor-pointer"
+                  onClick={() => handleDeletePin(pin._id)}
+                />
               </div>
 
               <span className="text-xs text-[#797878]">{pin.description}</span>
