@@ -1,5 +1,11 @@
+import SOSCard from "./SOSCard";
+
 const SOSsignal = () => {
-  return <div>SOSsignal</div>;
+  return (
+    <div>
+      <SOSCard />
+    </div>
+  );
 };
 
 export default SOSsignal;
