@@ -15,24 +15,24 @@ const Dashboard = () => {
     <div className="w-full my-10">
       <Header />
       {/**Cards */}
-      <div className="flex gap-25 justify-center items-center mt-10">
-        <div className="bg-gray-300 h-40 w-60 rounded-md shadow-sm p-5">
+      <div className="flex gap-25 max-md:grid max-md:gap-5 max-md:mx-10 max-md:grid-cols-2 justify-center items-center mt-10">
+        <div className="bg-red-300 h-40 w-60 rounded-md shadow-sm p-5">
           <div className="flex justify-between items-start">
-            <span className="text-gray-500 text-xs">Segments</span>
+            <span className="text-gray-500 text-sm">Segments</span>
             <Route size={20} />
           </div>
           <p className="text-4xl font-bold text-[#303030] mt-3">10</p>
         </div>
-        <div className="bg-gray-300 h-40 w-60 rounded-md shadow-sm p-5">
+        <div className="bg-blue-400 h-40 w-60 rounded-md shadow-sm p-5">
           <div className="flex justify-between items-start">
-            <span className="text-gray-500 text-xs">Pinned Locations</span>
+            <span className="text-gray-500 text-sm">Pinned Locations</span>
             <MapPin size={20} />
           </div>
           <p className="text-4xl font-bold text-[#303030] mt-3">10</p>
         </div>
-        <div className="bg-gray-300 h-40 w-60 rounded-md shadow-sm p-5">
+        <div className="bg-yellow-200 h-40 w-60 rounded-md shadow-sm p-5">
           <div className="flex justify-between items-start">
-            <span className="text-gray-500 text-xs">Responded</span>
+            <span className="text-gray-500 text-sm">Responded</span>
             <Siren size={20} />
           </div>
           <p className="text-4xl font-bold text-[#303030] mt-3">10</p>
@@ -41,7 +41,7 @@ const Dashboard = () => {
           <span className="text-gray-500 text-xs">Active Users</span>
           <p className="text-4xl font-bold text-[#303030] mt-3">10</p>
         </div> */}
-        <div className="bg-gray-300 h-40 w-60 rounded-md shadow-sm p-5">
+        <div className="bg-green-200 h-40 w-60 rounded-md shadow-sm p-5">
           <div className="flex justify-between items-start">
             <span className="text-gray-500 text-xs">Admin Users</span>
             <UserCheck2 size={20} />
@@ -49,7 +49,7 @@ const Dashboard = () => {
           <p className="text-4xl font-bold text-[#303030] mt-3">10</p>
         </div>
       </div>
-      <div className="mx-23 mt-15 grid grid-cols-2 gap-5">
+      <div className="mx-23 mt-15 max-md:grid-cols-1 grid grid-cols-2 gap-5">
         {/**Announcement */}
         <div>
           <div className="flex items-center justify-between mr-3">

@@ -10,7 +10,7 @@ const Header = () => {
   );
 
   return (
-    <div className="w-full px-20">
+    <div className="w-full max-md:px-5 px-20">
       <div className="flex items-center justify-between">
         <div>
           <p>Welcome, {user?.name}!</p>

@@ -1,6 +1,6 @@
 export const FloodReportCardSkeleton = () => {
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 w-900">
       {[...Array(3)].map((_, i) => (
         <div
           key={i}

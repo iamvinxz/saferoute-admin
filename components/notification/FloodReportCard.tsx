@@ -24,7 +24,7 @@ const FloodReportCard = () => {
     );
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 ">
       {floodReports?.reports.map((report, index) => {
         const colors = getDepthColors(report.floodDepth);
         return (

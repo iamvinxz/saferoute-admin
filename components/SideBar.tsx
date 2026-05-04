@@ -61,8 +61,12 @@ const SideBar = () => {
     <section
       className={cn(
         isSidebarExtended ? `w-85` : `w-30`,
-        ` transition-all duration-300 drop-shadow-xl border-r shadow-xl h-full flex flex-col`,
+        ` fixed top-0 left-0 z-999 bg-white transition-all duration-300 drop-shadow-xl border-r shadow-xl h-screen flex flex-col`,
       )}
+      style={{
+        // Expose sidebar width as CSS variable for layout to consume
+        ["--sidebar-w" as string]: isSidebarExtended ? "21.25rem" : "7.5rem",
+      }}
     >
       <button
         className={cn(
