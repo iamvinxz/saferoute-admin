@@ -8,7 +8,6 @@ import { addPoint, addSegment, updateCoords } from "@/state/slices/segment";
 import { fetchOSRMRoute } from "@/lib/fetchOSRMRoute";
 import { toast } from "sonner";
 import { useGetAllSegmentQuery } from "@/Redux/Services/markService";
-import { depthColors } from "@/components/notification/FloodReportCard";
 import { getDepthColors } from "@/lib/colorHelper";
 
 interface Props {
