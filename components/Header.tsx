@@ -19,7 +19,7 @@ const Header = () => {
 
         <div className="flex items-center gap-2">
           <div className="rounded-full bg-gray-200 w-10 h-10"></div>
-          <span>{user?.role}</span>
+          <span className="capitalize">{user?.role}</span>
         </div>
       </div>
     </div>
