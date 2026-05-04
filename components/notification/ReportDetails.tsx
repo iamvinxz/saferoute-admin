@@ -7,6 +7,7 @@ import { RootState } from "@/state/store";
 import { trash } from "@/lib/icon";
 import { clearReport } from "@/state/slices/selectedReport";
 import dynamic from "next/dynamic";
+import { useDeleteFloodReportMutation } from "@/Redux/Services/floodReportService";
 
 const depthColors: Record<string, string> = {
   "Ankle-Deep": "text-yellow-600 bg-yellow-50 border-yellow-200",
@@ -30,9 +31,21 @@ const ReportDetails = () => {
   const report = useSelector((state: RootState) => state.report);
   const segments = useSelector((state: RootState) => state.segment.segments);
 
+  //rtk query
+  const [deleteFloodReport] = useDeleteFloodReportMutation();
+
+  const handleDeleteFloodReport = async (id: string) => {
+    try {
+      await deleteFloodReport({ id });
+      dispatch(clearReport()); // Clear the selected report after deletion
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleCreateSegment = () => {
     dispatch(addSegment());
-    const lastIndex = segments.length; //capture last index
+    const lastIndex = segments.length; //capture last index 
     dispatch(
       updateFloodReport({
         index: lastIndex,
@@ -149,7 +162,10 @@ const ReportDetails = () => {
               <Navigation className="w-4 h-4" />
               Approve
             </button>
-            <button className="w-full flex  items-center  justify-center bg-red-600 text-white font-medium text-sm rounded-xl hover:bg-red-500">
+            <button
+              className="w-full flex  items-center  justify-center bg-red-600 text-white font-medium text-sm rounded-xl hover:bg-red-500"
+              onClick={() => handleDeleteFloodReport(report?.id)}
+            >
               <span dangerouslySetInnerHTML={{ __html: trash }} />
               Reject
             </button>
