@@ -1,5 +1,5 @@
 "use client";
-import FloodReports from "@/components/notification/FloodReports";
+import FloodReportCard from "@/components/notification/FloodReportCard";
 import SOSsignal from "@/components/notification/SOSsignal";
 import { useState } from "react";
 import ReportDetails from "../../../components/notification/ReportDetails";
@@ -10,8 +10,6 @@ import NoContentDisplay from "@/components/notification/NoContentDisplay";
 const Notification = () => {
   const [activeTab, setActiveTab] = useState<"flood" | "sos">("flood");
   const selectedReport = useSelector((state: RootState) => state.report);
-
-  console.log("selected", selectedReport);
 
   return (
     <>
@@ -45,7 +43,7 @@ const Notification = () => {
         {/* Content Box */}
 
         <div
-          className={`mr-20 pt-4 pb-4 px-5 rounded-br-md rounded-bl-md shadow-sm max-h-180 overflow-auto ${
+          className={`mr-20 pt-4 pb-4 px-5 rounded-br-md rounded-bl-md shadow-sm h-185 max-h-185 overflow-auto ${
             activeTab === "flood"
               ? "bg-[#f3f3f3] rounded-tr-md"
               : "bg-[#f3f3f3] rounded-tl-md"
@@ -53,7 +51,7 @@ const Notification = () => {
         >
           {activeTab === "flood" ? (
             <div>
-              <FloodReports />
+              <FloodReportCard />
             </div>
           ) : (
             <div>
