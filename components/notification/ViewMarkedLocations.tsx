@@ -121,10 +121,6 @@ const ViewMarkedLocations = ({ onFocus }: Props) => {
                   </div>
                   <div className="flex items-center">
                     <span
-                      dangerouslySetInnerHTML={{ __html: edit }}
-                      className="hover:cursor-pointer"
-                    />
-                    <span
                       dangerouslySetInnerHTML={{
                         __html: deleteId === street._id ? loading : x,
                       }}
@@ -171,10 +167,6 @@ const ViewMarkedLocations = ({ onFocus }: Props) => {
                   {pin.pinName}
                 </p>
                 <div className="flex items-center">
-                  <span
-                    dangerouslySetInnerHTML={{ __html: edit }}
-                    className="hover:cursor-pointer"
-                  />
                   <span
                     dangerouslySetInnerHTML={{
                       __html: deleteId === pin._id ? loading : x,
