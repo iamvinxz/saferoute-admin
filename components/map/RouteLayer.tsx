@@ -9,20 +9,11 @@ import { fetchOSRMRoute } from "@/lib/fetchOSRMRoute";
 import { toast } from "sonner";
 import { useGetAllSegmentQuery } from "@/Redux/Services/markService";
 import { depthColors } from "@/components/notification/FloodReportCard";
+import { getDepthColors } from "@/lib/colorHelper";
 
 interface Props {
   geoJsonData: GeoJSON.FeatureCollection;
 }
-
-export const getDepthColors = (depth: string) => {
-  const match = Object.keys(depthColors).find(
-    (key) => key.toLowerCase() === depth.toLowerCase(),
-  );
-
-  return (
-    depthColors[match ?? ""] ?? { badge: "bg-gray-100", text: "text-gray-700" }
-  );
-};
 
 const RouteLayer = ({ geoJsonData }: Props) => {
   const segments = useSelector((state: RootState) => state.segment.segments);
@@ -125,7 +116,7 @@ const RouteLayer = ({ geoJsonData }: Props) => {
                   {segment.floodReport.streetName}
                 </span>
                 <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap
+                  className={`text-xs font-medium px-2 capitalize py-0.5 rounded-full whitespace-nowrap
                     ${getDepthColors(segment.floodReport.floodDepth).badge}
                     ${getDepthColors(segment.floodReport.floodDepth).text}
                   `}
