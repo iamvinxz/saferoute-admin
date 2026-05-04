@@ -6,3 +6,6 @@ export const CREATE_SEGMENT = "/api/mark/createSegment";
 export const GET_ALL_SEGMENT_LOCATIONS = "/api/mark/segment/all";
 export const DELETE_SEGMENT = "/api/mark/segment/deleteSingleSegment";
 export const DELETE_PIN = "/api/mark/pin/deleteSinglePin";
+export const GET_ALL_SOS = "/api/sos/alerts";
+export const GET_ALL_FLOOD_REPORTS = "/api/floods/reports";
+export const DELETE_SINGLE_FLOOD_REPORT = "/api/floods/deleteSingleFloodReport";
