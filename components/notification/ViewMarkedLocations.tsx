@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getDepthColors } from "@/components/map/RouteLayer";
+import { getDepthColors } from "@/lib/colorHelper";
 import { edit, loading, search, x } from "@/lib/icon";
 import {
   useDeletePinMutation,
@@ -111,7 +111,7 @@ const ViewMarkedLocations = ({ onFocus }: Props) => {
                       {street.floodReport.streetName}
                     </p>
                     <span
-                      className={`inline-block text-xs font-medium px-1.5 py-0.5 rounded-full border                            
+                      className={`inline-block capitalize text-xs font-medium px-1.5 py-0.5 rounded-full border                            
                           ${getDepthColors(street.floodReport.floodDepth).badge}
                           ${getDepthColors(street.floodReport.floodDepth).text}
                         `}
