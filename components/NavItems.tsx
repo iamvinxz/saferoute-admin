@@ -1,5 +1,5 @@
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, LucideMapPinned, Bell } from "lucide-react";
+import { LayoutDashboard, LucideMapPinned, Bell, Users } from "lucide-react";
 import React from "react";
 
 const NavItems = () => {
@@ -27,6 +27,13 @@ const NavItems = () => {
       href: "/notification",
       icon: <Bell size={30} />,
       active: isNavItemActive(pathname, "/notification"),
+      position: "top",
+    },
+    {
+      name: "Users",
+      href: "/users",
+      icon: <Users size={30} />,
+      active: isNavItemActive(pathname, "/users"),
       position: "top",
     },
   ];

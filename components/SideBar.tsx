@@ -29,19 +29,28 @@ const SideBar = () => {
   //rtk query
   const [logout] = useLogoutMutation();
 
+  // ✅ CHANGED: Also sets --sidebar-w on :root immediately on mount
   useEffect(() => {
     setHasMounted(true);
     const savedState = localStorage.getItem("sidebar-extended");
-    if (savedState !== null) {
-      setIsSideBarExtended(JSON.parse(savedState));
-    }
+    const extended = savedState !== null ? JSON.parse(savedState) : true;
+    setIsSideBarExtended(extended);
+    document.documentElement.style.setProperty(
+      "--sidebar-w",
+      extended ? "21.25rem" : "7.5rem",
+    );
   }, []);
 
+  // ✅ CHANGED: Sets --sidebar-w on :root whenever sidebar toggles
   useEffect(() => {
     if (hasMounted) {
       localStorage.setItem(
         "sidebar-extended",
         JSON.stringify(isSidebarExtended),
+      );
+      document.documentElement.style.setProperty(
+        "--sidebar-w",
+        isSidebarExtended ? "21.25rem" : "7.5rem",
       );
     }
   }, [isSidebarExtended, hasMounted]);
@@ -63,15 +72,11 @@ const SideBar = () => {
         isSidebarExtended ? `w-85` : `w-30`,
         ` fixed top-0 left-0 z-999 bg-white transition-all duration-300 drop-shadow-xl border-r shadow-xl h-screen flex flex-col`,
       )}
-      style={{
-        // Expose sidebar width as CSS variable for layout to consume
-        ["--sidebar-w" as string]: isSidebarExtended ? "21.25rem" : "7.5rem",
-      }}
     >
       <button
         className={cn(
-          "cursor-pointer mt-8 mb-4",
-          isSidebarExtended ? "ml-8" : "mx-auto",
+          "cursor-pointer mt-8 mb-1",
+          isSidebarExtended ? "ml-6" : "mx-auto",
         )}
         onClick={toggleSideBar}
       >
@@ -80,7 +85,7 @@ const SideBar = () => {
       <aside
         className={cn(
           !isSidebarExtended && `gap-13 items-center`,
-          `flex flex-col flex-1 mt-17 transition-all duration-300 gap-10`,
+          `flex flex-col flex-1 mt-10 transition-all duration-300 gap-10`,
         )}
       >
         {isSidebarExtended && hasMounted
@@ -123,6 +128,7 @@ const SideBar = () => {
                 </Tooltip>
               </TooltipProvider>
             ))}
+            
       </aside>
 
       <div className="mb-8">
