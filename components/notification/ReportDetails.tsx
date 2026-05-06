@@ -45,7 +45,7 @@ const ReportDetails = () => {
 
   const handleCreateSegment = () => {
     dispatch(addSegment());
-    const lastIndex = segments.length; //capture last index 
+    const lastIndex = segments.length; //capture last index
     dispatch(
       updateFloodReport({
         index: lastIndex,
@@ -73,7 +73,7 @@ const ReportDetails = () => {
   };
 
   return (
-    <div className="grid grid-2 gap-4">
+    <div className="grid grid-2 gap-4 max-md:ml-15 max-md:w-full">
       <div>
         <MapOverview />
       </div>

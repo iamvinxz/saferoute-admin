@@ -42,18 +42,22 @@ const FormsField = () => {
   };
 
   return (
-    <div className="p-10">
-      <div className="flex flex-col items-center justify-center mt-5">
-        <h1 className="text-3xl font-semibold">Login</h1>
+    <div className="p-20 max-md:px-20 max-md:py-0 max-md:mt-10  max-md:h-100">
+      <div className="flex flex-col items-center justify-center \">
+        <h1 className="text-3xl max-md:mb-3 font-semibold">Login</h1>
         <Image
           src="/user-removed.png"
           alt="user.png"
           width={200}
           height={200}
+          className="max-md:w-20"
         />
       </div>
-      <form onSubmit={handleSubmit(handleSignIn)}>
-        <div className="space-y-5 mb-20">
+      <form
+        onSubmit={handleSubmit(handleSignIn)}
+        className="flex flex-col justify-center max-md:mx-10 max-md:px-50"
+      >
+        <div className="space-y-5 mb-10">
           <FieldGroup>
             <Field>
               <FieldLabel className="text-md">Email</FieldLabel>
@@ -71,8 +75,8 @@ const FormsField = () => {
             </Field>
           </FieldGroup>
         </div>
-        <div className="my-5">
-          <Button className="w-full h-12 bg-[#5f7ed1]" type="submit">
+        <div className="flex justify-center">
+          <Button className="w-60 h-10 bg-[#5f7ed1]" type="submit">
             Submit
           </Button>
         </div>

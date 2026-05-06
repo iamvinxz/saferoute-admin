@@ -13,12 +13,12 @@ const Notification = () => {
 
   return (
     <>
-      <div className="ml-20 pt-10">
-        <div className="flex gap-5">
+      <div className="ml-20 pt-10 ">
+        <div className="flex max-md:w-40 gap-5">
           {/* Flood Reports Tab */}
           <div
             onClick={() => setActiveTab("flood")}
-            className={`pt-3 pb-2 px-5 rounded-tl-md rounded-tr-md cursor-pointer ${
+            className={`pt-3 pb-2 px-5 rounded-tl-md max-md:w-full rounded-tr-md cursor-pointer ${
               activeTab === "flood"
                 ? "bg-[#f3f3f3] relative z-10"
                 : "bg-[#f3f3f3] opacity-60"
@@ -43,7 +43,7 @@ const Notification = () => {
         {/* Content Box */}
 
         <div
-          className={`mr-20 pt-4 pb-4 px-5 rounded-br-md rounded-bl-md shadow-sm h-185 max-h-185 overflow-auto ${
+          className={`mr-20 pt-4 pb-4 px-5 max-md:w-123 rounded-br-md  rounded-bl-md shadow-sm h-185 max-h-185 overflow-auto ${
             activeTab === "flood"
               ? "bg-[#f3f3f3] rounded-tr-md"
               : "bg-[#f3f3f3] rounded-tl-md"
