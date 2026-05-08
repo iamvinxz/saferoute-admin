@@ -4,10 +4,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="h-screen flex">
       <SideBar />
-      <main
-        className="flex-1 h-screen overflow-auto transition-all duration-300"
-        style={{ marginLeft: "var(--sidebar-w, 7.5rem)" }}
-      >
+      <main className="flex-1 max-sm:ml-0 h-screen overflow-auto transition-all duration-300 ml-0 md:ml-(--sidebar-w,7.5rem)">
         {children}
       </main>
     </div>

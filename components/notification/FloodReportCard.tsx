@@ -30,10 +30,10 @@ const FloodReportCard = () => {
         return (
           <div
             key={report._id}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200"
+            className="bg-white rounded-2xl shadow-sm border  border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200"
           >
             {report.photoUrl && (
-              <div className="relative w-full h-40">
+              <div className="relative w-full max-sm:h-20 h-40">
                 <Image
                   src={report.photoUrl}
                   alt={report.streetName}
@@ -44,9 +44,9 @@ const FloodReportCard = () => {
               </div>
             )}
 
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-3 max-sm:space-y-0">
               <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 ">
                   <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
                   <span className="font-semibold text-gray-800 text-sm">
                     {report.streetName}

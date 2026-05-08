@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import { Menu, LogOut } from "lucide-react";
+import { Menu, LogOut, X } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -20,16 +20,25 @@ const SideBar = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const [isSidebarExtended, setIsSideBarExtended] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const navItems = NavItems();
+
   const toggleSideBar = () => {
     setIsSideBarExtended(!isSidebarExtended);
+  };
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
   };
 
   //rtk query
   const [logout] = useLogoutMutation();
 
-  // ✅ CHANGED: Also sets --sidebar-w on :root immediately on mount
   useEffect(() => {
     setHasMounted(true);
     const savedState = localStorage.getItem("sidebar-extended");
@@ -41,7 +50,6 @@ const SideBar = () => {
     );
   }, []);
 
-  // ✅ CHANGED: Sets --sidebar-w on :root whenever sidebar toggles
   useEffect(() => {
     if (hasMounted) {
       localStorage.setItem(
@@ -55,10 +63,14 @@ const SideBar = () => {
     }
   }, [isSidebarExtended, hasMounted]);
 
+  // Close drawer on route change (optional UX improvement)
+  useEffect(() => {
+    closeDrawer();
+  }, []);
+
   const handleLogout = async () => {
     try {
       await logout().unwrap();
-
       dispatch(clearUser());
       router.push("/auth/login");
     } catch (error) {
@@ -66,34 +78,45 @@ const SideBar = () => {
     }
   };
 
-  return (
+  const SidebarContent = ({
+    isExpanded,
+    onClose,
+  }: {
+    isExpanded: boolean;
+    onClose?: () => void;
+  }) => (
     <section
       className={cn(
-        isSidebarExtended ? `w-85` : `w-30`,
-        ` fixed top-0 left-0 z-999 bg-white transition-all duration-300 drop-shadow-xl border-r shadow-xl h-screen flex flex-col`,
+        isExpanded ? `w-85` : `w-30`,
+        `bg-white transition-all duration-300 drop-shadow-xl border-r shadow-xl h-screen flex flex-col`,
       )}
     >
-      <button
-        className={cn(
-          "cursor-pointer mt-8 mb-1",
-          isSidebarExtended ? "ml-6" : "mx-auto",
+      <div className="flex items-center mt-8 mb-1 px-4">
+        <button
+          className={cn("cursor-pointer", isExpanded ? "ml-2" : "mx-auto")}
+          onClick={onClose ?? toggleSideBar}
+        >
+          {onClose ? <X size={27} /> : <Menu size={27} />}
+        </button>
+        {!onClose && isExpanded && (
+          <button className="ml-auto cursor-pointer" onClick={toggleSideBar}>
+            <Menu size={27} />
+          </button>
         )}
-        onClick={toggleSideBar}
-      >
-        <Menu size={27} />
-      </button>
+      </div>
+
       <aside
         className={cn(
-          !isSidebarExtended && `gap-13 items-center`,
+          !isExpanded && `gap-13 items-center`,
           `flex flex-col flex-1 mt-10 transition-all duration-300 gap-10`,
         )}
       >
-        {isSidebarExtended && hasMounted
+        {isExpanded && hasMounted
           ? navItems.map((item, index) => (
-              <Link href={item.href} key={index}>
+              <Link href={item.href} key={index} onClick={onClose}>
                 <div
                   className={cn(
-                    `flex items-center gap-2 mx-3 p-3 text-[#171717] rounded-xl hover:bg-blue-600 hover:text-white `,
+                    `flex items-center gap-2 mx-3 p-3 text-[#171717] rounded-xl hover:bg-blue-600 hover:text-white`,
                     item.active && `bg-blue-600 text-white shadow-xl`,
                   )}
                 >
@@ -108,8 +131,9 @@ const SideBar = () => {
                   <TooltipTrigger asChild>
                     <Link
                       href={item.href}
+                      onClick={onClose}
                       className={cn(
-                        `flex items-center justify-center p-7 hover:bg-blue-600 hover:text-white rounded-xl transition-all w-12 h-12 `,
+                        `flex items-center justify-center p-7 hover:bg-blue-600 hover:text-white rounded-xl transition-all w-12 h-12`,
                         item.active && `bg-blue-600 text-white shadow-xl`,
                       )}
                     >
@@ -128,11 +152,10 @@ const SideBar = () => {
                 </Tooltip>
               </TooltipProvider>
             ))}
-            
       </aside>
 
       <div className="mb-8">
-        {isSidebarExtended && hasMounted ? (
+        {isExpanded && hasMounted ? (
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 mx-3 p-3 w-[calc(100%-24px)] text-[#171717] rounded-xl hover:bg-blue-600 hover:text-white transition-all"
@@ -163,6 +186,42 @@ const SideBar = () => {
         )}
       </div>
     </section>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar — visible on md and above */}
+      <div className="max-sm:hidden fixed top-0 left-0 z-50">
+        <SidebarContent isExpanded={isSidebarExtended} />
+      </div>
+
+      {/* Mobile: hamburger button to open drawer */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 bg-white rounded-xl p-2 shadow-md border"
+        onClick={toggleDrawer}
+        aria-label="Open menu"
+      >
+        <Menu size={24} />
+      </button>
+
+      {/* Mobile: backdrop overlay */}
+      {isDrawerOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity"
+          onClick={closeDrawer}
+        />
+      )}
+
+      {/* Mobile: sliding drawer */}
+      <div
+        className={cn(
+          "md:hidden fixed top-0 left-0 z-50 h-screen transition-transform duration-300 ease-in-out",
+          isDrawerOpen ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
+        <SidebarContent isExpanded={true} onClose={closeDrawer} />
+      </div>
+    </>
   );
 };
 
