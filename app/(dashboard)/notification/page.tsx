@@ -13,15 +13,15 @@ const Notification = () => {
 
   return (
     <>
-      <div className="ml-20 pt-10 ">
-        <div className="flex max-md:w-40 gap-5">
+      <div className=" max-sm:pl-3 pl-20 mt-5 ">
+        <div className="flex max-sm:w-30 gap-5">
           {/* Flood Reports Tab */}
           <div
             onClick={() => setActiveTab("flood")}
-            className={`pt-3 pb-2 px-5 rounded-tl-md max-md:w-full rounded-tr-md cursor-pointer ${
+            className={`pt-3 pb-2 px-5 rounded-tl-md text-white max-sm:text-xs max-md:w-full rounded-tr-md cursor-pointer ${
               activeTab === "flood"
-                ? "bg-[#f3f3f3] relative z-10"
-                : "bg-[#f3f3f3] opacity-60"
+                ? "bg-[#7da3cf] relative z-10"
+                : "bg-[#757272] opacity-60"
             }`}
           >
             Flood Reports
@@ -30,10 +30,10 @@ const Notification = () => {
           {/* SOS Signal Tab */}
           <div
             onClick={() => setActiveTab("sos")}
-            className={`pt-3 px-5 rounded-tl-md rounded-tr-md cursor-pointer ${
+            className={`pt-3 px-5 rounded-tl-md max-sm:text-xs text-white rounded-tr-md cursor-pointer ${
               activeTab === "sos"
-                ? "bg-[#f3f3f3] relative z-10"
-                : "bg-[#f3f3f3] opacity-60"
+                ? "bg-[#ff7d7d] relative z-10"
+                : "bg-[#757272] opacity-60"
             }`}
           >
             SOS Signal
@@ -43,10 +43,8 @@ const Notification = () => {
         {/* Content Box */}
 
         <div
-          className={`mr-20 pt-4 pb-4 px-5 max-md:w-123 rounded-br-md  rounded-bl-md shadow-sm h-185 max-h-185 overflow-auto ${
-            activeTab === "flood"
-              ? "bg-[#f3f3f3] rounded-tr-md"
-              : "bg-[#f3f3f3] rounded-tl-md"
+          className={`mr-20 pt-4 pb-4 px-5 max-sm:w-95 max-md:w-123 rounded-br-md rounded-tr-md  rounded-bl-md shadow-sm h-185 max-h-185 overflow-auto ${
+            activeTab === "flood" ? "bg-[#7da3cf] " : "bg-[#ff7d7d] "
           }`}
         >
           {activeTab === "flood" ? (
@@ -60,7 +58,7 @@ const Notification = () => {
           )}
         </div>
       </div>
-      <div className="mr-20 pt-24 px-5">
+      <div className="mr-20 pt-24 max-sm:pt-10 px-5">
         {selectedReport.index !== -1 ? <ReportDetails /> : <NoContentDisplay />}
       </div>
     </>

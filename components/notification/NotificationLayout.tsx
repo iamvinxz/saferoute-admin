@@ -1,13 +1,11 @@
 const NotificationLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="w-full ">
-      <div className="flex flex-col justify-center ml-20 pt-10 ">
-        <span className="font-semibold text-xl text-blue-600">
-          Notification
-        </span>
-        <span className="text-sm text-[#303030]">
-          Monitor flood reports and SOS signals.
-        </span>
+    <div className="w-full bg-[#f8fafc]  h-full ">
+      <div className="flex flex-col max-sm:pl-20 justify-center max-sm:ml-0 ml-9 pt-10 ">
+        <div>
+          <h1 className="text-xl font-semibold text-blue-500">Notifications</h1>
+          <p className="text-sm text-slate-400">Manage and create accounts.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 max-md:grid max-md:grid-cols-1">

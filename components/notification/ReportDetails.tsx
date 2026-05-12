@@ -1,3 +1,5 @@
+"use client";
+import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { addSegment, updateFloodReport } from "@/state/slices/segment";
@@ -16,12 +18,9 @@ const depthColors: Record<string, string> = {
   Critical: "text-red-800 bg-red-100 border-red-300",
 };
 
-//disables ssr and force map to render in browser
 const MapOverview = dynamic(
   () => import("@/components/notification/mapOverview"),
-  {
-    ssr: false,
-  },
+  { ssr: false },
 );
 
 const ReportDetails = () => {
@@ -31,13 +30,12 @@ const ReportDetails = () => {
   const report = useSelector((state: RootState) => state.report);
   const segments = useSelector((state: RootState) => state.segment.segments);
 
-  //rtk query
   const [deleteFloodReport] = useDeleteFloodReportMutation();
 
   const handleDeleteFloodReport = async (id: string) => {
     try {
       await deleteFloodReport({ id });
-      dispatch(clearReport()); // Clear the selected report after deletion
+      dispatch(clearReport());
     } catch (error) {
       console.log(error);
     }
@@ -45,7 +43,7 @@ const ReportDetails = () => {
 
   const handleCreateSegment = () => {
     dispatch(addSegment());
-    const lastIndex = segments.length; //capture last index
+    const lastIndex = segments.length;
     dispatch(
       updateFloodReport({
         index: lastIndex,
@@ -73,25 +71,24 @@ const ReportDetails = () => {
   };
 
   return (
-    <div className="grid grid-2 gap-4 max-md:ml-15 max-md:w-full">
+    <div className="flex flex-col gap-4 w-full max-sm:w-97 max-sm:pr-4 mb-3 2md:px-0">
       <div>
         <MapOverview />
       </div>
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden w-full">
-        {/* Image */}
         {report.imageUrl && (
           <div className="relative w-full h-43">
-            <img
+            <Image
               src={report.imageUrl}
               alt={report.streetName}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
           </div>
         )}
 
         <div className="p-5 space-y-3">
-          {/* Title */}
           <div>
             <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">
               Flood Report Details
@@ -103,7 +100,6 @@ const ReportDetails = () => {
 
           <hr className="border-gray-100" />
 
-          {/* Street Name */}
           <div className="flex items-start gap-3">
             <div className="p-2 bg-gray-50 rounded-lg">
               <MapPin className="w-4 h-4 text-gray-400" />
@@ -118,7 +114,6 @@ const ReportDetails = () => {
             </div>
           </div>
 
-          {/* Depth */}
           <div className="flex items-start gap-3">
             <div className="p-2 bg-gray-50 rounded-lg">
               <Droplets className="w-4 h-4 text-gray-400" />
@@ -137,7 +132,6 @@ const ReportDetails = () => {
             </div>
           </div>
 
-          {/* Description */}
           <div className="flex items-start gap-3">
             <div className="p-2 bg-gray-50 rounded-lg">
               <FileText className="w-4 h-4 text-gray-400" />
@@ -151,9 +145,9 @@ const ReportDetails = () => {
               </p>
             </div>
           </div>
+
           <hr className="border-gray-100" />
 
-          {/* Create Segment Button */}
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={handleCreateSegment}
@@ -163,7 +157,7 @@ const ReportDetails = () => {
               Approve
             </button>
             <button
-              className="w-full flex  items-center  justify-center bg-red-600 text-white font-medium text-sm rounded-xl hover:bg-red-500"
+              className="w-full flex items-center justify-center bg-red-600 text-white font-medium text-sm rounded-xl hover:bg-red-500 py-2.5"
               onClick={() => handleDeleteFloodReport(report?.id)}
             >
               <span dangerouslySetInnerHTML={{ __html: trash }} />

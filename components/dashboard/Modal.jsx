@@ -59,7 +59,7 @@ const Modal = ({ isOpen, onClose, type }) => {
 
   return createPortal(
     <div
-     className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]"
+     className="fixed inset-0 bg-black/40 flex items-center justify-center z-9999"
       onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div className="bg-white rounded-xl shadow-2xl p-7 w-105 max-w-[95vw]">
