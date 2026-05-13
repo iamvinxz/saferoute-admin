@@ -58,8 +58,9 @@ const Dashboard = () => {
     {
       label: "Responded",
       value:
-        sosData?.alerts?.filter((a: { status: string }) => a.status === "responded").length ??
-        0,
+        sosData?.alerts?.filter(
+          (a: { status: string }) => a.status === "responded",
+        ).length ?? 0,
       icon: <Siren size={18} />,
       iconBg: "bg-amber-50",
       iconColor: "text-amber-500",
