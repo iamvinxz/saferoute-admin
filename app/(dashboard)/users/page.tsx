@@ -159,19 +159,19 @@ const UsersPage = () => {
         }
       `}</style>
 
-      <div className="users-page w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <div className="users-page w-full mx-auto px-4 sm:px-6 max-sm:pt-4 lg:px-8 py-8 sm:py-10">
         {/* Header — matches original style */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-xl font-bold text-blue-500">Users</h1>
-            <p className="text-sm text-slate-400">
+            <h1 className="text-xl font-semibold max-sm:ml-12 text-blue-500">Users</h1>
+            <p className="text-sm max-sm:text-xs max-sm:pl-12 text-slate-400">
               Manage and create accounts.
             </p>
           </div>
           {activeTab === "admins" && (
             <button
               onClick={() => setIsOpen(true)}
-              className="flex items-center gap-2 bg-blue-400 hover:bg-blue-500 active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
+              className="flex items-center  bg-blue-400 hover:bg-blue-500 active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
             >
               <Plus size={16} strokeWidth={2.5} />
               <span>Add Admin</span>

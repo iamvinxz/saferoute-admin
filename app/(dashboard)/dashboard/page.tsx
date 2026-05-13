@@ -97,7 +97,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="dash-page min-h-screen bg-[#f8fafc] w-full px-6 sm:px-8 lg:px-10 py-8">
+    <div className="dash-page min-h-screen bg-[#f8fafc] w-full px-6 sm:px-8 lg:px-10 max-sm:pt-5 py-8">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
         .dash-page * { font-family: 'Poppins', sans-serif; box-sizing: border-box; }
@@ -228,7 +228,7 @@ const Dashboard = () => {
       <Modal isOpen={modal.isOpen} onClose={closeModal} type={modal.type} />
 
       {/* Urgent alert cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         <div
           onClick={() => router.push("/notification")}
           className="urgent-card urgent-card-sos"
