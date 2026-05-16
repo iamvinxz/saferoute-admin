@@ -11,6 +11,10 @@ import { clearReport } from "@/state/slices/selectedReport";
 import dynamic from "next/dynamic";
 import { useDeleteFloodReportMutation } from "@/Redux/Services/floodReportService";
 
+interface ReportDetailsProps {
+  activeTab: string;
+}
+
 const depthColors: Record<string, string> = {
   "Ankle-Deep": "text-yellow-600 bg-yellow-50 border-yellow-200",
   "Knee-Deep": "text-orange-600 bg-orange-50 border-orange-200",
@@ -71,101 +75,8 @@ const ReportDetails = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full max-sm:w-97 max-sm:pr-4 mb-3 2md:px-0">
-      <div>
-        <MapOverview />
-      </div>
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden w-full">
-        {report.imageUrl && (
-          <div className="relative w-full h-43">
-            <Image
-              src={report.imageUrl}
-              alt={report.streetName}
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
-          </div>
-        )}
-
-        <div className="p-5 space-y-3">
-          <div>
-            <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">
-              Flood Report Details
-            </p>
-            <h2 className="text-md font-semibold text-gray-800">
-              Incident Overview
-            </h2>
-          </div>
-
-          <hr className="border-gray-100" />
-
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-gray-50 rounded-lg">
-              <MapPin className="w-4 h-4 text-gray-400" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-400 uppercase tracking-wide">
-                Street Name
-              </p>
-              <p className="text-sm font-medium text-gray-800 mt-0.5">
-                {report.streetName}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-gray-50 rounded-lg">
-              <Droplets className="w-4 h-4 text-gray-400" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-400 uppercase tracking-wide">
-                Flood Depth
-              </p>
-              <span
-                className={`inline-block mt-1 text-xs font-medium px-2.5 py-1 rounded-full border ${
-                  depthColors[report.depth] ?? depthColors["Knee-Deep"]
-                }`}
-              >
-                {report.depth}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-gray-50 rounded-lg">
-              <FileText className="w-4 h-4 text-gray-400" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-400 uppercase tracking-wide">
-                Description
-              </p>
-              <p className="text-sm text-gray-600 mt-0.5 leading-relaxed">
-                {report.description}
-              </p>
-            </div>
-          </div>
-
-          <hr className="border-gray-100" />
-
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={handleCreateSegment}
-              className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
-            >
-              <Navigation className="w-4 h-4" />
-              Approve
-            </button>
-            <button
-              className="w-full flex items-center justify-center bg-red-600 text-white font-medium text-sm rounded-xl hover:bg-red-500 py-2.5"
-              onClick={() => handleDeleteFloodReport(report?.id)}
-            >
-              <span dangerouslySetInnerHTML={{ __html: trash }} />
-              Reject
-            </button>
-          </div>
-        </div>
-      </div>
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
+      <div className="bg-white rounded-xl p-6 w-full max-w-lg">Hello</div>
     </div>
   );
 };
