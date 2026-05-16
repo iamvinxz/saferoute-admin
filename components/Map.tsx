@@ -1,5 +1,6 @@
 "use client";
 import "leaflet/dist/leaflet.css";
+import Link from "next/link";
 import { createPortal } from "react-dom";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import { useGetGeoJsonQuery } from "@/Redux/Services/mapService";
@@ -23,19 +24,19 @@ import {
   triggerConfirmation,
   triggerSOSsignal,
 } from "@/state/slices/sosSignal";
-import { OctagonAlert } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
+import { LayoutDashboard, Bell, Users } from "lucide-react";
 import ViewMarkedLocations from "./notification/ViewMarkedLocations";
 
 export const center: [number, number] = [14.673413900535, 120.9685888671883];
 export const maxBounds: [[number, number], [number, number]] = [
   [14.616796295409431, 120.90597134427183],
   [14.718980127971527, 121.00881300073651],
+];
+
+const navItems = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: Bell, label: "Notification", href: "/notification" },
+  { icon: Users, label: "Users", href: "/users" },
 ];
 
 export default function Map() {
@@ -102,6 +103,7 @@ export default function Map() {
         minZoom={15}
         maxBounds={maxBounds}
         maxBoundsViscosity={1.0}
+        zoomControl={false}
         style={{ height: "100%", width: "100%" }}
       >
         <TileLayer
@@ -133,25 +135,6 @@ export default function Map() {
         <ZoomTracker />
         <FocusTrigger target={focusTarget} />
         <FloodReportSheet />
-
-        {/**sos indictor */}
-        {sosSignal && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div
-                  ref={containerRef}
-                  className="absolute top-25 left-2 z-1000 w-12 h-12 rounded-md bg-[#9d70707a] flex items-center justify-center hover:cursor-pointer"
-                >
-                  <OctagonAlert color="red" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <span>SOS Signal Enabled</span>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
       </MapContainer>
 
       {isRoutingMode && (
@@ -159,11 +142,11 @@ export default function Map() {
           <div ref={containerRef}>
             <button
               onClick={handleNewSegment}
-              className="absolute top-17 left-15 z-1000 bg-white px-4 py-2 rounded-md shadow-md border text-sm font-medium"
+              className="absolute top-17 left-5 z-1000 bg-white px-4 py-2 rounded-md shadow-md border text-sm font-medium"
             >
               + New Segment
             </button>
-            <span className="absolute top-27 left-16 z-1000">
+            <span className="absolute top-27 left-5 z-1000">
               No. of Segments: {segments.length}
             </span>
           </div>
@@ -175,6 +158,18 @@ export default function Map() {
         onToggle={() => setViewFloodedStreets((prev) => !prev)}
       />
       <ToolBox />
+
+      {/**nav bar for maps */}
+      <div className="bg-white absolute bottom-10 left-1/2 -translate-x-1/2 z-[400] p-4 space-x-6 rounded-md hover:opacity-100 flex flex-row drop-shadow-lg">
+        {navItems.map((nav, index) => (
+          <Link href={nav.href} key={index}>
+            <div className="flex items-center gap-2 hover:text-[#1A5EFD]">
+              <nav.icon size={14} />
+              <span className="text-xs">{nav.label}</span>
+            </div>
+          </Link>
+        ))}
+      </div>
 
       {/**view modal */}
       {viewFloodedStreets && <ViewMarkedLocations onFocus={setFocusTarget} />}
