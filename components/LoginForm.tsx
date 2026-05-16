@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const LoginForm = () => {
   return (
-    <div className="grid md:grid-cols-2 grid-cols-1 bg-white rounded-2xl w-full shadow-2xl overflow-hidden h-[560px]">
+    <div className="grid md:grid-cols-2 grid-cols-1 bg-white rounded-2xl w-full shadow-2xl overflow-hidden h-140">
       {/* Left panel — desktop only */}
       <div className="hidden md:flex bg-[#0f1e4a] flex-col items-center justify-center py-14 px-8 gap-6 relative overflow-hidden h-full">
         <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full border border-white/5" />
@@ -11,7 +11,7 @@ const LoginForm = () => {
 
         <div className="bg-white rounded-2xl p-2 shadow-md border-2 border-yellow-400/80">
           <Image
-            src="/LOGO.png"
+            src="/LOGO.jpg"
             alt="SafeRoute Logo"
             width={110}
             height={110}
@@ -35,7 +35,7 @@ const LoginForm = () => {
       <div className="md:hidden bg-[#0f1e4a] border-b-5 border-yellow-300 flex flex-col items-center justify-center py-6 gap-2">
         <div className="bg-white rounded-xl p-1.5 border-2 border-yellow-400">
           <Image
-            src="/LOGO.png"
+            src="/LOGO.jpg"
             alt="SafeRoute Logo"
             width={48}
             height={48}
