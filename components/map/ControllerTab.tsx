@@ -1,5 +1,13 @@
 import { shelterIcon, barangay, center, floodedStreet } from "@/lib/icon";
-import { useState } from "react";
+import { RootState } from "@/state/store";
+import { OctagonAlert } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useSelector } from "react-redux";
 
 interface FocusTarget {
   lat: number;
@@ -39,30 +47,46 @@ const controllers = [
 ];
 
 const ControllerTab = ({ onFocus, onToggle }: Props) => {
+  const sosSignal = useSelector(
+    (state: RootState) => state.sos.triggerSosSignal,
+  );
   return (
-    <>
-      <div className="absolute top-3 left-15 z-400 flex items-center w-436 justify-between">
-        <div className="flex gap-4">
-          {controllers.map((ctrl, index) => (
-            <button
-              key={index}
-              onClick={() => onFocus(ctrl.coordinates)} // go to specific marker
-              className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-md hover:bg-blue-50 hover:shadow-lg transition-all cursor-pointer"
-            >
-              <span dangerouslySetInnerHTML={{ __html: ctrl.icon }} />
-              <span className="text-sm font-medium">{ctrl.name}</span>
-            </button>
-          ))}
-        </div>
-        <button
-          className="bg-white px-3 py-2 rounded-md shadow-md relative right-5 flex items-center gap-2 hover:bg-blue-50 hover:shadow-lg cursor-pointer"
-          onClick={() => onToggle()}
-        >
-          <span dangerouslySetInnerHTML={{ __html: floodedStreet }} />
-          <span className="text-sm font-medium">View Marked Locations</span>
-        </button>
+    <div className="absolute top-3 z-400 flex items-center justify-between w-full px-5">
+      <div className="flex gap-4">
+        {controllers.map((ctrl, index) => (
+          <button
+            key={index}
+            onClick={() => onFocus(ctrl.coordinates)} // go to specific marker
+            className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-md hover:bg-blue-50 hover:shadow-lg transition-all cursor-pointer"
+          >
+            <span dangerouslySetInnerHTML={{ __html: ctrl.icon }} />
+            <span className="text-sm font-medium">{ctrl.name}</span>
+          </button>
+        ))}
+        {/**sos indictor */}
+        {sosSignal && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="relative z-1000 w-12 h-12 rounded-md bg-[#9d70707a] flex items-center justify-center hover:cursor-pointer">
+                  <OctagonAlert color="red" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <span>SOS Signal Enabled</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </div>
-    </>
+      <button
+        className="bg-white px-3 py-2 rounded-md shadow-md relative flex items-center gap-2 hover:bg-blue-50 hover:shadow-lg cursor-pointer"
+        onClick={() => onToggle()}
+      >
+        <span dangerouslySetInnerHTML={{ __html: floodedStreet }} />
+        <span className="text-sm font-medium">View Marked Locations</span>
+      </button>
+    </div>
   );
 };
 
