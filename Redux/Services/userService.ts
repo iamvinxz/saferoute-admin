@@ -45,7 +45,9 @@ type CreateAdminRequest = {
   email: string;
   password: string;
   department: string;
-};type Admin = {
+};
+
+export type Admin = {
   _id: string;
   name: string;
   email: string;
@@ -58,7 +60,7 @@ type CreateAdminRequest = {
   updatedAt: string;
 };
 
-type User = {
+export type User = {
   _id: string;
   age: number;
   phone: string;
