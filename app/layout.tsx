@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Poppins, Geist } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
-import SideBar from "@/components/SideBar";
 import { cn } from "@/lib/utils";
 import LayoutProvider from "@/components/LayoutProvider";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
 });
@@ -22,7 +21,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full", "antialiased", poppins.variable)}>
+    <html
+      lang="en"
+      className={cn("h-full", "antialiased", montserrat.variable)}
+    >
       <body>
         <LayoutProvider>{children}</LayoutProvider>
       </body>
