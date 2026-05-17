@@ -17,6 +17,7 @@ const MapOverview = () => {
       <MapContainer
         center={center}
         zoom={17}
+        zoomControl={false}
         maxZoom={19}
         minZoom={15}
         maxBounds={maxBounds}
