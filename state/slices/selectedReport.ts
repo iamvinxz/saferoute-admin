@@ -7,7 +7,7 @@ type Report = {
   streetName: string;
   depth: string;
   description: string;
-  reportedAt?: string;
+  reportedAt: string;
   coordinates: [number, number] | undefined;
 };
 
@@ -18,6 +18,7 @@ const initialState: Report = {
   streetName: "",
   depth: "",
   description: "",
+  reportedAt: "",
   coordinates: undefined,
 };
 
