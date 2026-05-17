@@ -3,31 +3,25 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { addSegment, updateFloodReport } from "@/state/slices/segment";
-import { MapPin, Droplets, FileText, Navigation } from "lucide-react";
+import { Navigation, X, Trash2 } from "lucide-react";
 import { toggleIsRouting } from "@/state/slices/modeSlice";
 import { RootState } from "@/state/store";
-import { trash } from "@/lib/icon";
 import { clearReport } from "@/state/slices/selectedReport";
 import dynamic from "next/dynamic";
 import { useDeleteFloodReportMutation } from "@/Redux/Services/floodReportService";
+import { getDepthColors } from "@/lib/colorHelper";
 
 interface ReportDetailsProps {
-  activeTab: string;
+  // activeTab: string;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-const depthColors: Record<string, string> = {
-  "Ankle-Deep": "text-yellow-600 bg-yellow-50 border-yellow-200",
-  "Knee-Deep": "text-orange-600 bg-orange-50 border-orange-200",
-  "Chest-Deep": "text-red-600 bg-red-50 border-red-200",
-  Critical: "text-red-800 bg-red-100 border-red-300",
-};
 
 const MapOverview = dynamic(
   () => import("@/components/notification/mapOverview"),
   { ssr: false },
 );
 
-const ReportDetails = () => {
+const ReportDetails = ({ setShowModal }: ReportDetailsProps) => {
   const dispatch = useDispatch();
   const isRouting = useSelector((state: RootState) => state.mode.isRouting);
   const router = useRouter();
@@ -76,7 +70,111 @@ const ReportDetails = () => {
 
   return (
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-6 w-full max-w-lg">Hello</div>
+      <div className="bg-white rounded-xl p-4 w-full max-w-lg">
+        {/**header */}
+        <div className="flex justify-between items-start border-b border-[#e6e6e6] pb-2 mb-2">
+          <div>
+            <p className="font-medium text-[#303030]">Flood report details.</p>
+            <p className="text-xs text-[#848484]">
+              Resident's report update of the flood level on their area.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setShowModal(false);
+              dispatch(clearReport());
+            }}
+          >
+            <X size={10} className="hover:cursor-pointer" />
+          </button>
+        </div>
+        <div className="w-full flex justify-center mt-4">
+          {report.imageUrl && (
+            <div className="relative w-full max-w-md aspect-video rounded-md overflow-hidden border shadow">
+              <Image
+                src={report.imageUrl}
+                alt="Report image"
+                fill
+                className="object-fill"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="mt-5 space-y-2 h-full">
+          {/**fields */}
+          <div className="grid grid-cols-2 gap-2 items-start justify-between">
+            <div className="bg-gray-50 rounded-md px-3 py-2.5">
+              <p className="text-[10px] text-[#848484] mb-1 flex items-center gap-1">
+                Street name
+              </p>
+              <p className="text-sm font-medium text-[#303030] truncate">
+                {report.streetName}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-md px-3 py-2">
+              <p className="text-[10px] text-[#848484] mb-1 flex items-center gap-1">
+                Condition
+              </p>
+              <span
+                className={`inline-flex items-center tracking-wide px-1 py-0.5 rounded-lg text-[0.62rem] capitalize
+                      ${getDepthColors(report.depth).badge} 
+                      ${getDepthColors(report.depth).text}`}
+              >
+                {report.depth}
+              </span>
+            </div>
+          </div>
+          <div className="bg-gray-50 rounded-md px-3 py-2.5">
+            <p className="text-[10px] text-[#848484] mb-1 flex items-center gap-1">
+              Reported at
+            </p>
+            <p className="text-xs font-medium text-[#303030]">
+              {new Date(report.reportedAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </p>
+          </div>
+
+          <div className="bg-gray-50 rounded-md px-3 py-2.5">
+            <p className="text-[10px] text-[#848484] mb-1 flex items-center gap-1">
+              Description
+            </p>
+            <p className="text-sm text-[#303030] leading-relaxed">
+              {report.description}
+            </p>
+          </div>
+
+          {/**map */}
+          <div className="rounded-md overflow-hidden border border-[#e6e6e6] h-40">
+            <MapOverview />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 pt-3">
+          <button
+            onClick={handleCreateSegment}
+            className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-[#1A5EFD] text-white text-xs transition-colors hover:cursor-pointer hover:bg-[#5183f8]"
+          >
+            <Navigation size={14} /> Create segment
+          </button>
+          <button
+            onClick={() => {
+              handleDeleteFloodReport(report.id);
+              setShowModal(false);
+            }}
+            className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-white border text-red-400 text-xs hover:bg-[#dfdfdf] hover:cursor-pointer transition-colors"
+          >
+            <Trash2 size={14} /> Delete report
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
