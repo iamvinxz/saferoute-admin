@@ -165,7 +165,7 @@ export default function Map() {
           <Link href={nav.href} key={index}>
             <div className="flex items-center gap-2 hover:text-[#1A5EFD]">
               <nav.icon size={14} />
-              <span className="text-xs">{nav.label}</span>
+              <span className="hidden lg:inline text-xs">{nav.label}</span>
             </div>
           </Link>
         ))}
