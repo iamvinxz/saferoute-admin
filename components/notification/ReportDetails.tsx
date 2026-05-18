@@ -71,7 +71,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
+    <div className="modal-overlay fixed inset-0 bg-black/30 flex items-center justify-center">
       <div className="bg-white rounded-xl p-4 w-full max-w-lg">
         {activeTab === "floodReport" ? (
           <div>
@@ -154,7 +154,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
 
               {/* Map */}
               <div className="rounded-md overflow-hidden border border-[#e6e6e6] h-40">
-                <MapOverview />
+                <MapOverview coordinates={report.coordinates} />
               </div>
 
               {/* Actions */}
@@ -270,7 +270,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
 
               {/* Map */}
               <div className="rounded-md overflow-hidden border border-[#e6e6e6] h-40">
-                <MapOverview />
+                <MapOverview coordinates={sosReport.coordinates} />
               </div>
 
               {/* Actions */}
