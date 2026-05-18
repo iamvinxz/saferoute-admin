@@ -53,7 +53,7 @@ export default function Table({ announcement, article, isLoading }: Props) {
   const activeData = activeTab === "announcement" ? announcement : article;
 
   return (
-    <div className="mt-5 lg:mt-7">
+    <div className="mt-5 pb-5 lg:mt-7">
       {/* Tab Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center border-b w-fit">
@@ -80,13 +80,15 @@ export default function Table({ announcement, article, isLoading }: Props) {
         </div>
         <div className="pr-2">
           <button
-            className="flex items-center gap-2 text-xs font-medium bg-blue-400 text-white p-3 rounded-md shadow-sm hover:cursor-pointer"
+            className="flex items-center gap-2 text-xs font-medium bg-blue-400 text-white p-1 rounded-md shadow-sm hover:cursor-pointer lg:p-3"
             onClick={() => setIsOpen(true)}
           >
-            <Plus size={15} />
-            {activeTab === "announcement"
-              ? "Create announcement"
-              : "Create article"}
+            <Plus className="w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="hidden lg:inline">
+              {activeTab === "announcement"
+                ? "Create announcement"
+                : "Create article"}
+            </span>
           </button>
         </div>
       </div>
@@ -94,7 +96,7 @@ export default function Table({ announcement, article, isLoading }: Props) {
       {isOpen && <Modal activeTab={activeTab} setIsOpen={setIsOpen} />}
 
       {/* Table */}
-      <div className="rounded-md max-h-90 overflow-y-auto lg:shadow-[0px_1px_4.5px_-1px_rgba(0,0,0,0.25)] lg:mt-5">
+      <div className="rounded-md max-h-200 overflow-y-auto lg:shadow-[0px_1px_4.5px_-1px_rgba(0,0,0,0.25)] lg:mt-5">
         {/* Header */}
         {activeTab === "announcement" ? (
           <div className="hidden grid-cols-[80px_1fr_1fr_180px_180px] border-b border-gray-200 pb-3 px-4 w-full text-[#848484] font-medium bg-gray-100 lg:grid lg:py-5">
@@ -195,7 +197,7 @@ export default function Table({ announcement, article, isLoading }: Props) {
                       href={item.sourceLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500 text-[10px] hover:underline truncate block mt-1"
+                      className="max-w-35 text-blue-500 text-[10px] hover:underline truncate block mt-1"
                     >
                       {item.sourceLink}
                     </a>
