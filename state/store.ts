@@ -8,6 +8,8 @@ import reportReducer from "@/state/slices/selectedReport";
 import sosReducer from "@/state/slices/sosSignal";
 import accountReducer from "@/state/slices/accountSlice";
 import sosReport from "@/state/slices/sosSignalReportSlice";
+import announcementSlice from "@/state/slices/announcementSlice";
+import articleSlice from "@/state/slices/articleSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ export const store = configureStore({
     sos: sosReducer,
     account: accountReducer,
     sosReport: sosReport,
+    announcement: announcementSlice,
+    article: articleSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware),
