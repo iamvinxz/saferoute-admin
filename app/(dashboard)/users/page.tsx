@@ -79,28 +79,54 @@ const UsersPage = () => {
 
         {/* Stat Cards */}
         <div className="flex gap-4 mb-8">
-          <div className="stat-card flex-1 min-w-0">
-            <div className="stat-icon bg-blue-50">
-              <ShieldCheck size={20} color="#3b82f6" />
-            </div>
-            <div>
-              <p className="text-xs text-slate-400 font-medium">Total Admins</p>
-              <p className="text-xl font-bold text-slate-800">
-                {adminResponse?.admins?.length ?? "—"}
-              </p>
-            </div>
-          </div>
-          <div className="stat-card flex-1 min-w-0">
-            <div className="stat-icon bg-emerald-50">
-              <Users size={20} color="#10b981" />
-            </div>
-            <div>
-              <p className="text-xs text-slate-400 font-medium">Residents</p>
-              <p className="text-xl font-bold text-slate-800">
-                {userResponse?.users?.length ?? "—"}
-              </p>
-            </div>
-          </div>
+          {adminsLoading || usersLoading ? (
+            <>
+              {/**skeleton */}
+              <div className="stat-card flex-1 min-w-0">
+                <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
+                <div className="space-y-2">
+                  <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
+                  <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
+                </div>
+              </div>
+              <div className="stat-card flex-1 min-w-0">
+                <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
+                <div className="space-y-2">
+                  <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
+                  <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="stat-card flex-1 min-w-0">
+                <div className="stat-icon bg-blue-50">
+                  <ShieldCheck size={20} color="#3b82f6" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 font-medium">
+                    Total Admins
+                  </p>
+                  <p className="text-xl font-bold text-slate-800">
+                    {adminResponse?.admins?.length}
+                  </p>
+                </div>
+              </div>
+              <div className="stat-card flex-1 min-w-0">
+                <div className="stat-icon bg-emerald-50">
+                  <Users size={20} color="#10b981" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 font-medium">
+                    Residents
+                  </p>
+                  <p className="text-xl font-bold text-slate-800">
+                    {userResponse?.users?.length}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Tabs + Search */}

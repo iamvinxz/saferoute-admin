@@ -60,10 +60,25 @@ const Table = ({
             </thead>
             <tbody className="divide-y divide-slate-50">
               {adminsLoading ? (
-                [...Array(4)].map((_, i) => (
+                [...Array(5)].map((_, i) => (
                   <tr key={i}>
-                    <td colSpan={6} className="px-5 py-4">
-                      <div className="animate-pulse-fast h-5 w-full bg-slate-100 rounded" />
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-5 bg-slate-200 rounded" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
                     </td>
                   </tr>
                 ))
@@ -128,10 +143,25 @@ const Table = ({
             </thead>
             <tbody className="divide-y divide-slate-50">
               {userIsLoading ? (
-                [...Array(4)].map((_, i) => (
+                [...Array(5)].map((_, i) => (
                   <tr key={i}>
-                    <td colSpan={6} className="px-5 py-4">
-                      <div className="animate-pulse-fast h-5 w-full bg-slate-100 rounded animate-pulse" />
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-5 bg-slate-200 rounded" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
                     </td>
                   </tr>
                 ))
