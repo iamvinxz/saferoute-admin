@@ -40,16 +40,21 @@ const Dashboard = () => {
 
   //rtk query
   const [logout] = useLogoutMutation();
-  const { data: announcementResponse } = useGetAllAnnouncementsQuery();
-  const { data: articleResponse } = useGetAllArticlesQuery();
-  const { data: sosResponse } = useGetAllSosAlertQuery();
-  const { data: floodReportResponse } = useGetAllFloodReportQuery();
-  const { data: pinnedLocationResponse } = useGetAllPinQuery();
-  const { data: segmentsResponse } = useGetAllSegmentQuery();
-  const { data: adminUserResponse } = useGetAllAdminsQuery();
-  const { data: residentUserResponse } = useGetAllUsersQuery();
-
-  console.log(residentUserResponse);
+  const { data: announcementResponse, isLoading: announcementLoading } =
+    useGetAllAnnouncementsQuery();
+  const { data: articleResponse, isLoading: articleLoading } =
+    useGetAllArticlesQuery();
+  const { data: sosResponse, isLoading: sosLoading } = useGetAllSosAlertQuery();
+  const { data: floodReportResponse, isLoading: floodReportLoading } =
+    useGetAllFloodReportQuery();
+  const { data: pinnedLocationResponse, isLoading: pinLoading } =
+    useGetAllPinQuery();
+  const { data: segmentsResponse, isLoading: segmentLoading } =
+    useGetAllSegmentQuery();
+  const { data: adminUserResponse, isLoading: adminLoading } =
+    useGetAllAdminsQuery();
+  const { data: residentUserResponse, isLoading: residentLoading } =
+    useGetAllUsersQuery();
 
   //var
   const announcement = announcementResponse?.announcements;
@@ -60,6 +65,16 @@ const Dashboard = () => {
   const segment = segmentsResponse?.segments;
   const admins = adminUserResponse?.admins;
   const residents = residentUserResponse?.users;
+  const tableLoading = announcementLoading || articleLoading;
+  const loading =
+    announcementLoading ||
+    articleLoading ||
+    sosLoading ||
+    floodReportLoading ||
+    pinLoading ||
+    segmentLoading ||
+    adminLoading ||
+    residentLoading;
 
   const topCards = [
     {
@@ -196,18 +211,22 @@ const Dashboard = () => {
       {/* top cards - 3 columns */}
       <div className="grid grid-cols-[200px_200px_200px] overflow-auto gap-5 mb-5 md:grid-cols-3">
         {topCards.map((card) => (
-          <StatCard key={card.label} {...card} />
+          <StatCard key={card.label} {...card} isLoading={loading} />
         ))}
       </div>
 
       {/* bottom cards */}
       <div className="grid grid-cols-2 justify-center gap-4 lg:grid-cols-4">
         {bottomCards.map((card) => (
-          <StatCard key={card.label} {...card} />
+          <StatCard key={card.label} {...card} isLoading={loading} />
         ))}
       </div>
 
-      <Table announcement={announcement} article={article} />
+      <Table
+        announcement={announcement}
+        article={article}
+        isLoading={tableLoading}
+      />
     </div>
   );
 };
