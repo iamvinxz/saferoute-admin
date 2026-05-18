@@ -107,7 +107,10 @@ const SOSsignalTable = ({ search, activeTab }: SosSignalProps) => {
                       numberOfPerson: alert.numberOfPersons,
                       status: alert.status,
                       requestedDate: alert.createdAt,
-                      coordinates: alert.coords,
+                      coordinates: [
+                        alert.coords.latitude,
+                        alert.coords.longitude,
+                      ],
                     }),
                   );
                   setShowModal(true);
