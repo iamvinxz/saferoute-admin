@@ -1,4 +1,6 @@
+import { Plus } from "lucide-react";
 import { useState } from "react";
+import Modal from "@/components/dashboard/Modal";
 
 type Tab = "announcement" | "article";
 
@@ -46,34 +48,50 @@ const SkeletonRow = () => (
 
 export default function Table({ announcement, article, isLoading }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("announcement");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const activeData = activeTab === "announcement" ? announcement : article;
 
   return (
     <div className="mt-5 lg:mt-7">
       {/* Tab Header */}
-      <div className="flex items-center border-b w-fit">
-        <button
-          onClick={() => setActiveTab("announcement")}
-          className={`tab-btn text-[12px] transition-colors px-4 py-2.5 md:text-[14px] ${
-            activeTab === "announcement"
-              ? "active text-[#1A5EFD] font-semibold"
-              : "text-gray-400 hover:text-gray-600"
-          }`}
-        >
-          Announcements
-        </button>
-        <button
-          onClick={() => setActiveTab("article")}
-          className={`tab-btn text-[12px] transition-colors px-4 py-2.5 md:text-[14px] ${
-            activeTab === "article"
-              ? "active text-[#1A5EFD] font-semibold"
-              : "text-gray-400 hover:text-gray-600"
-          }`}
-        >
-          Articles
-        </button>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center border-b w-fit">
+          <button
+            onClick={() => setActiveTab("announcement")}
+            className={`tab-btn text-[12px] transition-colors px-4 py-2.5 md:text-[14px] ${
+              activeTab === "announcement"
+                ? "active text-[#1A5EFD] font-semibold"
+                : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            Announcements
+          </button>
+          <button
+            onClick={() => setActiveTab("article")}
+            className={`tab-btn text-[12px] transition-colors px-4 py-2.5 md:text-[14px] ${
+              activeTab === "article"
+                ? "active text-[#1A5EFD] font-semibold"
+                : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            Articles
+          </button>
+        </div>
+        <div className="pr-2">
+          <button
+            className="flex items-center gap-2 text-xs font-medium bg-blue-400 text-white p-3 rounded-md shadow-sm hover:cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          >
+            <Plus size={15} />
+            {activeTab === "announcement"
+              ? "Create announcement"
+              : "Create article"}
+          </button>
+        </div>
       </div>
+
+      {isOpen && <Modal activeTab={activeTab} setIsOpen={setIsOpen} />}
 
       {/* Table */}
       <div className="rounded-md max-h-90 overflow-y-auto lg:shadow-[0px_1px_4.5px_-1px_rgba(0,0,0,0.25)] lg:mt-5">
