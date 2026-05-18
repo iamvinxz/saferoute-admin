@@ -77,11 +77,11 @@ const Notification = () => {
         <div className="mr-20 pt-4 max-sm:w-95 max-md:w-123 max-h-185 overflow-auto">
           {activeTab === "floodReport" ? (
             <div>
-              <FloodReportTable search={search} />
+              <FloodReportTable search={search} activeTab={activeTab} />
             </div>
           ) : (
             <div>
-              <SOSsignal search={search} />
+              <SOSsignal search={search} activeTab={activeTab} />
             </div>
           )}
         </div>
