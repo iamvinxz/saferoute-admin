@@ -88,27 +88,29 @@ const ToolBox = () => {
       ))}
 
       {/* Main toggle button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-15 h-15 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center hover:bg-blue-50 transition-colors"
-      >
-        <div
-          className={cn(
-            "transition-all duration-200",
-            isOpen ? "rotate-90 opacity-0 absolute" : "rotate-0 opacity-100",
-          )}
+      <div className="hidden lg:block">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-15 h-15 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center hover:bg-blue-50 transition-colors"
         >
-          <LayoutGrid size={28} />
-        </div>
-        <div
-          className={cn(
-            "transition-all duration-200",
-            isOpen ? "rotate-0 opacity-100" : "-rotate-90 opacity-0 absolute",
-          )}
-        >
-          <X size={20} />
-        </div>
-      </button>
+          <div
+            className={cn(
+              "transition-all duration-200",
+              isOpen ? "rotate-90 opacity-0 absolute" : "rotate-0 opacity-100",
+            )}
+          >
+            <LayoutGrid size={28} />
+          </div>
+          <div
+            className={cn(
+              "transition-all duration-200",
+              isOpen ? "rotate-0 opacity-100" : "-rotate-90 opacity-0 absolute",
+            )}
+          >
+            <X size={20} />
+          </div>
+        </button>
+      </div>
     </div>
   );
 };
