@@ -1,21 +1,19 @@
 "use client";
 import "leaflet/dist/leaflet.css";
-import { CircleMarker, MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import { maxBounds } from "../Map";
-import { useSelector } from "react-redux";
-import { RootState } from "@/state/store";
 import FocusTrigger from "../map/FocusTrigger";
 import PulsingMarker from "./PingMarker";
 
-const defaultCenter: [number, number] = [14.673413900535, 120.9685888671883];
+type MapOVerviewProps = {
+  coordinates: [number, number] | undefined;
+};
 
-const MapOverview = () => {
-  const report = useSelector((state: RootState) => state.report);
-  const center = report.coordinates ?? defaultCenter;
+const MapOverview = ({ coordinates }: MapOVerviewProps) => {
   return (
     <div className="w-full h-46">
       <MapContainer
-        center={center}
+        center={coordinates}
         zoom={17}
         zoomControl={false}
         maxZoom={19}
@@ -31,17 +29,15 @@ const MapOverview = () => {
           minZoom={15}
         />
 
-        {report.coordinates && (
+        {coordinates && (
           <>
-            <PulsingMarker center={center} />
+            <PulsingMarker center={coordinates} />
           </>
         )}
 
         <FocusTrigger
           target={
-            report.coordinates
-              ? { lat: report.coordinates[0], lng: report.coordinates[1] }
-              : null
+            coordinates ? { lat: coordinates[0], lng: coordinates[1] } : null
           }
         />
       </MapContainer>
