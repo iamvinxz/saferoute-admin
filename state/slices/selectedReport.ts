@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type Report = {
-  index: number;
   id: string;
   imageUrl?: string;
   streetName: string;
@@ -12,7 +11,6 @@ type Report = {
 };
 
 const initialState: Report = {
-  index: -1,
   id: "",
   imageUrl: "",
   streetName: "",
