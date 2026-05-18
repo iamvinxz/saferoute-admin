@@ -17,20 +17,7 @@ const ZoomTracker = () => {
   });
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        bottom: "20px",
-        left: "20px",
-        zIndex: 1000,
-        background: "white",
-        padding: "6px 12px",
-        borderRadius: "8px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-        fontSize: "14px",
-        fontWeight: "bold",
-      }}
-    >
+    <div className="hidden lg:block absolute bottom-5 left-5 lg:z-[999] bg-white px-3 py-1.5 rounded-lg shadow-md text-sm font-bold">
       Zoom: {zoomPercentage}%
     </div>
   );
