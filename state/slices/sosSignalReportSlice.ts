@@ -7,7 +7,7 @@ type SosSignalReport = {
   numberOfPerson: number;
   status: string;
   requestedDate: string;
-  coordinates: { latitude: number; longitude: number } | undefined;
+  coordinates: [number, number] | undefined;
 };
 
 const initialState: SosSignalReport = {
