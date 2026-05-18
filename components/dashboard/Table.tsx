@@ -225,7 +225,7 @@ export default function Table({ announcement, article, isLoading }: Props) {
                       href={item.sourceLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline truncate block"
+                      className="text-blue-500 hover:underline truncate block pr-5"
                     >
                       {item.sourceLink}
                     </a>
