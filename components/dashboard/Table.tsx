@@ -19,9 +19,32 @@ interface Article {
 interface Props {
   announcement?: Announcement[];
   article?: Article[];
+  isLoading?: boolean;
 }
 
-export default function Table({ announcement, article }: Props) {
+const SkeletonRow = () => (
+  <div className="py-4 px-3 border-b border-gray-200 animate-pulse">
+    {/* Mobile skeleton */}
+    <div className="flex items-start justify-between lg:hidden">
+      <div className="flex-1 pr-4 space-y-2">
+        <div className="h-3 bg-gray-200 rounded-full w-2/3" />
+        <div className="h-2.5 bg-gray-200 rounded-full w-full" />
+        <div className="h-2 bg-gray-200 rounded-full w-1/3" />
+      </div>
+      <div className="h-2 bg-gray-200 rounded-full w-16" />
+    </div>
+    {/* Desktop skeleton */}
+    <div className="hidden lg:grid grid-cols-[80px_200px_1fr_180px_180px] px-2 gap-4">
+      <div className="h-3 bg-gray-200 rounded-full" />
+      <div className="h-3 bg-gray-200 rounded-full" />
+      <div className="h-3 bg-gray-200 rounded-full" />
+      <div className="h-3 bg-gray-200 rounded-full" />
+      <div className="h-3 bg-gray-200 rounded-full" />
+    </div>
+  </div>
+);
+
+export default function Table({ announcement, article, isLoading }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("announcement");
 
   const activeData = activeTab === "announcement" ? announcement : article;
@@ -73,13 +96,17 @@ export default function Table({ announcement, article }: Props) {
           </div>
         )}
 
-        {/* Rows */}
-        {!activeData || activeData.length === 0 ? (
+        {/* Skeleton */}
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
+        ) : /* Empty state */
+        !activeData || activeData.length === 0 ? (
           <div className="text-center text-gray-400 py-10">
             No {activeTab === "announcement" ? "announcements" : "articles"}{" "}
             found.
           </div>
-        ) : activeTab === "announcement" ? (
+        ) : /* Announcement rows */
+        activeTab === "announcement" ? (
           (activeData as Announcement[]).map((item, index) => (
             <div
               key={index}
@@ -130,6 +157,7 @@ export default function Table({ announcement, article }: Props) {
             </div>
           ))
         ) : (
+          /* Article rows */
           (activeData as Article[]).map((item, index) => (
             <div
               key={index}
