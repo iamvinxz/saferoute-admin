@@ -57,7 +57,7 @@ const ViewMarkedLocations = ({ onFocus }: Props) => {
   };
 
   return (
-    <div className="bg-white shadow-md absolute top-17 right-5 z-400 w-60 rounded-md min-w-100 max-w-120 h-130 px-3 pb-3 overflow-y-auto">
+    <div className="bg-white shadow-md absolute top-17 right-5 z-400 rounded-md w-90 max-w-120 h-130 px-3 pb-3 overflow-y-auto lg:min-w-100">
       <div className="text-sm sticky top-0 bg-white pt-3 pl-2 pb-2 select-none flex flex-col gap-2">
         <span className="text-[#464646] font-semibold text-[15px]">
           Flooded Street
