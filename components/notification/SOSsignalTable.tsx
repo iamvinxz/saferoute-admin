@@ -1,11 +1,19 @@
 import { useGetAllSosAlertQuery } from "@/Redux/Services/sosService";
 import { getDepthColors, getStatusColors } from "@/lib/colorHelper";
+import { useState } from "react";
+import ReportDetails from "./ReportDetails";
+import { useDispatch } from "react-redux";
+import { setSosReport } from "@/state/slices/sosSignalReportSlice";
 
 interface SosSignalProps {
+  activeTab: string;
   search: string;
 }
 
-const SOSsignalTable = ({ search }: SosSignalProps) => {
+const SOSsignalTable = ({ search, activeTab }: SosSignalProps) => {
+  const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState<boolean>(false);
+
   //rtk
   const { data: sosAlertsResponse, isLoading: alertsLoading } =
     useGetAllSosAlertQuery();
@@ -18,10 +26,11 @@ const SOSsignalTable = ({ search }: SosSignalProps) => {
       alert.status.toLowerCase().includes(search.toLowerCase()),
   );
 
-  console.log("here", sosAlertsResponse);
-
   return (
     <div className="bg-white border border-slate-100 rounded-md shadow-sm">
+      {showModal && (
+        <ReportDetails activeTab={activeTab} setShowModal={setShowModal} />
+      )}
       <table className="w-full text-sm">
         <thead>
           <tr className="bg-slate-50 border-b border-slate-100">
@@ -86,7 +95,24 @@ const SOSsignalTable = ({ search }: SosSignalProps) => {
             </tr>
           ) : (
             filteredSosSignals?.map((alert, index) => (
-              <tr key={alert._id} className="hover:bg-[#f1f5f9]">
+              <tr
+                key={alert._id}
+                className="hover:bg-[#f1f5f9]"
+                onClick={() => {
+                  dispatch(
+                    setSosReport({
+                      phone: alert._id,
+                      streetName: alert.streetName,
+                      condition: alert.condition,
+                      numberOfPerson: alert.numberOfPersons,
+                      status: alert.status,
+                      requestedDate: alert.createdAt,
+                      coordinates: alert.coords,
+                    }),
+                  );
+                  setShowModal(true);
+                }}
+              >
                 <td className="px-5 py-4 text-[#585858]">{index + 1}</td>
                 <td className="px-5 py-4 text-[#585858]">{alert._id}</td>
                 <td className="px-5 py-4 text-[#585858]">{alert.streetName}</td>
