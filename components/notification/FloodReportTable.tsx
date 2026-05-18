@@ -8,10 +8,11 @@ import ReportDetails from "./ReportDetails";
 import { createPortal } from "react-dom";
 
 interface FloodReportTableProps {
+  activeTab: string;
   search: string;
 }
 
-const FloodReportTable = ({ search }: FloodReportTableProps) => {
+const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState<boolean>(false);
   //rtk query
@@ -30,7 +31,7 @@ const FloodReportTable = ({ search }: FloodReportTableProps) => {
     <div className="bg-white border border-slate-100 rounded-md shadow-sm">
       {showModal &&
         createPortal(
-          <ReportDetails setShowModal={setShowModal} />,
+          <ReportDetails setShowModal={setShowModal} activeTab={activeTab} />,
           document.body,
         )}
       <table className="w-full text-sm">
@@ -103,7 +104,6 @@ const FloodReportTable = ({ search }: FloodReportTableProps) => {
                 onClick={() => {
                   dispatch(
                     setReport({
-                      index: index,
                       id: report._id,
                       imageUrl: report.photoUrl,
                       streetName: report.streetName,
