@@ -60,7 +60,9 @@ const ControllerTab = ({ onFocus, onToggle }: Props) => {
             className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-md hover:bg-blue-50 hover:shadow-lg transition-all cursor-pointer"
           >
             <span dangerouslySetInnerHTML={{ __html: ctrl.icon }} />
-            <span className="text-sm font-medium">{ctrl.name}</span>
+            <span className="hidden lg:inline text-sm font-medium">
+              {ctrl.name}
+            </span>
           </button>
         ))}
         {/**sos indictor */}
@@ -84,7 +86,9 @@ const ControllerTab = ({ onFocus, onToggle }: Props) => {
         onClick={() => onToggle()}
       >
         <span dangerouslySetInnerHTML={{ __html: floodedStreet }} />
-        <span className="text-sm font-medium">View Marked Locations</span>
+        <span className="hidden lg:inline text-sm font-medium">
+          View Marked Locations
+        </span>
       </button>
     </div>
   );
