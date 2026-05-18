@@ -14,7 +14,7 @@ const Map = dynamic(
 
 export default function MapsPage() {
   return (
-    <div className="h-screen w-full">
+    <div className="h-[100dvh] w-full overflow-hidden">
       <Map />
     </div>
   );
