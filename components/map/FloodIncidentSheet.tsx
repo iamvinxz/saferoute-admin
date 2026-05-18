@@ -23,6 +23,7 @@ import {
 } from "@/Redux/Services/markService";
 import { toast } from "sonner";
 import { toggleIsPinMode, toggleIsRouting } from "@/state/slices/modeSlice";
+import { clearReport } from "@/state/slices/selectedReport";
 
 const FloodReportSheet = () => {
   const dispatch = useDispatch();
@@ -53,7 +54,11 @@ const FloodReportSheet = () => {
   }, [visible]);
 
   const handleRemovePin = (index: number) => dispatch(removePin(index));
-  const handleRemoveSegment = (index: number) => dispatch(removeSegment(index));
+  const handleRemoveSegment = (index: number) => {
+    dispatch(removeSegment(index));
+    dispatch(clearSegment());
+    dispatch(clearReport());
+  };
 
   const handleAnimationEnd = () => {
     if (!isRoutingMode && !isPinMode) setVisible(false);
@@ -134,6 +139,7 @@ const FloodReportSheet = () => {
 
         dispatch(toggleIsRouting());
         dispatch(clearSegment());
+        dispatch(clearReport());
       }
     } catch (error) {
       console.error(error);
