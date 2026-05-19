@@ -101,14 +101,14 @@ const UsersPage = () => {
         {adminsLoading || usersLoading ? (
           <>
             {/**skeleton */}
-            <div className="stat-card flex-1 min-w-0">
+            <div className="stat-card flex-1 min-w-0 px-2 py-2 lg:px-5 lg:py-5">
               <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
               <div className="space-y-2">
                 <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
                 <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
               </div>
             </div>
-            <div className="stat-card flex-1 min-w-0">
+            <div className="stat-card flex-1 min-w-0 px-2 py-2">
               <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
               <div className="space-y-2">
                 <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
