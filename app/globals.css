@@ -180,7 +180,6 @@ body {
     background: white;
     border: 1px solid #e8edf3;
     border-radius: 14px;
-    padding: 18px 22px;
     display: flex;
     align-items: center;
     gap: 14px;
@@ -188,8 +187,6 @@ body {
   }
 
   .stat-icon {
-    width: 44px;
-    height: 44px;
     border-radius: 12px;
     display: flex;
     align-items: center;
