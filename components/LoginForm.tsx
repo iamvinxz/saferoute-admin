@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const LoginForm = () => {
   return (
-    <div className="grid md:grid-cols-2 grid-cols-1 bg-white rounded-2xl w-full shadow-2xl overflow-hidden h-140">
+    <div className="grid md:grid-cols-2 grid-cols-1 bg-white rounded-2xl w-full shadow-2xl overflow-hidden">
       {/* Left panel — desktop only */}
       <div className="hidden md:flex bg-[#0f1e4a] flex-col items-center justify-center py-14 px-8 gap-6 relative overflow-hidden h-full">
         <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full border border-white/5" />
@@ -48,7 +48,7 @@ const LoginForm = () => {
       </div>
 
       {/* Right: form — clips overflow so errors don't expand the card */}
-      <div className="h-full  overflow-hidden">
+      <div className="h-full overflow-hidden">
         <FormsField />
       </div>
     </div>
