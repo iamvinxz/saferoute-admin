@@ -153,7 +153,7 @@ const UsersPage = () => {
       </div>
 
       {/* Tabs + Search */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
         <div className="flex justify-between">
           <div className="flex gap-1 border-b border-slate-200 w-fit">
             {(["admins", "users"] as const).map((tab) => (
@@ -173,6 +173,7 @@ const UsersPage = () => {
               </button>
             ))}
           </div>
+
           <div className="lg:hidden">
             {activeTab === "admins" && (
               <button
@@ -185,8 +186,7 @@ const UsersPage = () => {
             )}
           </div>
         </div>
-
-        <div className="w-full relative">
+        <div className="lg:w-70 relative">
           <Search size={15} className="absolute left-3 top-2" color="#94a3b8" />
           <input
             type="text"
