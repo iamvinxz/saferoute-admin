@@ -1,5 +1,6 @@
 "use client";
 import SideBar from "@/components/SideBar";
+import { useWebSocket } from "@/lib/useWebSocket";
 import { useGetMeQuery } from "@/Redux/Services/authService";
 import { clearUser, setUser } from "@/state/slices/authSlice";
 import { useRouter } from "next/navigation";
@@ -11,7 +12,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { data, isSuccess, isError } = useGetMeQuery();
 
-  console.log("data", data);
+  useWebSocket();
 
   useEffect(() => {
     if (isSuccess && data?.user) {
