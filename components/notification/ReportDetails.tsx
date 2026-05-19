@@ -71,7 +71,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
   };
 
   return (
-    <div className="modal-overlay fixed inset-0 bg-black/30 flex items-center justify-center max-lg:px-9">
+    <div className="modal-overlay fixed inset-0 bg-black/30 flex items-center justify-center max-lg:px-5">
       <div className="bg-white rounded-xl p-4 w-full max-w-lg">
         {activeTab === "floodReport" ? (
           <div>
