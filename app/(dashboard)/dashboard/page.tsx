@@ -15,7 +15,7 @@ import {
   Menu,
 } from "lucide-react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import SideBar from "@/components/SideBar";
 import { useGetAllAnnouncementsQuery } from "@/Redux/Services/notificationService";
@@ -31,12 +31,14 @@ import {
   useGetAllAdminsQuery,
   useGetAllUsersQuery,
 } from "@/Redux/Services/userService";
+import { RootState } from "@/state/store";
 
 const Dashboard = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [isDown, setIsDown] = useState<boolean>(false);
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
+  const user = useSelector((state: RootState) => state.auth.user);
 
   //rtk query
   const [logout] = useLogoutMutation();
@@ -154,7 +156,7 @@ const Dashboard = () => {
       {/* header */}
       <div className="flex items-center justify-between mb-4 md:mb-8">
         <div>
-          <p className="text-[12px] text-[#303030]">Welcome, John Doe!</p>
+          <p className="text-[12px] text-[#303030]">Welcome, {user?.name}!</p>
           <p className="font-semibold text-[#1A5EFD] md:text-lg">Dashboard</p>
         </div>
         <div className="hidden lg:flex gap-3 pr-10">
@@ -164,9 +166,9 @@ const Dashboard = () => {
             onClick={() => setIsDown((prev) => !prev)}
           >
             <div>
-              <p className="text-sm">John Doe</p>
-              <span className="text-[12px] text-[#848484] relative -top-2">
-                Admin
+              <p className="text-sm">{user?.name}</p>
+              <span className="text-[12px] text-[#848484] relative -top-2 capitalize">
+                {user?.role}
               </span>
             </div>
             <ChevronDown size={15} />
