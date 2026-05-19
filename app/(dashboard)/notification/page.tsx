@@ -1,14 +1,9 @@
 "use client";
-import FloodReportCard from "@/components/notification/FloodReportTable";
-import SOSsignal from "@/components/notification/SOSsignalTable";
 import { useState } from "react";
-import ReportDetails from "../../../components/notification/ReportDetails";
-import { RootState } from "@/state/store";
-import { useSelector } from "react-redux";
-import NoContentDisplay from "@/components/notification/NoContentDisplay";
 import FloodReportTable from "@/components/notification/FloodReportTable";
 import { Menu, Search } from "lucide-react";
 import SideBar from "@/components/SideBar";
+import SOSsignalTable from "@/components/notification/SOSsignalTable";
 
 type ActiveTab = "floodReport" | "sos";
 
@@ -16,10 +11,9 @@ const Notification = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("floodReport");
   const [search, setSearch] = useState<string>("");
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
-  const selectedReport = useSelector((state: RootState) => state.report);
 
   return (
-    <div className="w-full bg-[#f8fafc] h-full px-[9vw] py-[5vh]">
+    <div className="w-full bg-[#f8fafc] min-h-full px-[9vw] py-[5vh]">
       {/**header */}
       <div className="flex justify-between items-center">
         <div>
@@ -89,11 +83,11 @@ const Notification = () => {
 
         {/* Content Box */}
 
-        <div className="pt-4 max-h-185 overflow-auto">
+        <div className="pt-4 max-h-185 overflow-y-auto">
           {activeTab === "floodReport" ? (
             <FloodReportTable search={search} activeTab={activeTab} />
           ) : (
-            <SOSsignal search={search} activeTab={activeTab} />
+            <SOSsignalTable search={search} activeTab={activeTab} />
           )}
         </div>
       </div>
