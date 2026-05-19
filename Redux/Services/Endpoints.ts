@@ -16,3 +16,4 @@ export const GET_ALL_ADMINS = "/api/user/all/admin";
 export const GET_ALL_USERS = "/api/user/all";
 export const GET_ALL_ANNOUNCEMENTS = "/api/notifications/all/announcement";
 export const GET_ALL_ARTICLES = "/api/article/all";
+export const GET_ME = "/api/auth/me";
