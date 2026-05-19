@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createPortal } from "react-dom";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import { useGetGeoJsonQuery } from "@/Redux/Services/mapService";
+import { useEnableSosSignalMutation } from "@/Redux/Services/sosService";
 import InvalidateSize from "@/components/map/InvalidateSize";
 import LandMarksLayer from "@/components/map/LandMarksLayer";
 import ZoomTracker from "@/components/map/ZoomTracker";
@@ -68,6 +69,7 @@ export default function Map() {
 
   //rtk query
   const { data: geoData } = useGetGeoJsonQuery();
+  const [enableSOS] = useEnableSosSignalMutation();
 
   //prevents penetrations of click on panels
   useEffect(() => {
@@ -206,9 +208,11 @@ export default function Map() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     dispatch(triggerSOSsignal());
                     dispatch(triggerConfirmation());
+                    const res = await enableSOS().unwrap();
+                    console.log("sos here", res);
                   }}
                   className="flex-1 py-2 rounded-lg bg-red-600 text-sm text-white font-medium hover:bg-red-700"
                 >
@@ -254,9 +258,11 @@ export default function Map() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     dispatch(triggerSOSsignal());
                     dispatch(triggerConfirmation());
+                    const res = await enableSOS().unwrap();
+                    console.log("sos here", res);
                   }}
                   className="flex-1 py-2 rounded-lg bg-red-600 text-sm text-white font-medium hover:bg-red-700"
                 >
