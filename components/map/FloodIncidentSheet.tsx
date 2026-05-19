@@ -150,7 +150,7 @@ const FloodReportSheet = () => {
     <div
       ref={divRef}
       onAnimationEnd={handleAnimationEnd}
-      className={`absolute bottom-0 right-0 z-1000 flex h-full w-1/4 flex-col gap-5 border-r border-gray-200 bg-white p-6 ${
+      className={`max-lg:hidden absolute bottom-0 right-0 z-1000 flex h-full w-1/4 flex-col gap-5 border-r border-gray-200 bg-white p-6 ${
         isRoutingMode || isPinMode ? "drawer-slide-in" : "drawer-slide-out"
       }`}
     >
