@@ -191,7 +191,7 @@ export default function Map() {
                   </svg>
                 </div>
                 <h2 className="text-base font-semibold text-gray-900">
-                  Send SOS Signal?
+                  Enable SOS Signal?
                 </h2>
                 <p className="text-sm text-gray-500">
                   This will alert nearby responders of your emergency. Only use
@@ -212,7 +212,7 @@ export default function Map() {
                   }}
                   className="flex-1 py-2 rounded-lg bg-red-600 text-sm text-white font-medium hover:bg-red-700"
                 >
-                  Send SOS
+                  Enable
                 </button>
               </div>
             </div>
