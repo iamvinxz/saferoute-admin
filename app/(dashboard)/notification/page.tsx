@@ -7,31 +7,46 @@ import { RootState } from "@/state/store";
 import { useSelector } from "react-redux";
 import NoContentDisplay from "@/components/notification/NoContentDisplay";
 import FloodReportTable from "@/components/notification/FloodReportTable";
-import { Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
+import SideBar from "@/components/SideBar";
 
 type ActiveTab = "floodReport" | "sos";
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("floodReport");
   const [search, setSearch] = useState<string>("");
+  const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const selectedReport = useSelector((state: RootState) => state.report);
 
   return (
-    <div className="w-full bg-[#f8fafc] h-full lg:px-[9vw] lg:py-[5vh]">
+    <div className="w-full bg-[#f8fafc] h-full px-[9vw] py-[5vh]">
       {/**header */}
-      <div className="flex flex-col max-sm:pl-19 justify-center max-sm:ml-0 max-sm:pt-5 ">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-xl font-semibold text-[#1A5EFD]">
+          <h1 className="font-semibold text-[#1A5EFD] md:text-lg">
             Notifications
           </h1>
-          <p className="text-sm max-sm:text-xs text-[#848484]">
-            Manage and create accounts.
+          <p className="text-[#848484] text-[10px] lg:text-sm">
+            Check for updated flood reports and sos signals.
           </p>
         </div>
+        <div className="lg:hidden">
+          <button
+            className="text-[#303030]"
+            onClick={() => setOpenSideBar(true)}
+          >
+            <Menu />
+          </button>
+        </div>
       </div>
-      <div className="max-sm:pl-3 mt-5">
+
+      <div className="lg:hidden">
+        <SideBar open={openSideBar} setOpen={setOpenSideBar} />
+      </div>
+
+      <div className="mt-5">
         {/**header buttons */}
-        <div className="flex justify-between max-sm:w-30 gap-5">
+        <div className="lg:flex justify-between gap-5">
           <div className="border-b w-fit">
             <button
               onClick={() => setActiveTab("floodReport")}
@@ -56,7 +71,7 @@ const Notification = () => {
           </div>
 
           {/**search bar */}
-          <div className="w-full sm:w-60 relative">
+          <div className="max-lg:mt-5 relative lg:w-70">
             <Search
               size={15}
               className="absolute left-3 top-2"
