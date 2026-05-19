@@ -168,7 +168,25 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
 
       {/**mobile */}
       <div className="lg:hidden divide-y divide-slate-100">
-        {filteredFloodReports?.length === 0 ? (
+        {/**skeleton */}
+        {loadingFloodReports ? (
+          [...Array(5)].map((_, index) => (
+            <div key={index} className="flex items-start gap-3 py-3">
+              <div className="shrink-0 w-14 h-14 bg-slate-200 rounded-md animate-pulse-fast" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-3 w-28 bg-slate-200 rounded animate-pulse-fast" />
+                    <div className="w-2 h-2 rounded-full bg-slate-200 animate-pulse-fast" />
+                  </div>
+                  <div className="h-4 w-16 bg-slate-200 rounded-full animate-pulse-fast" />
+                </div>
+                <div className="h-2.5 w-40 bg-slate-200 rounded animate-pulse-fast mb-2" />
+                <div className="h-2 w-20 bg-slate-200 rounded animate-pulse-fast" />
+              </div>
+            </div>
+          ))
+        ) : filteredFloodReports?.length === 0 ? (
           <p className="px-4 py-8 text-center text-sm text-[#848484]">
             No reports found.
           </p>
