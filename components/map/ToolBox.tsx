@@ -58,7 +58,7 @@ const ToolBox = () => {
     },
   ];
   return (
-    <div className="absolute bottom-10 right-10 z-1000 flex flex-col items-end gap-3">
+    <div className="max-lg:hidden absolute bottom-10 right-10 z-1000 flex flex-col items-end gap-3">
       {/* Tool items — pop up when open */}
       {defaultTools.map((tool, index) => (
         <div
