@@ -1,5 +1,5 @@
 import { api } from "./APIService";
-import { LOGIN, LOGOUT } from "./Endpoints";
+import { GET_ME, LOGIN, LOGOUT } from "./Endpoints";
 
 export const authApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -21,6 +21,12 @@ export const authApi = api.injectEndpoints({
         credentials: "include",
       }),
     }),
+    getMe: build.query<GetMeResponse, void>({
+      query: () => ({
+        url: GET_ME,
+        credentials: "include",
+      }),
+    }),
   }),
   overrideExisting: true,
 });
@@ -39,4 +45,12 @@ type AuthControllerSignInRequest = {
   email: string;
   password: string;
 };
-export const { useLoginMutation, useLogoutMutation } = authApi;
+
+type GetMeResponse = {
+  user: {
+    id: string;
+    name: string;
+    role: string;
+  };
+};
+export const { useLoginMutation, useLogoutMutation, useGetMeQuery } = authApi;
