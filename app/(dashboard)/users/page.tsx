@@ -5,7 +5,16 @@ import {
   useGetAllAdminsQuery,
   useGetAllUsersQuery,
 } from "@/Redux/Services/userService";
-import { Plus, X, Users, ShieldCheck, Search, Eye, EyeOff } from "lucide-react";
+import {
+  Plus,
+  X,
+  Users,
+  ShieldCheck,
+  Search,
+  Eye,
+  EyeOff,
+  Menu,
+} from "lucide-react";
 import { createPortal } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
@@ -19,6 +28,7 @@ import {
 } from "@/state/slices/accountSlice";
 import { Input } from "@/components/ui/input";
 import Table from "@/components/user/Table";
+import SideBar from "@/components/SideBar";
 
 const UsersPage = () => {
   const dispatch = useDispatch();
@@ -30,6 +40,7 @@ const UsersPage = () => {
   const [activeTab, setActiveTab] = useState<"admins" | "users">("admins");
   const [search, setSearch] = useState("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [openSideBar, setOpenSideBar] = useState<boolean>(false);
 
   //rtk
   const [createAdmin, { isLoading }] = useCreateAdminMutation();
@@ -54,83 +65,96 @@ const UsersPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] w-full">
-      <div className="users-page w-full mx-auto sm:px-6 max-sm:pt-4 lg:px-[9vw] lg:py-[5vh] sm:py-10">
-        {/* Header — matches original style */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-xl font-semibold max-sm:ml-12 text-[#1A5EFD]">
-              Users
-            </h1>
-            <p className="text-sm max-sm:text-xs max-sm:pl-12 text-[#848484]">
-              Manage and create accounts.
-            </p>
-          </div>
+    <div className="min-h-full w-full bg-[#f8fafc] px-[9vw] py-[5vh]">
+      {/* Header — matches original style */}
+      <div className="flex items-center justify-between mb-4 lg:mb-8">
+        <div>
+          <h1 className="font-semibold text-[#1A5EFD] md:text-lg">Users</h1>
+          <p className="text-[#848484] text-[10px] lg:text-sm">
+            Manage and create accounts.
+          </p>
+        </div>
+        <div className="hidden lg:block">
           {activeTab === "admins" && (
             <button
               onClick={() => setIsOpen(true)}
-              className="flex items-center  bg-blue-400 hover:bg-blue-500 active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
+              className="flex items-center  bg-blue-400 hover:bg-blue-500 text-white text-sm font-medium transition-all rounded-md px-1 py-1 lg:px-4 lg:py-2 lg:rounded-lg "
             >
               <Plus size={16} strokeWidth={2.5} />
-              <span>Add Admin</span>
+              <span className="hidden lg:inline">Add Admin</span>
             </button>
           )}
         </div>
-
-        {/* Stat Cards */}
-        <div className="flex gap-4 mb-8">
-          {adminsLoading || usersLoading ? (
-            <>
-              {/**skeleton */}
-              <div className="stat-card flex-1 min-w-0">
-                <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
-                <div className="space-y-2">
-                  <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
-                  <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
-                </div>
-              </div>
-              <div className="stat-card flex-1 min-w-0">
-                <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
-                <div className="space-y-2">
-                  <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
-                  <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="stat-card flex-1 min-w-0">
-                <div className="stat-icon bg-blue-50">
-                  <ShieldCheck size={20} color="#3b82f6" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 font-medium">
-                    Total Admins
-                  </p>
-                  <p className="text-xl font-bold text-slate-800">
-                    {adminResponse?.admins?.length}
-                  </p>
-                </div>
-              </div>
-              <div className="stat-card flex-1 min-w-0">
-                <div className="stat-icon bg-emerald-50">
-                  <Users size={20} color="#10b981" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 font-medium">
-                    Residents
-                  </p>
-                  <p className="text-xl font-bold text-slate-800">
-                    {userResponse?.users?.length}
-                  </p>
-                </div>
-              </div>
-            </>
-          )}
+        {/**menu button for tab and mobile */}
+        <div className="lg:hidden">
+          <button
+            className="text-[#303030]"
+            onClick={() => setOpenSideBar(true)}
+          >
+            <Menu />
+          </button>
         </div>
+      </div>
 
-        {/* Tabs + Search */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+      {/* Stat Cards */}
+      <div className="flex gap-4 mb-4 lg:mb-8">
+        {adminsLoading || usersLoading ? (
+          <>
+            {/**skeleton */}
+            <div className="stat-card flex-1 min-w-0">
+              <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
+              <div className="space-y-2">
+                <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
+                <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
+              </div>
+            </div>
+            <div className="stat-card flex-1 min-w-0">
+              <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
+              <div className="space-y-2">
+                <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
+                <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="stat-card flex-1 px-3 py-3 lg:px-5 lg:py-5">
+              <div className="stat-icon bg-blue-50 h-10 w-10">
+                <ShieldCheck size={20} color="#3b82f6" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 font-medium max-lg:text-[10px]">
+                  Total Admins
+                </p>
+                <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
+                  {adminResponse?.admins?.length}
+                </p>
+              </div>
+            </div>
+            <div className="stat-card flex-1 px-3 py-3 lg:px-5 lgpy-5">
+              <div className="stat-icon bg-emerald-50 h-10 w-10">
+                <Users size={20} color="#10b981" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 font-medium max-lg:text-[10px]">
+                  Residents
+                </p>
+                <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
+                  {userResponse?.users?.length}
+                </p>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="lg:hidden">
+        <SideBar open={openSideBar} setOpen={setOpenSideBar} />
+      </div>
+
+      {/* Tabs + Search */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+        <div className="flex justify-between">
           <div className="flex gap-1 border-b border-slate-200 w-fit">
             {(["admins", "users"] as const).map((tab) => (
               <button
@@ -139,7 +163,7 @@ const UsersPage = () => {
                   setActiveTab(tab);
                   setSearch("");
                 }}
-                className={`tab-btn px-4 py-2.5 text-sm font-medium transition-colors ${
+                className={`tab-btn px-4 py-2.5 text-sm font-medium transition-colors max-lg:text-[11px] ${
                   activeTab === tab
                     ? "active text-blue-500 font-semibold"
                     : "text-slate-400 hover:text-slate-600"
@@ -149,31 +173,38 @@ const UsersPage = () => {
               </button>
             ))}
           </div>
-
-          <div className="w-full sm:w-60 relative">
-            <Search
-              size={15}
-              className="absolute left-3 top-2"
-              color="#94a3b8"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={`Search ${activeTab === "admins" ? "admins" : "residents"}`}
-              className="w-full border border-[#e2e9f0] outline-none rounded-md pl-9.5 pr-2 py-1 text-[0.87rem] bg-[#fafbfc] text-[#303030]"
-            />
+          <div className="lg:hidden">
+            {activeTab === "admins" && (
+              <button
+                onClick={() => setIsOpen(true)}
+                className="flex items-center  bg-blue-400 hover:bg-blue-500 text-white text-sm font-medium transition-all rounded-md px-1 py-1 lg:px-4 lg:py-2 lg:rounded-lg "
+              >
+                <Plus size={16} strokeWidth={2.5} />
+                <span className="hidden lg:inline">Add Admin</span>
+              </button>
+            )}
           </div>
         </div>
-        <Table
-          activeTab={activeTab}
-          admins={adminResponse?.admins}
-          users={userResponse?.users}
-          adminsLoading={adminsLoading}
-          userIsLoading={usersLoading}
-          search={search}
-        />
+
+        <div className="w-full relative">
+          <Search size={15} className="absolute left-3 top-2" color="#94a3b8" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={`Search ${activeTab === "admins" ? "admins" : "residents"}`}
+            className="w-full border border-[#e2e9f0] outline-none rounded-md pl-9.5 pr-2 py-1 text-[0.87rem] bg-[#fafbfc] text-[#303030]"
+          />
+        </div>
       </div>
+      <Table
+        activeTab={activeTab}
+        admins={adminResponse?.admins}
+        users={userResponse?.users}
+        adminsLoading={adminsLoading}
+        userIsLoading={usersLoading}
+        search={search}
+      />
 
       {/* Modal */}
       {isOpen &&
