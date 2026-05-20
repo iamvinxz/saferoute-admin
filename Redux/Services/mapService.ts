@@ -31,6 +31,7 @@ export const mapsApi = api.injectEndpoints({
       },
     }),
   }),
+  overrideExisting: true,
 });
 
 export const { useGetGeoJsonQuery } = mapsApi;
