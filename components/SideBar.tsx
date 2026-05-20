@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "./ui/drawer";
 import SidebarContent from "./SidebarContent";
