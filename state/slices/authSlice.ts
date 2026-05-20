@@ -1,19 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
-  id: string;
+  _id: string;
   name: string;
   role: string;
+  coordinates?: [number, number] | undefined;
 }
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  watchId: number | null;
 }
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  watchId: null,
 };
 
 const authSlice = createSlice({
@@ -24,6 +27,14 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = true;
     },
+    setCoordinates: (state, action: PayloadAction<[number, number]>) => {
+      if (state.user) {
+        state.user.coordinates = action.payload;
+      }
+    },
+    setWatchId: (state, action: PayloadAction<number>) => {
+      state.watchId = action.payload;
+    },
     clearUser: (state) => {
       state.user = null;
       state.isAuthenticated = false;
@@ -31,5 +42,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, clearUser } = authSlice.actions;
+export const { setUser, setCoordinates, setWatchId, clearUser } =
+  authSlice.actions;
 export default authSlice.reducer;
