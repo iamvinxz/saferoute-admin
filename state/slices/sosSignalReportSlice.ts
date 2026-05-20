@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type SosSignalReport = {
+  _id: string;
   phone: string;
   streetName: string;
   condition: string;
@@ -8,9 +9,11 @@ type SosSignalReport = {
   status: string;
   requestedDate: string;
   coordinates: [number, number] | undefined;
+  rescuerId: string | null;
 };
 
 const initialState: SosSignalReport = {
+  _id: "",
   phone: "",
   streetName: "",
   condition: "",
@@ -18,6 +21,7 @@ const initialState: SosSignalReport = {
   status: "",
   requestedDate: "",
   coordinates: undefined,
+  rescuerId: null,
 };
 
 const sosReport = createSlice({
