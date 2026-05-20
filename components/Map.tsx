@@ -59,12 +59,6 @@ export default function Map() {
   const sosSignal = useSelector(
     (state: RootState) => state.sos.triggerSosSignal,
   );
-  const user = useSelector((state: RootState) => state.auth.user);
-
-  const { data: sosResponse } = useGetAllSosAlertQuery();
-
-  console.log("sos alerts:", sosResponse?.alerts);
-  console.log("user id", user?._id);
 
   const [focusTarget, setFocusTarget] = useState<{
     lat: number;
