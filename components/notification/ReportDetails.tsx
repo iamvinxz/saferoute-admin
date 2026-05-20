@@ -11,6 +11,9 @@ import dynamic from "next/dynamic";
 import { useDeleteFloodReportMutation } from "@/Redux/Services/floodReportService";
 import { getDepthColors, getStatusColors } from "@/lib/colorHelper";
 import { clearSosReport } from "@/state/slices/sosSignalReportSlice";
+import { useUpdateSosStatusMutation } from "@/Redux/Services/sosService";
+import { setCoordinates, setWatchId } from "@/state/slices/authSlice";
+import { isMobileDevice } from "@/lib/deviceHelper";
 
 interface ReportDetailsProps {
   activeTab: string;
@@ -29,8 +32,11 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
   const report = useSelector((state: RootState) => state.report);
   const segments = useSelector((state: RootState) => state.segment.segments);
   const sosReport = useSelector((state: RootState) => state.sosReport);
+  const user = useSelector((state: RootState) => state.auth.user);
 
+  //rtk
   const [deleteFloodReport] = useDeleteFloodReportMutation();
+  const [updateSosStatus] = useUpdateSosStatusMutation();
 
   const handleDeleteFloodReport = async (id: string) => {
     try {
@@ -68,6 +74,58 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
     if (!isRouting) dispatch(toggleIsRouting());
     router.push("/maps");
     dispatch(clearReport());
+  };
+
+  const handleResponse = async (id: string, status: string) => {
+    try {
+      const result = await updateSosStatus({
+        id,
+        status,
+        rescuerId: user?._id ?? "",
+      }).unwrap();
+
+      console.log("result here:", result);
+
+      // get immediate location first
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          dispatch(setCoordinates([latitude, longitude]));
+
+          // watching for continuous updates
+          let watchId: number;
+          watchId = navigator.geolocation.watchPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              dispatch(setCoordinates([latitude, longitude]));
+              dispatch(setWatchId(watchId));
+            },
+            (error) => {
+              console.error("Error watching location:", error.message);
+            },
+            {
+              enableHighAccuracy: false,
+              maximumAge: 0,
+              timeout: isMobileDevice() ? 5000 : undefined,
+            },
+          );
+
+          dispatch(setWatchId(watchId));
+          setShowModal(false);
+          router.push("/maps");
+        },
+        (error) => {
+          console.error("Error getting location:", error.message);
+        },
+        {
+          enableHighAccuracy: false,
+          maximumAge: 0,
+          timeout: isMobileDevice() ? 5000 : undefined,
+        },
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -292,7 +350,9 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
               {/* Actions */}
               <div className="grid grid-cols-2 gap-2 pt-3">
                 <button
-                  onClick={handleCreateSegment}
+                  onClick={() => {
+                    handleResponse(sosReport._id, "dispatched");
+                  }}
                   className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-[#1A5EFD] text-white text-xs transition-colors hover:cursor-pointer hover:bg-[#5183f8]  max-lg:text-[10px]"
                 >
                   <Navigation size={14} /> Response
