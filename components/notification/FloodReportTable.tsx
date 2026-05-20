@@ -2,10 +2,14 @@ import Image from "next/image";
 import { useDispatch } from "react-redux";
 import { setReport } from "@/state/slices/selectedReport";
 import { getDepthColors, getStatusColors } from "@/lib/colorHelper";
-import { useGetAllFloodReportQuery } from "@/Redux/Services/floodReportService";
+import {
+  useDeleteFloodReportMutation,
+  useGetAllFloodReportQuery,
+} from "@/Redux/Services/floodReportService";
 import { Fragment, useState } from "react";
 import ReportDetails from "./ReportDetails";
 import { createPortal } from "react-dom";
+import { Trash } from "lucide-react";
 
 interface FloodReportTableProps {
   activeTab: string;
@@ -15,9 +19,11 @@ interface FloodReportTableProps {
 const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState<boolean>(false);
+
   //rtk query
   const { data: floodReportResponse, isLoading: loadingFloodReports } =
     useGetAllFloodReportQuery();
+  const [deleteFloodReport] = useDeleteFloodReportMutation();
 
   //handlers
   const filteredFloodReports = floodReportResponse?.reports?.filter(
@@ -26,6 +32,14 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
       report.floodDepth.toLowerCase().includes(search.toLowerCase()) ||
       report.status.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const handleDeleteFloodReport = async (id: string) => {
+    try {
+      await deleteFloodReport({ id });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Fragment>
@@ -60,6 +74,9 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
               <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Created at
               </th>
+              <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -71,6 +88,9 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
                   </td>
                   <td className="px-5 py-4">
                     <div className="animate-pulse-fast h-9 w-10 bg-slate-200 rounded-md" />
+                  </td>
+                  <td className="px-5 py-4">
+                    <div className="animate-pulse-fast h-4 w-full bg-slate-200 rounded-md" />
                   </td>
                   <td className="px-5 py-4">
                     <div className="animate-pulse-fast h-4 w-full bg-slate-200 rounded-md" />
@@ -158,6 +178,14 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
                       day: "numeric",
                       year: "numeric",
                     })}
+                  </td>
+                  <td className="px-5 py-4 text-red-500">
+                    <button
+                      className="hover:cursor-pointer"
+                      onClick={() => handleDeleteFloodReport(report._id)}
+                    >
+                      <Trash size={18} />
+                    </button>
                   </td>
                 </tr>
               ))
