@@ -19,6 +19,7 @@ const notificationService = api.injectEndpoints({
       providesTags: ["Announcements"],
     }),
   }),
+  overrideExisting: true,
 });
 
 type SendAnnouncementResponse = {
@@ -59,5 +60,5 @@ type GetAllAnnouncementsResponse = {
   }[];
 };
 
-
-export const { useSendAnnouncementMutation, useGetAllAnnouncementsQuery } = notificationService;
+export const { useSendAnnouncementMutation, useGetAllAnnouncementsQuery } =
+  notificationService;
