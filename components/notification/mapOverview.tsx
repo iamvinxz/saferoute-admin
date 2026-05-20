@@ -18,7 +18,7 @@ const MapOverview = ({ coordinates }: MapOVerviewProps) => {
         zoomControl={false}
         maxZoom={19}
         minZoom={15}
-        maxBounds={maxBounds}
+        // maxBounds={maxBounds}
         maxBoundsViscosity={1.0}
         style={{ height: "100%", width: "100%" }}
       >
