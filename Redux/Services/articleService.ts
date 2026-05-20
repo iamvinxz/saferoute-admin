@@ -16,6 +16,7 @@ const articleService = api.injectEndpoints({
       providesTags: ["Articles"],
     }),
   }),
+  overrideExisting: true,
 });
 
 type CreateArticleResponse = {
