@@ -21,6 +21,7 @@ const floodReport = api.injectEndpoints({
       invalidatesTags: ["FloodReports"],
     }),
   }),
+  overrideExisting: true,
 });
 
 type FloodReportControllerGetAllResponse = {
