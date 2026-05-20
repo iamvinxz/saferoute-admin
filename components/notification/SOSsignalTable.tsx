@@ -99,6 +99,7 @@ const SOSsignalTable = ({ search, activeTab }: SosSignalProps) => {
                   onClick={() => {
                     dispatch(
                       setSosReport({
+                        _id: alert._id,
                         phone: alert._id,
                         streetName: alert.streetName,
                         condition: alert.condition,
@@ -109,6 +110,7 @@ const SOSsignalTable = ({ search, activeTab }: SosSignalProps) => {
                           alert.coords.latitude,
                           alert.coords.longitude,
                         ],
+                        rescuerId: alert.rescuerId?._id ?? null,
                       }),
                     );
                     setShowModal(true);
@@ -187,9 +189,11 @@ const SOSsignalTable = ({ search, activeTab }: SosSignalProps) => {
             const statusColor =
               alert.status.toLowerCase() === "pending"
                 ? "bg-amber-400"
-                : alert.status.toLowerCase() === "resolved"
-                  ? "bg-green-500"
-                  : "bg-red-500";
+                : alert.status.toLowerCase() === "dispatched"
+                  ? "bg-blue-500"
+                  : alert.status.toLowerCase() === "resolved"
+                    ? "bg-green-500"
+                    : "bg-red-500";
 
             return (
               <div
@@ -198,6 +202,7 @@ const SOSsignalTable = ({ search, activeTab }: SosSignalProps) => {
                 onClick={() => {
                   dispatch(
                     setSosReport({
+                      _id: alert._id,
                       phone: alert._id,
                       streetName: alert.streetName,
                       condition: alert.condition,
@@ -208,6 +213,7 @@ const SOSsignalTable = ({ search, activeTab }: SosSignalProps) => {
                         alert.coords.latitude,
                         alert.coords.longitude,
                       ],
+                      rescuerId: alert.rescuerId?._id ?? null,
                     }),
                   );
                   setShowModal(true);
