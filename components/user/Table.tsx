@@ -51,7 +51,7 @@ const Table = ({
                     Email
                   </th>
                   <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Dept.
+                    Role
                   </th>
                   <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Region
@@ -102,8 +102,8 @@ const Table = ({
                       <td className="px-5 py-4 text-[#585858]">
                         {admin.email}
                       </td>
-                      <td className="px-5 py-4 text-[#585858]">
-                        {admin.department}
+                      <td className="px-5 py-4 text-[#585858] capitalize">
+                        {admin.role}
                       </td>
                       <td className="px-5 py-4 text-[#585858]">
                         {admin.region}
