@@ -1,5 +1,5 @@
 import { api } from "./APIService";
-import { ENABLE_SOS, GET_ALL_SOS } from "./Endpoints";
+import { ENABLE_SOS, GET_ALL_SOS, UPDATE_SOS_STATUS } from "./Endpoints";
 
 const sosService = api.injectEndpoints({
   endpoints: (build) => ({
@@ -14,6 +14,15 @@ const sosService = api.injectEndpoints({
         url: ENABLE_SOS,
         method: "PATCH",
       }),
+    }),
+    updateSosStatus: build.mutation<UpdateStatusResponse, UpdateStatusRequest>({
+      query: ({ id, status, rescuerId }) => ({
+        url: UPDATE_SOS_STATUS,
+        method: "PATCH",
+        params: { id },
+        body: { status, rescuerId },
+      }),
+      invalidatesTags: ["SosAlerts"],
     }),
   }),
   overrideExisting: true,
@@ -33,6 +42,10 @@ type SosControllerGetAllResponse = {
       status: string;
       createdAt: string;
       updatedAt: string;
+      rescuerId: {
+        _id: string;
+        name: string;
+      } | null;
     },
   ];
 };
@@ -42,5 +55,18 @@ type EnableSosSignalResponse = {
   isSosEnabled: boolean;
 };
 
-export const { useGetAllSosAlertQuery, useEnableSosSignalMutation } =
-  sosService;
+type UpdateStatusResponse = {
+  status: string;
+};
+
+type UpdateStatusRequest = {
+  id: string;
+  status: string;
+  rescuerId: string;
+};
+
+export const {
+  useGetAllSosAlertQuery,
+  useEnableSosSignalMutation,
+  useUpdateSosStatusMutation,
+} = sosService;
