@@ -211,8 +211,7 @@ export default function Map() {
                   onClick={async () => {
                     dispatch(triggerSOSsignal());
                     dispatch(triggerConfirmation());
-                    const res = await enableSOS().unwrap();
-                    console.log("sos here", res);
+                    await enableSOS().unwrap();
                   }}
                   className="flex-1 py-2 rounded-lg bg-red-600 text-sm text-white font-medium hover:bg-red-700"
                 >
@@ -261,8 +260,7 @@ export default function Map() {
                   onClick={async () => {
                     dispatch(triggerSOSsignal());
                     dispatch(triggerConfirmation());
-                    const res = await enableSOS().unwrap();
-                    console.log("sos here", res);
+                    await enableSOS().unwrap();
                   }}
                   className="flex-1 py-2 rounded-lg bg-red-600 text-sm text-white font-medium hover:bg-red-700"
                 >
