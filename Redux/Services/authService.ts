@@ -35,7 +35,7 @@ type AuthControllerSignInResponse = {
   message: string;
   token: string;
   user: {
-    id: string;
+    _id: string;
     name: string;
     role: string;
   };
@@ -48,7 +48,7 @@ type AuthControllerSignInRequest = {
 
 type GetMeResponse = {
   user: {
-    id: string;
+    _id: string;
     name: string;
     role: string;
   };
