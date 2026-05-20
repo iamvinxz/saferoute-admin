@@ -4,7 +4,10 @@ import Link from "next/link";
 import { createPortal } from "react-dom";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import { useGetGeoJsonQuery } from "@/Redux/Services/mapService";
-import { useEnableSosSignalMutation } from "@/Redux/Services/sosService";
+import {
+  useEnableSosSignalMutation,
+  useGetAllSosAlertQuery,
+} from "@/Redux/Services/sosService";
 import InvalidateSize from "@/components/map/InvalidateSize";
 import LandMarksLayer from "@/components/map/LandMarksLayer";
 import ZoomTracker from "@/components/map/ZoomTracker";
@@ -27,6 +30,7 @@ import {
 } from "@/state/slices/sosSignal";
 import { LayoutDashboard, Bell, Users } from "lucide-react";
 import ViewMarkedLocations from "./notification/ViewMarkedLocations";
+import RescueRouteLayer from "./map/RescueRouteLayer";
 
 export const center: [number, number] = [14.673413900535, 120.9685888671883];
 export const maxBounds: [[number, number], [number, number]] = [
@@ -55,6 +59,12 @@ export default function Map() {
   const sosSignal = useSelector(
     (state: RootState) => state.sos.triggerSosSignal,
   );
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const { data: sosResponse } = useGetAllSosAlertQuery();
+
+  console.log("sos alerts:", sosResponse?.alerts);
+  console.log("user id", user?._id);
 
   const [focusTarget, setFocusTarget] = useState<{
     lat: number;
@@ -103,7 +113,7 @@ export default function Map() {
         zoom={17}
         maxZoom={19}
         minZoom={15}
-        maxBounds={maxBounds}
+        // maxBounds={maxBounds}
         maxBoundsViscosity={1.0}
         zoomControl={false}
         style={{ height: "100%", width: "100%" }}
@@ -137,6 +147,7 @@ export default function Map() {
         <ZoomTracker />
         <FocusTrigger target={focusTarget} />
         <FloodReportSheet />
+        <RescueRouteLayer />
       </MapContainer>
 
       {isRoutingMode && (
