@@ -1,16 +1,32 @@
 "use client";
 import { useState } from "react";
 import FloodReportTable from "@/components/notification/FloodReportTable";
-import { Menu, Search } from "lucide-react";
+import { Menu, Search, ChevronDown } from "lucide-react";
 import SideBar from "@/components/SideBar";
 import SOSsignalTable from "@/components/notification/SOSsignalTable";
 
 type ActiveTab = "floodReport" | "sos";
+type SortBy = "status" | "condition";
+
+const filterOptions = {
+  status: ["all", "pending", "dispatched", "resolved", "cancelled"],
+  condition: ["all", "ankle-deep", "knee-deep", "chest-deep", "critical"],
+};
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("floodReport");
   const [search, setSearch] = useState<string>("");
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
+  const [sortBy, setSortBy] = useState<SortBy>("status");
+  const [filterValue, setFilterValue] = useState<string>("all");
+  const [sortByOpen, setSortByOpen] = useState<boolean>(false);
+  const [filterValueOpen, setFilterValueOpen] = useState<boolean>(false);
+
+  const handleSortByChange = (value: SortBy) => {
+    setSortBy(value);
+    setFilterValue("all"); // reset filter value when sort by changes
+    setSortByOpen(false);
+  };
 
   return (
     <div className="w-full bg-[#f8fafc] min-h-full px-[9vw] py-[5vh]">
@@ -64,30 +80,113 @@ const Notification = () => {
             </button>
           </div>
 
-          {/**search bar */}
-          <div className="max-lg:mt-5 relative lg:w-70">
-            <Search
-              size={15}
-              className="absolute left-3 top-2"
-              color="#94a3b8"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={`Search ${activeTab === "floodReport" ? "flood reports" : "sos signals"}`}
-              className="w-full border border-[#e2e9f0] outline-none rounded-md pl-9.5 pr-2 py-1 text-[0.87rem] bg-[#fafbfc] text-[#303030]"
-            />
+          <div className="flex gap-3 max-lg:mt-5 max-lg:flex-col lg:items-center">
+            {/* filters - only show on sos tab */}
+            {activeTab === "sos" && (
+              <div className="flex items-center gap-2">
+                <span className="text-[#848484] text-xs">Sort by:</span>
+                {/* sort by dropdown */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSortByOpen((prev) => !prev);
+                      setFilterValueOpen(false);
+                    }}
+                    className="flex items-center justify-between gap-2 border border-[#e2e9f0] rounded-md px-3 py-1.5 text-[12px] bg-white text-[#303030] min-w-28 hover:border-[#1A5EFD] transition-colors"
+                  >
+                    <span className="capitalize text-[#303030]">{sortBy}</span>
+                    <ChevronDown size={13} className="text-slate-400" />
+                  </button>
+                  {sortByOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-[#e2e9f0] rounded-md shadow-md">
+                      {(["status", "condition"] as SortBy[]).map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => handleSortByChange(option)}
+                          className={`w-full text-left px-3 py-2 text-[12px] capitalize hover:bg-slate-50 transition-colors ${
+                            sortBy === option
+                              ? "text-[#1A5EFD] font-medium"
+                              : "text-[#303030]"
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* filter value dropdown */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilterValueOpen((prev) => !prev);
+                      setSortByOpen(false);
+                    }}
+                    className="flex items-center justify-between gap-2 border border-[#e2e9f0] rounded-md px-3 py-1.5 text-[12px] bg-white text-[#303030] min-w-32 hover:border-[#1A5EFD] transition-colors"
+                  >
+                    <span className="capitalize text-[#303030]">
+                      {filterValue}
+                    </span>
+                    <ChevronDown size={13} className="text-slate-400" />
+                  </button>
+                  {filterValueOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-[#e2e9f0] rounded-md shadow-md">
+                      {filterOptions[sortBy].map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => {
+                            setFilterValue(option);
+                            setFilterValueOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 text-[12px] capitalize hover:bg-slate-50 transition-colors ${
+                            filterValue === option
+                              ? "text-[#1A5EFD] font-medium"
+                              : "text-[#303030]"
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/**search bar */}
+            <div className="relative lg:w-70">
+              <Search
+                size={15}
+                className="absolute left-3 top-2"
+                color="#94a3b8"
+              />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={`Search ${activeTab === "floodReport" ? "flood reports" : "sos signals"}`}
+                className="w-full border border-[#e2e9f0] outline-none rounded-md pl-9.5 pr-2 py-1 text-[0.87rem] bg-[#fafbfc] text-[#303030]"
+              />
+            </div>
           </div>
         </div>
 
         {/* Content Box */}
-
         <div className="pt-4 max-h-185 overflow-y-auto">
           {activeTab === "floodReport" ? (
             <FloodReportTable search={search} activeTab={activeTab} />
           ) : (
-            <SOSsignalTable search={search} activeTab={activeTab} />
+            <SOSsignalTable
+              search={search}
+              activeTab={activeTab}
+              sortBy={sortBy}
+              filterValue={filterValue}
+            />
           )}
         </div>
       </div>
