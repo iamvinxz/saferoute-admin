@@ -19,3 +19,4 @@ export const GET_ALL_ARTICLES = "/api/article/all";
 export const GET_ME = "/api/auth/me";
 export const ENABLE_SOS = "/api/user/toggleSOS";
 export const UPDATE_SOS_STATUS = "/api/sos/updateStatus";
+export const DELETE_SOS = "api/sos/deleteSOS";
