@@ -1,6 +1,5 @@
 "use client";
 import SideBar from "@/components/SideBar";
-import { useWebSocket } from "@/lib/useWebSocket";
 import { useGetMeQuery } from "@/Redux/Services/authService";
 import {
   clearUser,
@@ -22,8 +21,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const { data: sosResponse } = useGetAllSosAlertQuery();
 
-  // useWebSocket();
-
   // rehydrate user
   useEffect(() => {
     if (isSuccess && data?.user) {
@@ -35,8 +32,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isSuccess, isError, data]);
 
-  // restart tracking on refresh if rescuer has active rescue
+  // restart location tracking on refresh if rescuer has active rescue
   useEffect(() => {
+    if (!isSuccess || !user || !sosResponse) return;
+
     const hasActiveRescue = sosResponse?.alerts?.some(
       (alert) =>
         alert.status === "dispatched" && alert.rescuerId?._id === user?._id,
@@ -52,13 +51,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         },
         (error) => console.error("Error getting location:", error.message),
         {
-          enableHighAccuracy: true,
+          enableHighAccuracy: isMobileDevice(),
           maximumAge: 0,
-          timeout: isMobileDevice() ? 5000 : undefined,
         },
       );
     }
-  }, [sosResponse, user]);
+  }, [sosResponse, user, isSuccess]);
 
   return (
     <div className="h-screen flex">
