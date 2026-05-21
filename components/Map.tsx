@@ -7,6 +7,7 @@ import { useGetGeoJsonQuery } from "@/Redux/Services/mapService";
 import {
   useEnableSosSignalMutation,
   useGetAllSosAlertQuery,
+  useUpdateSosStatusMutation,
 } from "@/Redux/Services/sosService";
 import InvalidateSize from "@/components/map/InvalidateSize";
 import LandMarksLayer from "@/components/map/LandMarksLayer";
@@ -31,6 +32,10 @@ import {
 import { LayoutDashboard, Bell, Users } from "lucide-react";
 import ViewMarkedLocations from "./notification/ViewMarkedLocations";
 import RescueRouteLayer from "./map/RescueRouteLayer";
+import RescuePanel from "./map/RescuePanel";
+import { setCoordinates, setWatchId } from "@/state/slices/authSlice";
+import { isMobileDevice } from "@/lib/deviceHelper";
+import { useGetMeQuery } from "@/Redux/Services/authService";
 
 export const center: [number, number] = [14.673413900535, 120.9685888671883];
 export const maxBounds: [[number, number], [number, number]] = [
@@ -53,12 +58,14 @@ export default function Map() {
   const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
   const segments = useSelector((state: RootState) => state.segment.segments); //empty segment
   const currentSegment = segments[segments.length - 1]; //initial undefine
+  const isWatching = useRef(false);
   const sosConfirmation = useSelector(
     (state: RootState) => state.sos.triggerConfirmation,
   );
   const sosSignal = useSelector(
     (state: RootState) => state.sos.triggerSosSignal,
   );
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const [focusTarget, setFocusTarget] = useState<{
     lat: number;
@@ -74,6 +81,14 @@ export default function Map() {
   //rtk query
   const { data: geoData } = useGetGeoJsonQuery();
   const [enableSOS] = useEnableSosSignalMutation();
+  const { data: sosResponse, isSuccess: sosSuccess } = useGetAllSosAlertQuery();
+  const [updateSosStatus] = useUpdateSosStatusMutation();
+  const { isSuccess: meSuccess } = useGetMeQuery();
+
+  const activeSosReportOnRescue = sosResponse?.alerts?.find(
+    (alert) =>
+      alert.status === "dispatched" && alert.rescuerId?._id === user?._id,
+  );
 
   //prevents penetrations of click on panels
   useEffect(() => {
@@ -81,6 +96,46 @@ export default function Map() {
       L.DomEvent.disableClickPropagation(containerRef.current);
       L.DomEvent.disableScrollPropagation(containerRef.current);
     }
+  }, []);
+
+  // watch rescuer location and update DB every 5 seconds
+  useEffect(() => {
+    // wait for all data to be ready
+    if (!user || !activeSosReportOnRescue) return;
+    if (isWatching.current) return;
+
+    let lastUpdate = 0;
+    const THROTTLE_MS = 5000;
+
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const now = Date.now();
+
+        // update live marker on map
+        dispatch(setCoordinates([latitude, longitude]));
+
+        // update DB every 5 seconds
+        if (now - lastUpdate >= THROTTLE_MS) {
+          lastUpdate = now;
+          updateSosStatus({
+            id: activeSosReportOnRescue._id,
+            status: "dispatched",
+            rescuerId: user._id,
+            rescuerCoords: { latitude, longitude },
+          });
+        }
+      },
+      (error) => console.error("Error getting location:", error.message),
+      {
+        enableHighAccuracy: isMobileDevice(),
+        maximumAge: 0,
+      },
+    );
+
+    dispatch(setWatchId(watchId));
+
+    return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
   //handlers
@@ -141,7 +196,7 @@ export default function Map() {
         <ZoomTracker />
         <FocusTrigger target={focusTarget} />
         <FloodReportSheet />
-        <RescueRouteLayer />
+        {meSuccess && user && <RescueRouteLayer />}
       </MapContainer>
 
       {isRoutingMode && (
@@ -159,6 +214,8 @@ export default function Map() {
           </div>
         </>
       )}
+
+      {meSuccess && user && <RescuePanel />}
 
       <ControllerTab
         onFocus={setFocusTarget}
