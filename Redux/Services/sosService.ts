@@ -16,11 +16,11 @@ const sosService = api.injectEndpoints({
       }),
     }),
     updateSosStatus: build.mutation<UpdateStatusResponse, UpdateStatusRequest>({
-      query: ({ id, status, rescuerId }) => ({
+      query: ({ id, status, rescuerId, rescuerCoords }) => ({
         url: UPDATE_SOS_STATUS,
         method: "PATCH",
         params: { id },
-        body: { status, rescuerId },
+        body: { status, rescuerId, rescuerCoords },
       }),
       invalidatesTags: ["SosAlerts"],
     }),
@@ -46,6 +46,10 @@ type SosControllerGetAllResponse = {
         _id: string;
         name: string;
       } | null;
+      rescuerCoords: {
+        latitude: number;
+        longitude: number;
+      } | null;
     },
   ];
 };
@@ -62,7 +66,11 @@ type UpdateStatusResponse = {
 type UpdateStatusRequest = {
   id: string;
   status: string;
-  rescuerId: string;
+  rescuerId?: string;
+  rescuerCoords?: {
+    latitude: number;
+    longitude: number;
+  };
 };
 
 export const {
