@@ -1,16 +1,48 @@
-// components/map/RescueRouteLayer.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { Polyline, Marker } from "react-leaflet";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { fetchOSRMRoute } from "@/lib/fetchOSRMRoute";
 import L from "leaflet";
+import { useGetAllSosAlertQuery } from "@/Redux/Services/sosService";
+import { setSosReport } from "@/state/slices/sosSignalReportSlice";
 
 const RescueRouteLayer = () => {
   const [polyline, setPolyline] = useState<[number, number][]>([]);
+  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const sosReport = useSelector((state: RootState) => state.sosReport);
+  const { data: sosResponse, isSuccess } = useGetAllSosAlertQuery();
+
+  // restore sosReport on refresh
+  useEffect(() => {
+    if (!isSuccess || !user || !sosResponse) return;
+
+    const activeRescue = sosResponse?.alerts?.find(
+      (alert) =>
+        alert.status === "dispatched" && alert.rescuerId?._id === user?._id,
+    );
+
+    if (activeRescue && sosReport._id === "") {
+      dispatch(
+        setSosReport({
+          _id: activeRescue._id,
+          phone: activeRescue._id,
+          streetName: activeRescue.streetName,
+          condition: activeRescue.condition,
+          numberOfPerson: activeRescue.numberOfPersons,
+          status: activeRescue.status,
+          requestedDate: activeRescue.createdAt,
+          coordinates: [
+            activeRescue.coords.latitude,
+            activeRescue.coords.longitude,
+          ],
+          rescuerId: activeRescue.rescuerId?._id ?? null,
+        }),
+      );
+    }
+  }, [sosResponse, user, isSuccess]);
 
   const rescuerCoords = user?.coordinates;
   const sosCoords = sosReport.coordinates;
@@ -26,7 +58,7 @@ const RescueRouteLayer = () => {
     };
 
     getRoute();
-  }, [rescuerCoords, sosCoords]); // updates as rescuer moves
+  }, [rescuerCoords, sosCoords]);
 
   if (!hasActiveRescue || polyline.length === 0) return null;
 
@@ -34,10 +66,8 @@ const RescueRouteLayer = () => {
     <>
       <Polyline
         positions={polyline}
-        pathOptions={{ color: "#1A5EFD", weight: 4, dashArray: "8" }}
+        pathOptions={{ color: "#1A5EFD", weight: 4 }}
       />
-
-      {/* rescuer marker */}
       {rescuerCoords && (
         <Marker
           position={rescuerCoords}
@@ -47,8 +77,6 @@ const RescueRouteLayer = () => {
           })}
         />
       )}
-
-      {/* sos location marker */}
       {sosCoords && (
         <Marker
           position={sosCoords}
