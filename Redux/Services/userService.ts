@@ -44,7 +44,7 @@ type CreateAdminRequest = {
   name: string;
   email: string;
   password: string;
-  department: string;
+  role: string;
 };
 
 export type Admin = {
