@@ -28,19 +28,8 @@ const RescuePanel = () => {
 
   if (!activeSosReportOnRescue) return null;
 
-  console.log("watchId:", watchId);
-
   const handleResolve = async () => {
     try {
-      console.log("resolving:", {
-        id: activeSosReportOnRescue._id,
-        status: "resolved",
-        rescuerId: user?._id ?? "",
-        rescuerCoords: user?.coordinates
-          ? { latitude: user.coordinates[0], longitude: user.coordinates[1] }
-          : undefined,
-      });
-
       await updateSosStatus({
         id: activeSosReportOnRescue._id,
         status: "resolved",
@@ -48,8 +37,6 @@ const RescuePanel = () => {
           ? { latitude: user.coordinates[0], longitude: user.coordinates[1] }
           : undefined,
       }).unwrap();
-
-      console.log("resolved successfully");
 
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
