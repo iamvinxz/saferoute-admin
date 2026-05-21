@@ -1,66 +1,55 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Polyline, Marker } from "react-leaflet";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { fetchOSRMRoute } from "@/lib/fetchOSRMRoute";
 import L from "leaflet";
 import { useGetAllSosAlertQuery } from "@/Redux/Services/sosService";
-import { setSosReport } from "@/state/slices/sosSignalReportSlice";
+import { useGetAllSegmentQuery } from "@/Redux/Services/markService";
+import { getDetourWaypoints } from "@/lib/avoidFlood";
 
 const RescueRouteLayer = () => {
   const [polyline, setPolyline] = useState<[number, number][]>([]);
-  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  const sosReport = useSelector((state: RootState) => state.sosReport);
-  const { data: sosResponse, isSuccess } = useGetAllSosAlertQuery();
+  const { data: sosResponse } = useGetAllSosAlertQuery(undefined, {
+    pollingInterval: 10000, // refetch every 10s
+    skip: !user,
+  });
+  const { data: segmentResponse } = useGetAllSegmentQuery();
 
-  // restore sosReport on refresh
+  const activeSosReportOnRescue = sosResponse?.alerts?.find(
+    (alert) =>
+      alert.status === "dispatched" && alert.rescuerId?._id === user?._id,
+  );
+
+  const rescuerCoords: [number, number] | undefined = user?.coordinates;
+
+  const sosCoords: [number, number] | undefined = activeSosReportOnRescue
+    ? [
+        activeSosReportOnRescue.coords.latitude,
+        activeSosReportOnRescue.coords.longitude,
+      ]
+    : undefined;
+
+  // fetch polyline when coords are ready
   useEffect(() => {
-    if (!isSuccess || !user || !sosResponse) return;
-
-    const activeRescue = sosResponse?.alerts?.find(
-      (alert) =>
-        alert.status === "dispatched" && alert.rescuerId?._id === user?._id,
-    );
-
-    if (activeRescue && sosReport._id === "") {
-      dispatch(
-        setSosReport({
-          _id: activeRescue._id,
-          phone: activeRescue._id,
-          streetName: activeRescue.streetName,
-          condition: activeRescue.condition,
-          numberOfPerson: activeRescue.numberOfPersons,
-          status: activeRescue.status,
-          requestedDate: activeRescue.createdAt,
-          coordinates: [
-            activeRescue.coords.latitude,
-            activeRescue.coords.longitude,
-          ],
-          rescuerId: activeRescue.rescuerId?._id ?? null,
-        }),
-      );
-    }
-  }, [sosResponse, user, isSuccess]);
-
-  const rescuerCoords = user?.coordinates;
-  const sosCoords = sosReport.coordinates;
-  const hasActiveRescue =
-    sosReport._id !== "" && sosReport.status === "dispatched";
-
-  useEffect(() => {
-    if (!rescuerCoords || !sosCoords || !hasActiveRescue) return;
+    if (!rescuerCoords || !sosCoords) return;
 
     const getRoute = async () => {
-      const route = await fetchOSRMRoute([rescuerCoords, sosCoords]);
+      const waypoints = getDetourWaypoints(
+        rescuerCoords,
+        sosCoords,
+        segmentResponse?.segments ?? [],
+      );
+      const route = await fetchOSRMRoute(waypoints);
       setPolyline(route);
     };
 
     getRoute();
-  }, [rescuerCoords, sosCoords, hasActiveRescue]);
+  }, [rescuerCoords, sosCoords, segmentResponse]);
 
-  if (!hasActiveRescue || polyline.length === 0) return null;
+  if (!activeSosReportOnRescue || polyline.length === 0) return null;
 
   return (
     <>
