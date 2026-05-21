@@ -58,7 +58,7 @@ const RescueRouteLayer = () => {
     };
 
     getRoute();
-  }, [rescuerCoords, sosCoords]);
+  }, [rescuerCoords, sosCoords, hasActiveRescue]);
 
   if (!hasActiveRescue || polyline.length === 0) return null;
 
