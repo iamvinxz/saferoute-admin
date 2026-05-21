@@ -1,5 +1,10 @@
 import { api } from "./APIService";
-import { ENABLE_SOS, GET_ALL_SOS, UPDATE_SOS_STATUS } from "./Endpoints";
+import {
+  DELETE_SOS,
+  ENABLE_SOS,
+  GET_ALL_SOS,
+  UPDATE_SOS_STATUS,
+} from "./Endpoints";
 
 const sosService = api.injectEndpoints({
   endpoints: (build) => ({
@@ -21,6 +26,14 @@ const sosService = api.injectEndpoints({
         method: "PATCH",
         params: { id },
         body: { status, rescuerId, rescuerCoords },
+      }),
+      invalidatesTags: ["SosAlerts"],
+    }),
+    deleteSos: build.mutation<void, DeleteSOSRequest>({
+      query: ({ id }) => ({
+        url: DELETE_SOS,
+        method: "PATCH",
+        params: { id },
       }),
       invalidatesTags: ["SosAlerts"],
     }),
@@ -73,8 +86,13 @@ type UpdateStatusRequest = {
   };
 };
 
+type DeleteSOSRequest = {
+  id: string;
+};
+
 export const {
   useGetAllSosAlertQuery,
   useEnableSosSignalMutation,
   useUpdateSosStatusMutation,
+  useDeleteSosMutation,
 } = sosService;
