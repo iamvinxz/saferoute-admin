@@ -39,9 +39,23 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
     },
+    clearCoordinates: (state) => {
+      if (state.user) {
+        state.user.coordinates = undefined;
+      }
+    },
+    clearWatchId: (state) => {
+      state.watchId = null;
+    },
   },
 });
 
-export const { setUser, setCoordinates, setWatchId, clearUser } =
-  authSlice.actions;
+export const {
+  setUser,
+  setCoordinates,
+  setWatchId,
+  clearUser,
+  clearCoordinates,
+  clearWatchId,
+} = authSlice.actions;
 export default authSlice.reducer;
