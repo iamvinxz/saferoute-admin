@@ -106,7 +106,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
             {
               enableHighAccuracy: false,
               maximumAge: 0,
-              timeout: isMobileDevice() ? 5000 : undefined,
+              // timeout: isMobileDevice() ? 5000 : undefined,
             },
           );
 
@@ -120,7 +120,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
         {
           enableHighAccuracy: false,
           maximumAge: 0,
-          timeout: isMobileDevice() ? 5000 : undefined,
+          // timeout: isMobileDevice() ? 5000 : undefined,
         },
       );
     } catch (error) {
