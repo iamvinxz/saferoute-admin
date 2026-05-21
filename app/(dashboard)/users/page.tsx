@@ -14,13 +14,14 @@ import {
   Eye,
   EyeOff,
   Menu,
+  ChevronDown,
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import {
   clearAccount,
-  setDepartment,
+  setRole,
   setEmail,
   setError,
   setName,
@@ -32,7 +33,7 @@ import SideBar from "@/components/SideBar";
 
 const UsersPage = () => {
   const dispatch = useDispatch();
-  const { name, email, password, department, error } = useSelector(
+  const { name, email, password, role, error } = useSelector(
     (state: RootState) => state.account,
   );
 
@@ -41,6 +42,7 @@ const UsersPage = () => {
   const [search, setSearch] = useState("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
+  const [roleOpen, setRoleOpen] = useState(false);
 
   //rtk
   const [createAdmin, { isLoading }] = useCreateAdminMutation();
@@ -55,7 +57,7 @@ const UsersPage = () => {
 
   const handleSubmit = async () => {
     try {
-      await createAdmin({ name, password, department, email }).unwrap();
+      await createAdmin({ name, password, role, email }).unwrap();
       dispatch(clearAccount());
       setIsOpen(false);
     } catch (err) {
@@ -278,17 +280,38 @@ const UsersPage = () => {
                     </button>
                   </div>
                 </div>
-                <div>
+                <div className="relative">
                   <label className="font-medium text-xs text-[#303030]">
-                    Department
+                    Role
                   </label>
-                  <Input
-                    type="text"
-                    value={department}
-                    placeholder="Enter the assigned department"
-                    onChange={(e) => dispatch(setDepartment(e.target.value))}
-                    className="border rounded-md placeholder:text-xs focus-visible:ring-1 p-4"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setRoleOpen((prev) => !prev)}
+                    className="w-full flex items-center justify-between border border-input rounded-md px-3 py-2 text-sm bg-white hover:bg-slate-50 transition-colors mt-1"
+                  >
+                    {role
+                      ? role.charAt(0).toUpperCase() + role.slice(1)
+                      : "Select a role"}
+                    <ChevronDown size={14} className="text-slate-400" />
+                  </button>
+
+                  {roleOpen && (
+                    <div className="absolute z-[10000] mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg">
+                      {["admin", "rescuer"].map((r) => (
+                        <button
+                          key={r}
+                          type="button"
+                          onClick={() => {
+                            dispatch(setRole(r));
+                            setRoleOpen(false);
+                          }}
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-slate-50 transition-colors"
+                        >
+                          {r.charAt(0).toUpperCase() + r.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
