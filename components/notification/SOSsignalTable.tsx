@@ -8,9 +8,16 @@ import { setSosReport } from "@/state/slices/sosSignalReportSlice";
 interface SosSignalProps {
   activeTab: string;
   search: string;
+  sortBy: string;
+  filterValue: string;
 }
 
-const SOSsignalTable = ({ search, activeTab }: SosSignalProps) => {
+const SOSsignalTable = ({
+  search,
+  activeTab,
+  sortBy,
+  filterValue,
+}: SosSignalProps) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -19,12 +26,20 @@ const SOSsignalTable = ({ search, activeTab }: SosSignalProps) => {
     useGetAllSosAlertQuery();
 
   //handlers
-  const filteredSosSignals = sosAlertsResponse?.alerts.filter(
-    (alert) =>
+  const filteredSosSignals = sosAlertsResponse?.alerts.filter((alert) => {
+    const matchesSearch =
       alert.streetName.toLowerCase().includes(search.toLowerCase()) ||
       alert.condition.toLowerCase().includes(search.toLowerCase()) ||
-      alert.status.toLowerCase().includes(search.toLowerCase()),
-  );
+      alert.status.toLowerCase().includes(search.toLowerCase());
+
+    const matchesFilter =
+      filterValue === "all" ||
+      (sortBy === "status"
+        ? alert.status.toLowerCase() === filterValue
+        : alert.condition.toLowerCase() === filterValue);
+
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <Fragment>
