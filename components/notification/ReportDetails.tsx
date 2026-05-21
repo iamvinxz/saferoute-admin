@@ -11,8 +11,10 @@ import dynamic from "next/dynamic";
 import { useDeleteFloodReportMutation } from "@/Redux/Services/floodReportService";
 import { getDepthColors, getStatusColors } from "@/lib/colorHelper";
 import { clearSosReport } from "@/state/slices/sosSignalReportSlice";
-import { useUpdateSosStatusMutation } from "@/Redux/Services/sosService";
-import { setCoordinates, setWatchId } from "@/state/slices/authSlice";
+import {
+  useDeleteSosMutation,
+  useUpdateSosStatusMutation,
+} from "@/Redux/Services/sosService";
 import { isMobileDevice } from "@/lib/deviceHelper";
 
 interface ReportDetailsProps {
@@ -38,6 +40,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
   const [deleteFloodReport] = useDeleteFloodReportMutation();
   const [updateSosStatus, { isLoading: updateSosIsLoading }] =
     useUpdateSosStatusMutation();
+  const [deleteSOS] = useDeleteSosMutation();
 
   const handleDeleteFloodReport = async (id: string) => {
     try {
@@ -75,6 +78,15 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
     if (!isRouting) dispatch(toggleIsRouting());
     router.push("/maps");
     dispatch(clearReport());
+  };
+
+  const handleDeleteSos = async (id: string) => {
+    try {
+      await deleteSOS({ id }).unwrap();
+      dispatch(clearSosReport());
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleResponse = async (id: string, status: string) => {
@@ -344,7 +356,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
                 </button>
                 <button
                   onClick={() => {
-                    handleDeleteFloodReport(report.id);
+                    handleDeleteSos(sosReport._id);
                     setShowModal(false);
                   }}
                   className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-white border text-red-400 text-xs hover:bg-[#dfdfdf] hover:cursor-pointer transition-colors  max-lg:text-[10px]"
