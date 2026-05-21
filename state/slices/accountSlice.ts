@@ -4,7 +4,7 @@ type Account = {
   name: string;
   email: string;
   password: string;
-  department: string;
+  role: string;
   error: string;
 };
 
@@ -12,7 +12,7 @@ const initialState: Account = {
   name: "",
   email: "",
   password: "",
-  department: "",
+  role: "",
   error: "",
 };
 
@@ -29,8 +29,8 @@ const accountSlice = createSlice({
     setPassword: (state, action: PayloadAction<string>) => {
       state.password = action.payload;
     },
-    setDepartment: (state, action: PayloadAction<string>) => {
-      state.department = action.payload;
+    setRole: (state, action: PayloadAction<string>) => {
+      state.role = action.payload;
     },
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
@@ -43,7 +43,7 @@ export const {
   setName,
   setEmail,
   setPassword,
-  setDepartment,
+  setRole,
   setError,
   clearAccount,
 } = accountSlice.actions;
