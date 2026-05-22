@@ -1,9 +1,13 @@
-import { useGetAllSosAlertQuery } from "@/Redux/Services/sosService";
+import {
+  useDeleteSosMutation,
+  useGetAllSosAlertQuery,
+} from "@/Redux/Services/sosService";
 import { getDepthColors, getStatusColors } from "@/lib/colorHelper";
 import { Fragment, useState } from "react";
 import ReportDetails from "./ReportDetails";
 import { useDispatch } from "react-redux";
 import { setSosReport } from "@/state/slices/sosSignalReportSlice";
+import { Trash } from "lucide-react";
 
 interface SosSignalProps {
   activeTab: string;
@@ -24,6 +28,15 @@ const SOSsignalTable = ({
   //rtk
   const { data: sosAlertsResponse, isLoading: alertsLoading } =
     useGetAllSosAlertQuery();
+  const [deleteSosAlert] = useDeleteSosMutation();
+
+  const handleDeleteSos = async (id: string) => {
+    try {
+      await deleteSosAlert({ id }).unwrap;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   //handlers
   const filteredSosSignals = sosAlertsResponse?.alerts.filter((alert) => {
@@ -40,6 +53,8 @@ const SOSsignalTable = ({
 
     return matchesSearch && matchesFilter;
   });
+
+  console.log("sos", filteredSosSignals);
 
   return (
     <Fragment>
@@ -68,6 +83,9 @@ const SOSsignalTable = ({
               <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Requested Time
               </th>
+              <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -76,6 +94,9 @@ const SOSsignalTable = ({
                 <tr key={index}>
                   <td className="px-5 py-4">
                     <div className="animate-pulse-fast h-4 w-4 bg-slate-200 rounded" />
+                  </td>
+                  <td className="px-5 py-4">
+                    <div className="animate-pulse-fast h-4 w-full bg-slate-200 rounded-md" />
                   </td>
                   <td className="px-5 py-4">
                     <div className="animate-pulse-fast h-4 w-full bg-slate-200 rounded-md" />
@@ -112,10 +133,11 @@ const SOSsignalTable = ({
                   key={alert._id}
                   className="hover:bg-[#f1f5f9]"
                   onClick={() => {
+                    console.log("here", alert.userId.phone);
                     dispatch(
                       setSosReport({
                         _id: alert._id,
-                        phone: alert._id,
+                        phone: alert.userId.phone,
                         streetName: alert.streetName,
                         condition: alert.condition,
                         numberOfPerson: alert.numberOfPersons,
@@ -132,7 +154,9 @@ const SOSsignalTable = ({
                   }}
                 >
                   <td className="px-5 py-4 text-[#585858]">{index + 1}</td>
-                  <td className="px-5 py-4 text-[#585858]">{alert._id}</td>
+                  <td className="px-5 py-4 text-[#585858]">
+                    {alert.userId.phone}
+                  </td>
                   <td className="px-5 py-4 text-[#585858]">
                     {alert.streetName}
                   </td>
@@ -164,6 +188,17 @@ const SOSsignalTable = ({
                       day: "numeric",
                       year: "numeric",
                     })}
+                  </td>
+                  <td className="px-5 py-4 text-[#fa4242]">
+                    <button
+                      className="hover:cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteSos(alert._id);
+                      }}
+                    >
+                      <Trash size={18} />
+                    </button>
                   </td>
                 </tr>
               ))
