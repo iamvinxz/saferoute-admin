@@ -80,7 +80,7 @@ export default function Table({ announcement, article, isLoading }: Props) {
         </div>
         <div className="pr-2">
           <button
-            className="flex items-center gap-2 text-xs font-medium bg-blue-400 text-white p-1 rounded-md shadow-sm hover:cursor-pointer lg:p-3"
+            className="flex items-center gap-2 text-xs font-medium bg-[#598bff] text-white p-1 rounded-md shadow-sm hover:cursor-pointer lg:p-3"
             onClick={() => setIsOpen(true)}
           >
             <Plus className="w-4 h-4 lg:w-5 lg:h-5" />
