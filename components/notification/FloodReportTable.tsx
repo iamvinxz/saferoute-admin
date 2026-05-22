@@ -182,7 +182,10 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
                   <td className="px-5 py-4 text-red-500">
                     <button
                       className="hover:cursor-pointer"
-                      onClick={() => handleDeleteFloodReport(report._id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteFloodReport(report._id);
+                      }}
                     >
                       <Trash size={18} />
                     </button>
