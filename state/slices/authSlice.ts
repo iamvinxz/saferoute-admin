@@ -4,6 +4,7 @@ interface User {
   _id: string;
   name: string;
   role: string;
+  photoUrl: string;
   coordinates?: [number, number] | undefined;
 }
 
