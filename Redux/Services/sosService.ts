@@ -54,6 +54,7 @@ type SosControllerGetAllResponse = {
       condition: string;
       status: string;
       createdAt: string;
+      isActive: boolean;
       updatedAt: string;
       rescuerId: {
         _id: string;
@@ -63,6 +64,12 @@ type SosControllerGetAllResponse = {
         latitude: number;
         longitude: number;
       } | null;
+      userId: {
+        _id: string;
+        age: number;
+        phone: string;
+        isPWD: boolean;
+      };
     },
   ];
 };
