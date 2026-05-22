@@ -160,7 +160,21 @@ const Dashboard = () => {
           <p className="font-semibold text-[#1A5EFD] md:text-lg">Dashboard</p>
         </div>
         <div className="hidden lg:flex gap-3 pr-10">
-          <div className="bg-gray-300 w-10 h-10 rounded-full" />
+          {/* avatar */}
+          {user?.photoUrl ? (
+            <img
+              src={user.photoUrl}
+              alt={user.name}
+              className="w-10 h-10 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div className="bg-[#598bff] w-10 h-10 rounded-full flex items-center justify-center shrink-0">
+              <span className="text-white text-sm font-semibold uppercase">
+                {user?.name?.charAt(0)}
+              </span>
+            </div>
+          )}
+
           <div
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => setIsDown((prev) => !prev)}
