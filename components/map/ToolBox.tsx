@@ -9,6 +9,8 @@ import {
   triggerConfirmation,
   triggerSOSsignal,
 } from "@/state/slices/sosSignal";
+import { useGetMeQuery } from "@/Redux/Services/authService";
+import { useGetSosAvailabilityQuery } from "@/Redux/Services/sosService";
 
 interface Tool {
   icon: React.ReactNode;
@@ -25,6 +27,8 @@ const ToolBox = () => {
   const isSosSignal = useSelector(
     (state: RootState) => state.sos.triggerSosSignal,
   );
+
+  const { data: sos } = useGetSosAvailabilityQuery();
 
   const defaultTools: Tool[] = [
     {
@@ -51,12 +55,16 @@ const ToolBox = () => {
     },
     {
       icon: <OctagonAlert size={22} />,
-      label: isSosSignal ? "Disable SOS Signal" : "Enable SOS Signal",
+      label:
+        sos?.isSosEnabled || isSosSignal
+          ? "Disable SOS Signal"
+          : "Enable SOS Signal",
       onClick: () => {
         dispatch(triggerConfirmation());
       },
     },
   ];
+
   return (
     <div className="max-lg:hidden absolute bottom-10 right-10 z-1000 flex flex-col items-end gap-3">
       {/* Tool items — pop up when open */}
