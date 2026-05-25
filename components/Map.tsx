@@ -7,6 +7,7 @@ import { useGetGeoJsonQuery } from "@/Redux/Services/mapService";
 import {
   useEnableSosSignalMutation,
   useGetAllSosAlertQuery,
+  useGetSosAvailabilityQuery,
   useUpdateSosStatusMutation,
 } from "@/Redux/Services/sosService";
 import InvalidateSize from "@/components/map/InvalidateSize";
@@ -84,6 +85,7 @@ export default function Map() {
   const { data: sosResponse, isSuccess: sosSuccess } = useGetAllSosAlertQuery();
   const [updateSosStatus] = useUpdateSosStatusMutation();
   const { isSuccess: meSuccess } = useGetMeQuery();
+  const { data: sos } = useGetSosAvailabilityQuery();
 
   const activeSosReportOnRescue = sosResponse?.alerts?.find(
     (alert) =>
@@ -277,56 +279,9 @@ export default function Map() {
                   }}
                   className="flex-1 py-2 rounded-lg bg-red-600 text-sm text-white font-medium hover:bg-red-700"
                 >
-                  Enable
-                </button>
-              </div>
-            </div>
-          </div>,
-          document.body,
-        )}
-
-      {/**disable sos signal */}
-      {sosConfirmation &&
-        sosSignal &&
-        createPortal(
-          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-xl p-8.5 w-80 flex flex-col gap-4">
-              <div className="flex flex-col items-center gap-2 text-center">
-                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
-                      stroke="#dc2626"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-                <h2 className="text-base font-semibold text-gray-900">
-                  Stop SOS Signal?
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Disabling the SOS signal will stop all active emergency
-                  alerts.
-                </p>
-              </div>
-              <div className="flex gap-2 mt-2">
-                <button
-                  onClick={() => dispatch(triggerConfirmation())}
-                  className="flex-1 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={async () => {
-                    dispatch(triggerSOSsignal());
-                    dispatch(triggerConfirmation());
-                    await enableSOS().unwrap();
-                  }}
-                  className="flex-1 py-2 rounded-lg bg-red-600 text-sm text-white font-medium hover:bg-red-700"
-                >
-                  Disable SOS
+                  {sos?.isSosEnabled || sosSignal
+                    ? "Disable SOS"
+                    : "Enable SOS"}
                 </button>
               </div>
             </div>
