@@ -1,5 +1,6 @@
 "use client";
 import SideBar from "@/components/SideBar";
+import { useWebSocket } from "@/lib/useWebSocket";
 import { useGetMeQuery } from "@/Redux/Services/authService";
 import { clearUser, setUser } from "@/state/slices/authSlice";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { data, isSuccess, isError } = useGetMeQuery();
+
+  useWebSocket();
 
   // rehydrate user
   useEffect(() => {
