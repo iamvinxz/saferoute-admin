@@ -20,6 +20,7 @@ const sosService = api.injectEndpoints({
         url: ENABLE_SOS,
         method: "PATCH",
       }),
+      invalidatesTags: ["SosAvailability"],
     }),
     updateSosStatus: build.mutation<UpdateStatusResponse, UpdateStatusRequest>({
       query: ({ id, status, rescuerId, rescuerCoords }) => ({
@@ -42,6 +43,7 @@ const sosService = api.injectEndpoints({
       query: () => ({
         url: GET_SOS_AVAILABILITY,
       }),
+      providesTags: ["SosAvailability"],
     }),
   }),
   overrideExisting: true,
