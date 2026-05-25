@@ -8,6 +8,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSelector } from "react-redux";
+import { useGetMeQuery } from "@/Redux/Services/authService";
+import { useGetSosAvailabilityQuery } from "@/Redux/Services/sosService";
 
 interface FocusTarget {
   lat: number;
@@ -50,6 +52,10 @@ const ControllerTab = ({ onFocus, onToggle }: Props) => {
   const sosSignal = useSelector(
     (state: RootState) => state.sos.triggerSosSignal,
   );
+
+  const { data: sos } = useGetSosAvailabilityQuery();
+
+  console.log(sos?.isSosEnabled);
   return (
     <div className="absolute top-3 z-400 flex items-center justify-between w-full px-5">
       <div className="flex gap-4">
@@ -66,7 +72,7 @@ const ControllerTab = ({ onFocus, onToggle }: Props) => {
           </button>
         ))}
         {/**sos indictor */}
-        {sosSignal && (
+        {(sos?.isSosEnabled || sosSignal) && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
