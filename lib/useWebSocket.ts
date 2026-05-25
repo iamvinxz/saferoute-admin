@@ -25,12 +25,20 @@ export const useWebSocket = () => {
       socket.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          console.log("📨 WS message received:", message); // remove after debugging
+          console.log("📨 WS message received:", message);
 
           if (
             message.type === "sos_alert" ||
             message.type === "sos_status_update"
           ) {
+            dispatch(api.util.invalidateTags(["SosAlerts"]));
+          }
+
+          if (message.type === "flood_report") {
+            dispatch(api.util.invalidateTags(["FloodReports"]));
+          }
+
+          if (message.type === "sos_toggle") {
             dispatch(api.util.invalidateTags(["SosAlerts"]));
           }
         } catch (err) {
