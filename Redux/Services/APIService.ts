@@ -19,6 +19,7 @@ export const api = createApi({
     "Segments",
     "FloodReports",
     "SosAlerts",
+    "SosAvailability",
     "Articles",
     "Announcements",
     "Admins",
