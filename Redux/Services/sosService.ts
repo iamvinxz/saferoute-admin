@@ -3,6 +3,7 @@ import {
   DELETE_SOS,
   ENABLE_SOS,
   GET_ALL_SOS,
+  GET_SOS_AVAILABILITY,
   UPDATE_SOS_STATUS,
 } from "./Endpoints";
 
@@ -36,6 +37,11 @@ const sosService = api.injectEndpoints({
         params: { id },
       }),
       invalidatesTags: ["SosAlerts"],
+    }),
+    getSosAvailability: build.query<GetSosAvailabilityResponse, void>({
+      query: () => ({
+        url: GET_SOS_AVAILABILITY,
+      }),
     }),
   }),
   overrideExisting: true,
@@ -97,9 +103,14 @@ type DeleteSOSRequest = {
   id: string;
 };
 
+type GetSosAvailabilityResponse = {
+  isSosEnabled: boolean;
+};
+
 export const {
   useGetAllSosAlertQuery,
   useEnableSosSignalMutation,
   useUpdateSosStatusMutation,
   useDeleteSosMutation,
+  useGetSosAvailabilityQuery,
 } = sosService;
