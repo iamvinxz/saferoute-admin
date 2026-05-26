@@ -8,9 +8,13 @@ import L from "leaflet";
 import { useGetAllSosAlertQuery } from "@/Redux/Services/sosService";
 import { useGetAllSegmentQuery } from "@/Redux/Services/markService";
 import { getDetourWaypoints } from "@/lib/avoidFlood";
+import { isMobileDevice } from "@/lib/deviceHelper";
 
 const RescueRouteLayer = () => {
   const [polyline, setPolyline] = useState<[number, number][]>([]);
+  const [localRescuerCoords, setLocalRescuerCoords] = useState<
+    [number, number] | undefined
+  >();
   const user = useSelector((state: RootState) => state.auth.user);
   const { data: sosResponse } = useGetAllSosAlertQuery(undefined, {
     pollingInterval: 10000, // refetch every 10s
@@ -31,6 +35,27 @@ const RescueRouteLayer = () => {
         activeSosReportOnRescue.coords.longitude,
       ]
     : undefined;
+
+  useEffect(() => {
+    if (user?.coordinates) {
+      setLocalRescuerCoords(user.coordinates);
+      return;
+    }
+    // fallback: get position directly if Redux coords not ready yet
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocalRescuerCoords([pos.coords.latitude, pos.coords.longitude]);
+      },
+      (err) => console.error(err),
+      { enableHighAccuracy: isMobileDevice(), maximumAge: 0 },
+    );
+  }, []);
+
+  useEffect(() => {
+    if (user?.coordinates) {
+      setLocalRescuerCoords(user.coordinates);
+    }
+  }, [user?.coordinates]);
 
   // fetch polyline when coords are ready
   useEffect(() => {
