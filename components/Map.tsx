@@ -106,6 +106,7 @@ export default function Map() {
     if (!user || !activeSosReportOnRescue) return;
     if (isWatching.current) return;
 
+    isWatching.current = true;
     let lastUpdate = 0;
     const THROTTLE_MS = 5000;
 
@@ -138,7 +139,7 @@ export default function Map() {
     dispatch(setWatchId(watchId));
 
     return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
+  }, [user?._id, activeSosReportOnRescue?._id]);
 
   //handlers
   const handleNewSegment = () => {
