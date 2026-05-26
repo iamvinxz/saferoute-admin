@@ -98,7 +98,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
           await updateSosStatus({
             id,
             status,
-            rescuerId: user?._id ?? "",
+            rescuerId: user?._id,
             rescuerCoords: { latitude, longitude },
           }).unwrap();
 
@@ -350,7 +350,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
                     <span>Responding...</span>
                   ) : (
                     <>
-                      <Navigation size={14} /> Response
+                      <Navigation size={14} /> Respond
                     </>
                   )}
                 </button>
