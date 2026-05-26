@@ -50,7 +50,7 @@ export const getDetourWaypoints = (
       segMidLng <= Math.max(origin[1], destination[1]) + 0.002;
 
     if (isOnPath) {
-      const detour = getPerpendicularOffset(start, end, 200);
+      const detour = getPerpendicularOffset(start, end, 100);
       waypoints.push(detour);
     }
   });
