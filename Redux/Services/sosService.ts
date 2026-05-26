@@ -77,7 +77,7 @@ type SosControllerGetAllResponse = {
         age: number;
         phone: string;
         isPWD: boolean;
-      };
+      } | null;
     },
   ];
 };
