@@ -54,8 +54,6 @@ const SOSsignalTable = ({
     return matchesSearch && matchesFilter;
   });
 
-  console.log("sos", filteredSosSignals);
-
   return (
     <Fragment>
       <div className="bg-white border border-slate-100 rounded-md shadow-sm max-lg:hidden">
@@ -133,11 +131,10 @@ const SOSsignalTable = ({
                   key={alert._id}
                   className="hover:bg-[#f1f5f9]"
                   onClick={() => {
-                    console.log("here", alert.userId.phone);
                     dispatch(
                       setSosReport({
                         _id: alert._id,
-                        phone: alert.userId.phone,
+                        phone: alert.userId?.phone ?? null,
                         streetName: alert.streetName,
                         condition: alert.condition,
                         numberOfPerson: alert.numberOfPersons,
@@ -155,7 +152,7 @@ const SOSsignalTable = ({
                 >
                   <td className="px-5 py-4 text-[#585858]">{index + 1}</td>
                   <td className="px-5 py-4 text-[#585858]">
-                    {alert.userId.phone}
+                    {alert.userId?.phone}
                   </td>
                   <td className="px-5 py-4 text-[#585858]">
                     {alert.streetName}
