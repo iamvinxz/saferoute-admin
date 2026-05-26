@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type SosSignalReport = {
   _id: string;
-  phone: string;
+  phone: string | null;
   streetName: string;
   condition: string;
   numberOfPerson: number;
