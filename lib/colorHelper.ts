@@ -33,6 +33,10 @@ export const statusColors: Record<string, { badge: string; text: string }> = {
     badge: "bg-blue-100",
     text: "text-blue-700",
   },
+  Responded: {
+    badge: "bg-teal-100",
+    text: "text-teal-700",
+  },
   Resolved: {
     badge: "bg-green-100",
     text: "text-green-700",
