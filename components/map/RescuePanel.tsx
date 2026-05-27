@@ -12,7 +12,7 @@ import { CheckCircle } from "lucide-react";
 const RescuePanel = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
-  const watchId = useSelector((state: RootState) => state.auth.watchId);
+
   const [updateSosStatus, { isLoading: updateSosIsLoading }] =
     useUpdateSosStatusMutation();
   const { data: sosResponse } = useGetAllSosAlertQuery(undefined, {
@@ -28,7 +28,7 @@ const RescuePanel = () => {
 
   if (!activeSosReportOnRescue) return null;
 
-  const handleResolve = async () => {
+  const handleResponded = async () => {
     try {
       await updateSosStatus({
         id: activeSosReportOnRescue._id,
@@ -36,12 +36,14 @@ const RescuePanel = () => {
         rescuerCoords: user?.coordinates
           ? { latitude: user.coordinates[0], longitude: user.coordinates[1] }
           : undefined,
-      }).unwrap();
 
-      if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-        dispatch(clearWatchId());
-      }
+        coords: user?.coordinates //set the user coords as coords of sos
+          ? {
+              latitude: user.coordinates[0],
+              longitude: user.coordinates[1],
+            }
+          : undefined,
+      }).unwrap();
 
       dispatch(clearSosReport());
     } catch (error) {
@@ -58,7 +60,7 @@ const RescuePanel = () => {
         </p>
       </div>
       <button
-        onClick={handleResolve}
+        onClick={handleResponded}
         disabled={updateSosIsLoading}
         className="flex items-center gap-1.5 px-3 py-2 bg-teal-500 text-white text-xs rounded-lg hover:bg-teal-600 transition-colors disabled:opacity-60"
       >
