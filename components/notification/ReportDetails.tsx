@@ -16,6 +16,7 @@ import {
   useUpdateSosStatusMutation,
 } from "@/Redux/Services/sosService";
 import { isMobileDevice } from "@/lib/deviceHelper";
+import { clearWatchId } from "@/state/slices/authSlice";
 
 interface ReportDetailsProps {
   activeTab: string;
@@ -35,6 +36,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
   const segments = useSelector((state: RootState) => state.segment.segments);
   const sosReport = useSelector((state: RootState) => state.sosReport);
   const user = useSelector((state: RootState) => state.auth.user);
+  const watchId = useSelector((state: RootState) => state.auth.watchId);
 
   //var
   const isAdmin = user?.role === "admin";
@@ -42,15 +44,23 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
   const status = sosReport?.status?.toLowerCase();
   const isPending = status === "pending";
   const isAssignedRescuer = sosReport?.rescuerId === user?._id;
-  const canManageSOS = isRescuer && (isPending || isAssignedRescuer);
-  const canRespond = canManageSOS;
+  // const canManageSOS = isRescuer && (isPending || isAssignedRescuer);
   const canDisregard = isAdmin;
+  const hasActiveResponse = isAssignedRescuer && status === "dispatched";
+  const isResponded = isAssignedRescuer && status === "responded";
+  const isResolved = status === "resolved";
+  const canRespond = isPending || hasActiveResponse || isResponded;
 
   //rtk
   const [deleteFloodReport] = useDeleteFloodReportMutation();
   const [updateSosStatus, { isLoading: updateSosIsLoading }] =
     useUpdateSosStatusMutation();
   const [deleteSOS] = useDeleteSosMutation();
+
+  const handleViewResponse = () => {
+    setShowModal(false);
+    router.push("/maps");
+  };
 
   const handleDeleteFloodReport = async (id: string) => {
     try {
@@ -126,6 +136,22 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
         maximumAge: 0,
       },
     );
+  };
+
+  const handleResolve = async (id: string) => {
+    try {
+      await updateSosStatus({ id, status: "resolved" }).unwrap();
+
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        dispatch(clearWatchId());
+      }
+
+      dispatch(clearSosReport());
+      setShowModal(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -348,39 +374,91 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
               </div>
 
               {/* Actions */}
-              {/* Actions */}
-              <div className="pt-3">
+              {isResolved ? (
+                <div className="bg-green-50 border border-green-200 rounded-md px-3 py-3">
+                  <div className="flex flex-col items-center text-center">
+                    <p className="text-sm font-semibold text-green-700">
+                      Rescue Completed
+                    </p>
+
+                    <p className="text-xs text-green-600 mt-1">
+                      This SOS report has been resolved.
+                    </p>
+
+                    {sosReport.rescuerName && (
+                      <p className="text-xs text-slate-600 mt-3">
+                        Rescuer:{" "}
+                        <span className="font-medium">
+                          {sosReport.rescuerName}
+                        </span>
+                      </p>
+                    )}
+
+                    {sosReport.resolvedAt && (
+                      <p className="text-xs text-slate-500 mt-1">
+                        Resolved at{" "}
+                        {new Date(sosReport.resolvedAt).toLocaleString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          },
+                        )}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
                 <div className="grid grid-cols-1 gap-2">
                   {canRespond && (
                     <button
-                      onClick={() =>
-                        handleResponse(sosReport._id, "dispatched")
-                      }
+                      onClick={() => {
+                        if (isResponded) {
+                          handleResolve(sosReport._id);
+                        } else if (hasActiveResponse) {
+                          handleViewResponse();
+                        } else {
+                          handleResponse(sosReport._id, "dispatched");
+                        }
+                      }}
                       disabled={updateSosIsLoading}
                       className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-[#1A5EFD] text-white text-xs transition-colors hover:cursor-pointer hover:bg-[#5183f8] max-lg:text-[10px] disabled:opacity-60"
                     >
                       {updateSosIsLoading ? (
-                        <span>Responding...</span>
+                        <span>
+                          {isResponded ? "Resolving..." : "Responding..."}
+                        </span>
                       ) : (
                         <>
-                          <Navigation size={14} /> Response
+                          <Navigation size={14} />
+                          {isResponded
+                            ? "Resolve"
+                            : hasActiveResponse
+                              ? "View Path"
+                              : "Respond"}
                         </>
                       )}
                     </button>
                   )}
+
                   {canDisregard && (
                     <button
                       onClick={() => {
                         handleDeleteSos(sosReport._id);
                         setShowModal(false);
                       }}
-                      className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-white border text-red-400 text-xs hover:bg-[#dfdfdf] hover:cursor-pointer transition-colors max-lg:text-[10px]"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-white border text-red-400 text-xs hover:bg-[#dfdfdf] hover:cursor-pointer transition-colors max-lg:text-[10px]"
                     >
-                      <Trash2 size={14} /> Disregard report
+                      <Trash2 size={14} />
+                      Disregard report
                     </button>
                   )}
                 </div>
-              </div>
+              )}
             </div>
           </div>
         )}
