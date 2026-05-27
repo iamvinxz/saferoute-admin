@@ -39,6 +39,7 @@ const Dashboard = () => {
   const [isDown, setIsDown] = useState<boolean>(false);
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.auth.user);
+  const isRescuer = user?.role === "rescuer";
 
   //rtk query
   const [logout] = useLogoutMutation();
@@ -54,9 +55,9 @@ const Dashboard = () => {
   const { data: segmentsResponse, isLoading: segmentLoading } =
     useGetAllSegmentQuery();
   const { data: adminUserResponse, isLoading: adminLoading } =
-    useGetAllAdminsQuery();
+    useGetAllAdminsQuery(undefined, { skip: isRescuer });
   const { data: residentUserResponse, isLoading: residentLoading } =
-    useGetAllUsersQuery();
+    useGetAllUsersQuery(undefined, { skip: isRescuer });
 
   //var
   const announcement = announcementResponse?.announcements;
@@ -78,68 +79,135 @@ const Dashboard = () => {
     adminLoading ||
     residentLoading;
 
-  const topCards = [
-    {
-      count: sos?.length,
-      label: "SOS Signals",
-      desc: "Active emergency alerts requiring attention",
-      icon: TriangleAlert,
-      iconBg: "bg-red-100",
-      iconColor: "text-red-400",
-    },
-    {
-      count: floodReport?.length,
-      label: "Flood Reports",
-      desc: "Incoming flood reports from residents",
-      icon: Waves,
-      iconBg: "bg-blue-100",
-      iconColor: "text-blue-400",
-    },
-    {
-      //todo
-      count: 10,
-      label: "Rescued",
-      desc: "People successfully rescued by response teams",
-      icon: Ambulance,
-      iconBg: "bg-yellow-100",
-      iconColor: "text-yellow-400",
-    },
-  ];
+  const topCards = isRescuer
+    ? [
+        {
+          count: sos?.filter((s) => s.rescuerId?._id === user?._id).length,
+          label: "My Active Rescues",
+          desc: "SOS alerts you are currently responding to",
+          icon: Ambulance,
+          iconBg: "bg-yellow-100",
+          iconColor: "text-yellow-400",
+        },
+        {
+          count: sos?.filter(
+            (s) => s.rescuerId?._id === user?._id && s.status === "resolved",
+          ).length,
+          label: "Resolved Rescues",
+          desc: "People you have successfully rescued",
+          icon: TriangleAlert,
+          iconBg: "bg-green-100",
+          iconColor: "text-green-400",
+        },
+        {
+          count: sos?.filter((s) => s.status === "pending").length,
+          label: "Pending SOS",
+          desc: "SOS signals waiting for response",
+          icon: TriangleAlert,
+          iconBg: "bg-red-100",
+          iconColor: "text-red-400",
+        },
+      ]
+    : [
+        {
+          count: sos?.length,
+          label: "SOS Signals",
+          desc: "Active emergency alerts requiring attention",
+          icon: TriangleAlert,
+          iconBg: "bg-red-100",
+          iconColor: "text-red-400",
+        },
+        {
+          count: floodReport?.length,
+          label: "Flood Reports",
+          desc: "Incoming flood reports from residents",
+          icon: Waves,
+          iconBg: "bg-blue-100",
+          iconColor: "text-blue-400",
+        },
+        {
+          count: 10,
+          label: "Rescued",
+          desc: "People successfully rescued by response teams",
+          icon: Ambulance,
+          iconBg: "bg-yellow-100",
+          iconColor: "text-yellow-400",
+        },
+      ];
 
-  const bottomCards = [
-    {
-      count: pin?.length,
-      label: "Pinned Locations",
-      desc: "Marked locations on map",
-      icon: MapPin,
-      iconBg: "bg-blue-100",
-      iconColor: "text-blue-400",
-    },
-    {
-      count: segment?.length,
-      label: "Segments",
-      desc: "Confirmed flooded streets",
-      icon: GitBranch,
-      iconBg: "bg-red-100",
-      iconColor: "text-red-400",
-    },
-    {
-      count: admins?.length,
-      label: "Admin Users",
-      desc: "Active admin users",
-      icon: ShieldUser,
-      iconBg: "bg-green-100",
-      iconColor: "text-green-400",
-    },
-    {
-      count: residents?.length,
-      label: "Residents Users",
-      desc: "Active residents users",
-      icon: Users,
-      iconBg: "bg-green-100",
-      iconColor: "text-green-400",
-    },
-  ];
+  const bottomCards = isRescuer
+    ? [
+        {
+          count: pin?.length,
+          label: "Pinned Locations",
+          desc: "Marked locations on map",
+          icon: MapPin,
+          iconBg: "bg-blue-100",
+          iconColor: "text-blue-400",
+        },
+        {
+          count: segment?.length,
+          label: "Segments",
+          desc: "Confirmed flooded streets",
+          icon: GitBranch,
+          iconBg: "bg-red-100",
+          iconColor: "text-red-400",
+        },
+        {
+          count: sos?.filter(
+            (s) => s.rescuerId?._id === user?._id && s.status === "dispatched",
+          ).length,
+          label: "Dispatched",
+          desc: "Rescues currently in progress",
+          icon: Ambulance,
+          iconBg: "bg-yellow-100",
+          iconColor: "text-yellow-400",
+        },
+        {
+          count: sos?.filter(
+            (s) => s.rescuerId?._id === user?._id && s.status === "resolved",
+          ).length,
+          label: "Total Resolved",
+          desc: "Total rescues completed",
+          icon: ShieldUser,
+          iconBg: "bg-green-100",
+          iconColor: "text-green-400",
+        },
+      ]
+    : [
+        {
+          count: pin?.length,
+          label: "Pinned Locations",
+          desc: "Marked locations on map",
+          icon: MapPin,
+          iconBg: "bg-blue-100",
+          iconColor: "text-blue-400",
+        },
+        {
+          count: segment?.length,
+          label: "Segments",
+          desc: "Confirmed flooded streets",
+          icon: GitBranch,
+          iconBg: "bg-red-100",
+          iconColor: "text-red-400",
+        },
+        {
+          count: admins?.length,
+          label: "Admin Users",
+          desc: "Active admin users",
+          icon: ShieldUser,
+          iconBg: "bg-green-100",
+          iconColor: "text-green-400",
+        },
+        {
+          count: residents?.length,
+          label: "Residents Users",
+          desc: "Active residents users",
+          icon: Users,
+          iconBg: "bg-green-100",
+          iconColor: "text-green-400",
+        },
+      ];
 
   const handleLogout = async () => {
     try {
