@@ -235,12 +235,14 @@ const RescuesPage = () => {
                         condition: alert.condition,
                         numberOfPerson: alert.numberOfPersons,
                         status: alert.status,
+                        resolvedAt: alert.resolvedAt ?? null,
                         requestedDate: alert.createdAt,
                         coordinates: [
                           alert.coords.latitude,
                           alert.coords.longitude,
                         ],
                         rescuerId: alert.rescuerId?._id ?? null,
+                        rescuerName: alert.rescuerId?.name ?? null,
                       }),
                     );
                     setShowModal(true);
