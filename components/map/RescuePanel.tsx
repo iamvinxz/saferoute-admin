@@ -32,7 +32,7 @@ const RescuePanel = () => {
     try {
       await updateSosStatus({
         id: activeSosReportOnRescue._id,
-        status: "resolved",
+        status: "responded",
         rescuerCoords: user?.coordinates
           ? { latitude: user.coordinates[0], longitude: user.coordinates[1] }
           : undefined,
@@ -50,23 +50,23 @@ const RescuePanel = () => {
   };
 
   return (
-    <div className="absolute top-5 left-1/2 -translate-x-1/2 z-[400] bg-white rounded-xl shadow-lg p-3 flex items-center gap-3 border border-gray-100">
+    <div className="absolute max-w-75 w-70 top-20 left-1/2 -translate-x-1/2 z-[400] bg-white rounded-xl shadow-lg p-3 flex items-center justify-between gap-3 border border-gray-100 lg:top-5 lg:w-70">
       <div>
         <p className="text-xs font-semibold text-[#303030]">Active Rescue</p>
-        <p className="text-[10px] text-[#848484]">
+        <p className="text-[11px] text-[#848484]">
           {activeSosReportOnRescue.streetName}
         </p>
       </div>
       <button
         onClick={handleResolve}
         disabled={updateSosIsLoading}
-        className="flex items-center gap-1.5 px-3 py-2 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition-colors disabled:opacity-60"
+        className="flex items-center gap-1.5 px-3 py-2 bg-teal-500 text-white text-xs rounded-lg hover:bg-teal-600 transition-colors disabled:opacity-60"
       >
         {updateSosIsLoading ? (
           <span>Resolving...</span>
         ) : (
           <>
-            <CheckCircle size={14} /> Mark Resolved
+            <CheckCircle size={14} /> Mark Reponded
           </>
         )}
       </button>
