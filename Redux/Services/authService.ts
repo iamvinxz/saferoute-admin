@@ -52,6 +52,7 @@ type GetMeResponse = {
     name: string;
     role: string;
     isActive: boolean;
+    respondedTo: string[];
   };
 };
 export const { useLoginMutation, useLogoutMutation, useGetMeQuery } = authApi;
