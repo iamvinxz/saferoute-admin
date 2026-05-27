@@ -1,25 +1,43 @@
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, MapPinned, Bell, Users, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  MapPinned,
+  Bell,
+  Users,
+  LogOut,
+  ClipboardList,
+  BookAlert,
+} from "lucide-react";
 import { useLogoutMutation } from "@/Redux/Services/authService";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "@/state/slices/authSlice";
+import { RootState } from "@/state/store";
 
-const navItems = [
+const adminNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: MapPinned, label: "Maps", href: "/maps" },
   { icon: Bell, label: "Notification", href: "/notification" },
   { icon: Users, label: "Users", href: "/users" },
 ];
 
+const rescuerNavItems = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: MapPinned, label: "Maps", href: "/maps" },
+  { icon: BookAlert, label: "SOS Reports", href: "/notification" },
+  { icon: ClipboardList, label: "My Rescues", href: "/rescues" }, // new tab
+];
+
 const SidebarContent = () => {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const navItems = user?.role === "rescuer" ? rescuerNavItems : adminNavItems;
 
   //rtk query
-
   const [logout] = useLogoutMutation();
 
   const handleLogout = async () => {
@@ -31,6 +49,24 @@ const SidebarContent = () => {
       console.error(error);
     }
   };
+
+  if (!user) {
+    return (
+      <div className="px-7 py-6">
+        <div className="flex items-center gap-2 mb-10 px-2 mt-5">
+          <div className="w-10 h-10 rounded-full bg-slate-200 animate-pulse" />
+          <div className="w-24 h-4 bg-slate-200 rounded animate-pulse" />
+        </div>
+        <div className="flex flex-col gap-5 mt-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="px-3 py-2">
+              <div className="w-full h-5 bg-slate-200 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-7 py-6">
