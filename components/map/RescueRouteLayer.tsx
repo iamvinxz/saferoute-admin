@@ -16,6 +16,8 @@ const RescueRouteLayer = () => {
     [number, number] | undefined
   >();
   const user = useSelector((state: RootState) => state.auth.user);
+
+  //rtk
   const { data: sosResponse } = useGetAllSosAlertQuery(undefined, {
     pollingInterval: 10000, // refetch every 10s
     skip: !user,
@@ -26,9 +28,8 @@ const RescueRouteLayer = () => {
     (alert) =>
       alert.status === "dispatched" && alert.rescuerId?._id === user?._id,
   );
-
   const rescuerCoords: [number, number] | undefined = user?.coordinates;
-
+  const isResponded = activeSosReportOnRescue?.status === "responded";
   const sosCoords: [number, number] | undefined = activeSosReportOnRescue
     ? [
         activeSosReportOnRescue.coords.latitude,
@@ -78,10 +79,12 @@ const RescueRouteLayer = () => {
 
   return (
     <>
-      <Polyline
-        positions={polyline}
-        pathOptions={{ color: "#1A5EFD", weight: 4 }}
-      />
+      {!isResponded && (
+        <Polyline
+          positions={polyline}
+          pathOptions={{ color: "#1A5EFD", weight: 4 }}
+        />
+      )}
       {rescuerCoords && (
         <Marker
           position={rescuerCoords}
