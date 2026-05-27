@@ -87,8 +87,6 @@ export default function Map() {
   const { isSuccess: meSuccess, data: meData } = useGetMeQuery();
   const { data: sos } = useGetSosAvailabilityQuery();
 
-  console.log("my data", meData);
-
   const isRescuer =
     meData?.user?.role === "rescuer" || user?.role === "rescuer";
   const activeSosReportOnRescue = sosResponse?.alerts?.find(
@@ -129,6 +127,7 @@ export default function Map() {
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        const currentStatus = activeSosReportOnRescue.status;
         const now = Date.now();
 
         // update live marker on map
@@ -139,9 +138,13 @@ export default function Map() {
           lastUpdate = now;
           updateSosStatus({
             id: activeSosReportOnRescue._id,
-            status: "dispatched",
+            status: currentStatus,
             rescuerId: user._id,
             rescuerCoords: { latitude, longitude },
+
+            ...(currentStatus === "responded" && {
+              coords: { latitude, longitude },
+            }),
           });
         }
       },
