@@ -1,6 +1,8 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import Modal from "@/components/dashboard/Modal";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
 
 type Tab = "announcement" | "article";
 
@@ -49,6 +51,8 @@ const SkeletonRow = () => (
 export default function Table({ announcement, article, isLoading }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("announcement");
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isRescuer = user?.role === "rescuer";
 
   const activeData = activeTab === "announcement" ? announcement : article;
 
@@ -78,19 +82,21 @@ export default function Table({ announcement, article, isLoading }: Props) {
             Articles
           </button>
         </div>
-        <div className="pr-2">
-          <button
-            className="flex items-center gap-2 text-xs font-medium bg-[#598bff] text-white p-1 rounded-md shadow-sm hover:cursor-pointer lg:p-3"
-            onClick={() => setIsOpen(true)}
-          >
-            <Plus className="w-4 h-4 lg:w-5 lg:h-5" />
-            <span className="hidden lg:inline">
-              {activeTab === "announcement"
-                ? "Create announcement"
-                : "Create article"}
-            </span>
-          </button>
-        </div>
+        {!isRescuer && (
+          <div className="pr-2">
+            <button
+              className="flex items-center gap-2 text-xs font-medium bg-[#598bff] text-white p-1 rounded-md shadow-sm hover:cursor-pointer lg:p-3"
+              onClick={() => setIsOpen(true)}
+            >
+              <Plus className="w-4 h-4 lg:w-5 lg:h-5" />
+              <span className="hidden lg:inline">
+                {activeTab === "announcement"
+                  ? "Create announcement"
+                  : "Create article"}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
 
       {isOpen && <Modal activeTab={activeTab} setIsOpen={setIsOpen} />}
