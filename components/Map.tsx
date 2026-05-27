@@ -30,7 +30,13 @@ import {
   triggerConfirmation,
   triggerSOSsignal,
 } from "@/state/slices/sosSignal";
-import { LayoutDashboard, Bell, Users } from "lucide-react";
+import {
+  LayoutDashboard,
+  Bell,
+  Users,
+  BookAlert,
+  ClipboardList,
+} from "lucide-react";
 import ViewMarkedLocations from "./notification/ViewMarkedLocations";
 import RescueRouteLayer from "./map/RescueRouteLayer";
 import RescuePanel from "./map/RescuePanel";
@@ -42,12 +48,6 @@ export const center: [number, number] = [14.673413900535, 120.9685888671883];
 export const maxBounds: [[number, number], [number, number]] = [
   [14.616796295409431, 120.90597134427183],
   [14.718980127971527, 121.00881300073651],
-];
-
-const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: Bell, label: "Notification", href: "/notification" },
-  { icon: Users, label: "Users", href: "/users" },
 ];
 
 export default function Map() {
@@ -84,13 +84,29 @@ export default function Map() {
   const [enableSOS] = useEnableSosSignalMutation();
   const { data: sosResponse, isSuccess: sosSuccess } = useGetAllSosAlertQuery();
   const [updateSosStatus] = useUpdateSosStatusMutation();
-  const { isSuccess: meSuccess } = useGetMeQuery();
+  const { isSuccess: meSuccess, data: meData } = useGetMeQuery();
   const { data: sos } = useGetSosAvailabilityQuery();
 
+  console.log("my data", meData);
+
+  const isRescuer =
+    meData?.user?.role === "rescuer" || user?.role === "rescuer";
   const activeSosReportOnRescue = sosResponse?.alerts?.find(
     (alert) =>
       alert.status === "dispatched" && alert.rescuerId?._id === user?._id,
   );
+
+  const navItems = isRescuer
+    ? [
+        { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+        { icon: BookAlert, label: "SOS Reports", href: "/notification" },
+        { icon: ClipboardList, label: "My Rescues", href: "/rescues" },
+      ]
+    : [
+        { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+        { icon: Bell, label: "Notification", href: "/notification" },
+        { icon: Users, label: "Users", href: "/users" },
+      ];
 
   //prevents penetrations of click on panels
   useEffect(() => {
@@ -158,6 +174,8 @@ export default function Map() {
     dispatch(addSegment());
   };
 
+  console.log("user here", user?.coordinates);
+
   return (
     <div className="relative w-full h-full z-0">
       <MapContainer
@@ -224,7 +242,7 @@ export default function Map() {
         onFocus={setFocusTarget}
         onToggle={() => setViewFloodedStreets((prev) => !prev)}
       />
-      <ToolBox />
+      {!isRescuer && <ToolBox />}
 
       {/**nav bar for maps */}
       <div className="bg-white absolute bottom-10 left-1/2 -translate-x-1/2 z-[400] p-4 space-x-6 rounded-md hover:opacity-100 flex flex-row drop-shadow-lg">
