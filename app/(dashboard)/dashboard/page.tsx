@@ -2,6 +2,7 @@
 import StatCard from "@/components/dashboard/Card";
 import { useLogoutMutation } from "@/Redux/Services/authService";
 import { clearUser } from "@/state/slices/authSlice";
+import { api } from "@/Redux/Services/APIService";
 import {
   ChevronDown,
   TriangleAlert,
@@ -82,7 +83,9 @@ const Dashboard = () => {
   const topCards = isRescuer
     ? [
         {
-          count: sos?.filter((s) => s.rescuerId?._id === user?._id).length,
+          count: sos?.filter(
+            (s) => s.rescuerId?._id === user?._id && s.status !== "resolved",
+          ).length,
           label: "My Active Rescues",
           desc: "SOS alerts you are currently responding to",
           icon: Ambulance,
@@ -213,6 +216,8 @@ const Dashboard = () => {
     try {
       await logout().unwrap();
       dispatch(clearUser());
+
+      dispatch(api.util.resetApiState());
       router.push("/auth/login");
     } catch (error) {
       console.error(error);
