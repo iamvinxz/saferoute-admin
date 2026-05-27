@@ -238,9 +238,11 @@ const SOSsignalTable = ({
                 ? "bg-amber-400"
                 : alert.status.toLowerCase() === "dispatched"
                   ? "bg-blue-500"
-                  : alert.status.toLowerCase() === "resolved"
-                    ? "bg-green-500"
-                    : "bg-red-500";
+                  : alert.status.toLowerCase() === "responded"
+                    ? "bg-teal-400"
+                    : alert.status.toLowerCase() === "resolved"
+                      ? "bg-green-500"
+                      : "bg-red-500";
 
             return (
               <div
