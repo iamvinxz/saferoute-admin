@@ -147,11 +147,13 @@ const SOSsignalTable = ({
                         numberOfPerson: alert.numberOfPersons,
                         status: alert.status,
                         requestedDate: alert.createdAt,
+                        resolvedAt: alert.resolvedAt ?? null,
                         coordinates: [
                           alert.coords.latitude,
                           alert.coords.longitude,
                         ],
                         rescuerId: alert.rescuerId?._id ?? null,
+                        rescuerName: alert.rescuerId?.name ?? null,
                       }),
                     );
                     setShowModal(true);
@@ -267,11 +269,13 @@ const SOSsignalTable = ({
                       numberOfPerson: alert.numberOfPersons,
                       status: alert.status,
                       requestedDate: alert.createdAt,
+                      resolvedAt: alert.resolvedAt ?? null,
                       coordinates: [
                         alert.coords.latitude,
                         alert.coords.longitude,
                       ],
                       rescuerId: alert.rescuerId?._id ?? null,
+                      rescuerName: alert.rescuerId?.name ?? null,
                     }),
                   );
                   setShowModal(true);
