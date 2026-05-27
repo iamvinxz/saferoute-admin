@@ -49,7 +49,7 @@ const sosService = api.injectEndpoints({
   overrideExisting: true,
 });
 
-type SosControllerGetAllResponse = {
+export type SosControllerGetAllResponse = {
   alerts: [
     {
       coords: {
