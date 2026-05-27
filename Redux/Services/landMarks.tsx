@@ -2,8 +2,8 @@ export const landMarks = [
   {
     name: "Barangay Hall",
     coordinates: {
-      lat: 14.671713871663536,
-      lng: 120.97042400298534,
+      lat: 14.67020445507815,
+      lng: 120.96488547174975,
     },
   },
   {
