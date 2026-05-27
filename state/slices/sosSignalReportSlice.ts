@@ -8,8 +8,10 @@ type SosSignalReport = {
   numberOfPerson: number;
   status: string;
   requestedDate: string;
+  resolvedAt: string | null;
   coordinates: [number, number] | undefined;
   rescuerId: string | null;
+  rescuerName: string | null;
 };
 
 const initialState: SosSignalReport = {
@@ -20,8 +22,10 @@ const initialState: SosSignalReport = {
   numberOfPerson: 0,
   status: "",
   requestedDate: "",
+  resolvedAt: null,
   coordinates: undefined,
   rescuerId: null,
+  rescuerName: null,
 };
 
 const sosReport = createSlice({
