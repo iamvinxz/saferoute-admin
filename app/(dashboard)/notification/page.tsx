@@ -4,6 +4,8 @@ import FloodReportTable from "@/components/notification/FloodReportTable";
 import { Menu, Search, ChevronDown } from "lucide-react";
 import SideBar from "@/components/SideBar";
 import SOSsignalTable from "@/components/notification/SOSsignalTable";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
 
 type ActiveTab = "floodReport" | "sos";
 type SortBy = "status" | "condition";
@@ -14,7 +16,12 @@ const filterOptions = {
 };
 
 const Notification = () => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("floodReport");
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isRescuer = user?.role === "rescuer";
+
+  const [activeTab, setActiveTab] = useState<ActiveTab>(
+    isRescuer ? "sos" : "floodReport", // ✅ default to sos for rescuer
+  );
   const [search, setSearch] = useState<string>("");
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<SortBy>("status");
@@ -24,7 +31,7 @@ const Notification = () => {
 
   const handleSortByChange = (value: SortBy) => {
     setSortBy(value);
-    setFilterValue("all"); // reset filter value when sort by changes
+    setFilterValue("all");
     setSortByOpen(false);
   };
 
@@ -34,10 +41,12 @@ const Notification = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="font-semibold text-[#1A5EFD] md:text-lg">
-            Notifications
+            {isRescuer ? "SOS Reports" : "Notifications"}
           </h1>
           <p className="text-[#848484] text-[10px] lg:text-sm">
-            Check for updated flood reports and sos signals.
+            {isRescuer
+              ? "Check for updated sos signals"
+              : "Check for updated flood reports and sos signals."}
           </p>
         </div>
         <div className="lg:hidden">
@@ -58,16 +67,19 @@ const Notification = () => {
         {/**header buttons */}
         <div className="lg:flex justify-between gap-5">
           <div className="border-b w-fit">
-            <button
-              onClick={() => setActiveTab("floodReport")}
-              className={`tab-btn text-[12px] transition-colors px-4 py-2.5 md:text-[14px] ${
-                activeTab === "floodReport"
-                  ? "active text-[#1A5EFD] font-semibold"
-                  : "text-gray-400 hover:text-gray-600"
-              }`}
-            >
-              Flood Reports
-            </button>
+            {/* hide flood report tab for rescuer */}
+            {!isRescuer && (
+              <button
+                onClick={() => setActiveTab("floodReport")}
+                className={`tab-btn text-[12px] transition-colors px-4 py-2.5 md:text-[14px] ${
+                  activeTab === "floodReport"
+                    ? "active text-[#1A5EFD] font-semibold"
+                    : "text-gray-400 hover:text-gray-600"
+                }`}
+              >
+                Flood Reports
+              </button>
+            )}
             <button
               onClick={() => setActiveTab("sos")}
               className={`tab-btn text-[12px] transition-colors px-4 py-2.5 md:text-[14px] ${
@@ -81,11 +93,9 @@ const Notification = () => {
           </div>
 
           <div className="flex gap-3 max-lg:mt-5 max-lg:flex-col lg:items-center">
-            {/* filters - only show on sos tab */}
             {activeTab === "sos" && (
               <div className="flex items-center gap-2">
                 <span className="text-[#848484] text-xs">Sort by:</span>
-                {/* sort by dropdown */}
                 <div className="relative">
                   <button
                     type="button"
@@ -118,7 +128,6 @@ const Notification = () => {
                   )}
                 </div>
 
-                {/* filter value dropdown */}
                 <div className="relative">
                   <button
                     type="button"
