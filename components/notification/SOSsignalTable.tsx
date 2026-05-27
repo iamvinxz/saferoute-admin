@@ -5,7 +5,8 @@ import {
 import { getDepthColors, getStatusColors } from "@/lib/colorHelper";
 import { Fragment, useState } from "react";
 import ReportDetails from "./ReportDetails";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/state/store";
 import { setSosReport } from "@/state/slices/sosSignalReportSlice";
 import { Trash } from "lucide-react";
 
@@ -24,6 +25,10 @@ const SOSsignalTable = ({
 }: SosSignalProps) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  //var
+  const isAdmin = user?.role === "admin";
 
   //rtk
   const { data: sosAlertsResponse, isLoading: alertsLoading } =
@@ -81,9 +86,11 @@ const SOSsignalTable = ({
               <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Requested Time
               </th>
-              <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Action
-              </th>
+              {isAdmin && (
+                <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                  Action
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -119,7 +126,7 @@ const SOSsignalTable = ({
             ) : filteredSosSignals?.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={isAdmin ? 8 : 7}
                   className="px-5 py-8 text-center text-sm text-[#848484]"
                 >
                   No reports found.
@@ -186,17 +193,19 @@ const SOSsignalTable = ({
                       year: "numeric",
                     })}
                   </td>
-                  <td className="px-5 py-4 text-[#fa4242]">
-                    <button
-                      className="hover:cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteSos(alert._id);
-                      }}
-                    >
-                      <Trash size={18} />
-                    </button>
-                  </td>
+                  {isAdmin && (
+                    <td className="px-5 py-4 text-[#fa4242]">
+                      <button
+                        className="hover:cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteSos(alert._id);
+                        }}
+                      >
+                        <Trash size={18} />
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -252,7 +261,7 @@ const SOSsignalTable = ({
                   dispatch(
                     setSosReport({
                       _id: alert._id,
-                      phone: alert._id,
+                      phone: alert.userId?.phone ?? null,
                       streetName: alert.streetName,
                       condition: alert.condition,
                       numberOfPerson: alert.numberOfPersons,
@@ -280,7 +289,7 @@ const SOSsignalTable = ({
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <div className="flex items-center gap-1.5 min-w-0">
                       <p className="text-[#303030] font-medium text-xs truncate">
-                        {alert._id}
+                        {alert.userId?.phone ?? null}
                       </p>
                       <span
                         className={`w-2 h-2 rounded-full shrink-0 ${statusColor}`}
