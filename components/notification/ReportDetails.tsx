@@ -49,7 +49,8 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
   const hasActiveResponse = isAssignedRescuer && status === "dispatched";
   const isResponded = isAssignedRescuer && status === "responded";
   const isResolved = status === "resolved";
-  const canRespond = isPending || hasActiveResponse || isResponded;
+  const canRespond =
+    isRescuer && (isPending || hasActiveResponse || isResponded);
 
   //rtk
   const [deleteFloodReport] = useDeleteFloodReportMutation();
