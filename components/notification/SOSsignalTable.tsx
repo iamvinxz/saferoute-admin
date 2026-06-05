@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { setSosReport } from "@/state/slices/sosSignalReportSlice";
 import { Trash } from "lucide-react";
+import formatRequestedTime from "@/lib/formatRequestedTime";
 
 interface SosSignalProps {
   activeTab: string;
@@ -189,11 +190,7 @@ const SOSsignalTable = ({
                     </span>
                   </td>
                   <td className="px-5 py-4 text-[#585858]">
-                    {new Date(alert.createdAt).toLocaleString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {formatRequestedTime(alert.createdAt)}
                   </td>
                   {isAdmin && (
                     <td className="px-5 py-4 text-[#fa4242]">
@@ -315,11 +312,7 @@ const SOSsignalTable = ({
                   </p>
 
                   <p className="text-[#848484] text-[9px]">
-                    {new Date(alert.createdAt).toLocaleString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {formatRequestedTime(alert.createdAt)}
                   </p>
                 </div>
               </div>
