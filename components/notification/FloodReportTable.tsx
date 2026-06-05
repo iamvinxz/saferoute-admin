@@ -10,6 +10,7 @@ import { Fragment, useState } from "react";
 import ReportDetails from "./ReportDetails";
 import { createPortal } from "react-dom";
 import { Trash } from "lucide-react";
+import formatRequestedTime from "@/lib/formatRequestedTime";
 
 interface FloodReportTableProps {
   activeTab: string;
@@ -173,11 +174,7 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
                     </span>
                   </td>
                   <td className="px-5 py-4 text-[#585858]">
-                    {new Date(report.createdAt).toLocaleString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {formatRequestedTime(report.createdAt)}
                   </td>
                   <td className="px-5 py-4 text-red-500">
                     <button
@@ -284,11 +281,7 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
                   </p>
 
                   <p className="text-[#848484] text-[9px]">
-                    {new Date(report.createdAt).toLocaleString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {formatRequestedTime(report.createdAt)}
                   </p>
                 </div>
               </div>
