@@ -1,5 +1,12 @@
 import { api } from "./APIService";
-import { CREATE_ADMIN, GET_ALL_ADMINS, GET_ALL_USERS } from "./Endpoints";
+import {
+  CREATE_ADMIN,
+  DELETE_ADMIN,
+  DELETE_USER,
+  EDIT_ADMIN,
+  GET_ALL_ADMINS,
+  GET_ALL_USERS,
+} from "./Endpoints";
 
 const userService = api.injectEndpoints({
   overrideExisting: true,
@@ -16,12 +23,54 @@ const userService = api.injectEndpoints({
       query: () => ({ url: GET_ALL_ADMINS }),
       providesTags: ["Admins"],
     }),
+    editAdmin: build.mutation<EditAdminResponse, EditAdminRequest>({
+      query: ({ id, ...body }) => ({
+        url: EDIT_ADMIN,
+        method: "PUT",
+        params: { id },
+        body,
+      }),
+      invalidatesTags: ["Admins"],
+    }),
+    deleteAdmin: build.mutation<void, string>({
+      query: (id) => ({
+        url: DELETE_ADMIN,
+        method: "DELETE",
+        params: { id },
+      }),
+      invalidatesTags: ["Admins"],
+    }),
+    deleteUser: build.mutation<void, string>({
+      query: (id) => ({
+        url: DELETE_USER,
+        method: "DELETE",
+        params: { id },
+      }),
+    }),
     getAllUsers: build.query<GetAllUsersResponse, void>({
       query: () => ({ url: GET_ALL_USERS }),
       providesTags: ["Users"],
     }),
   }),
 });
+
+export type EditAdminRequest = {
+  id: string;
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: string;
+};
+
+type EditAdminResponse = {
+  message: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+};
 
 type CreateAdminResponse = {
   success: boolean;
@@ -86,4 +135,7 @@ export const {
   useCreateAdminMutation,
   useGetAllAdminsQuery,
   useGetAllUsersQuery,
+  useEditAdminMutation,
+  useDeleteAdminMutation,
+  useDeleteUserMutation,
 } = userService;

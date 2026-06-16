@@ -1,5 +1,11 @@
-import { Admin, User } from "@/Redux/Services/userService";
-import { Fragment } from "react";
+import {
+  Admin,
+  useDeleteAdminMutation,
+  useDeleteUserMutation,
+  User,
+} from "@/Redux/Services/userService";
+import { Fragment, useState } from "react";
+import EditAdminModal from "./EditAdminModal";
 
 interface TableProp {
   activeTab: string;
@@ -18,6 +24,12 @@ const Table = ({
   userIsLoading,
   search,
 }: TableProp) => {
+  const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
+
+  //rtk
+  const [deleteAdmin] = useDeleteAdminMutation();
+  const [deleteUser] = useDeleteUserMutation();
+
   //handlers;
   const filteredAdmins = admins?.filter(
     (admin) =>
@@ -31,6 +43,24 @@ const Table = ({
       user.phone?.toLowerCase().includes(search.toLowerCase()) ||
       user.role?.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const handleDeleteAdmin = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    try {
+      await deleteAdmin(id).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteUser = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    try {
+      await deleteUser(id).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Fragment>
@@ -59,6 +89,9 @@ const Table = ({
                   <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Status
                   </th>
+                  <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -67,6 +100,9 @@ const Table = ({
                     <tr key={i}>
                       <td className="px-5 py-4">
                         <div className="animate-pulse-fast h-4 w-5 bg-slate-200 rounded" />
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
                       </td>
                       <td className="px-5 py-4">
                         <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
@@ -96,7 +132,11 @@ const Table = ({
                   </tr>
                 ) : (
                   filteredAdmins?.map((admin, index) => (
-                    <tr key={admin._id} className="hover:bg-[#f1f5f9]">
+                    <tr
+                      key={admin._id}
+                      className="hover:bg-[#f1f5f9]"
+                      onClick={() => setSelectedAdmin(admin)}
+                    >
                       <td className="px-5 py-4 text-[#585858]">{index + 1}</td>
                       <td className="px-5 py-4 text-[#585858]">{admin.name}</td>
                       <td className="px-5 py-4 text-[#585858]">
@@ -115,6 +155,14 @@ const Table = ({
                           {admin.isActive ? "Active" : "Inactive"}
                         </span>
                       </td>
+                      <td className="px-5 py-4">
+                        <button
+                          onClick={(e) => handleDeleteUser(e, admin._id)}
+                          className="inline-flex items-center px-3 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
+                        >
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -122,6 +170,11 @@ const Table = ({
             </table>
           </div>
         )}
+
+        <EditAdminModal
+          admin={selectedAdmin}
+          onClose={() => setSelectedAdmin(null)}
+        />
 
         {activeTab === "users" && (
           <div className="overflow-x-auto">
@@ -146,6 +199,9 @@ const Table = ({
                   <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Status
                   </th>
+                  <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -154,6 +210,9 @@ const Table = ({
                     <tr key={i}>
                       <td className="px-5 py-4">
                         <div className="animate-pulse-fast h-4 w-5 bg-slate-200 rounded" />
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
                       </td>
                       <td className="px-5 py-4">
                         <div className="animate-pulse-fast h-4 w-30 bg-slate-200 rounded-md" />
@@ -199,6 +258,14 @@ const Table = ({
                         >
                           {user.isActive ? "Active" : "Inactive"}
                         </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <button
+                          onClick={(e) => handleDeleteUser(e, user._id)}
+                          className="inline-flex items-center px-3 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
+                        >
+                          Delete
+                        </button>
                       </td>
                     </tr>
                   ))

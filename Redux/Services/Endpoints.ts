@@ -21,3 +21,9 @@ export const ENABLE_SOS = "/api/user/toggleSOS";
 export const UPDATE_SOS_STATUS = "/api/sos/updateStatus";
 export const DELETE_SOS = "/api/sos/deleteSOS";
 export const GET_SOS_AVAILABILITY = "/api/user/all/getSosAvailability";
+export const DELETE_ARTICLE = "/api/article/deleteSingleArticle";
+export const DELETE_ANNOUNCEMENT =
+  "/api/notifications/deleteSingleAnnouncement";
+export const EDIT_ADMIN = "/api/user/editAdminById";
+export const DELETE_ADMIN = "/api/user/deleteAdminById";
+export const DELETE_USER = "/api/user/deleteUserById";

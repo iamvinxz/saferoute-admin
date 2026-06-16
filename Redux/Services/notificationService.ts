@@ -1,5 +1,9 @@
 import { api } from "./APIService";
-import { SEND_ANNOUNCEMENT, GET_ALL_ANNOUNCEMENTS } from "./Endpoints";
+import {
+  SEND_ANNOUNCEMENT,
+  GET_ALL_ANNOUNCEMENTS,
+  DELETE_ANNOUNCEMENT,
+} from "./Endpoints";
 
 const notificationService = api.injectEndpoints({
   endpoints: (build) => ({
@@ -14,13 +18,32 @@ const notificationService = api.injectEndpoints({
       }),
       invalidatesTags: ["Announcements"],
     }),
-    getAllAnnouncements: build.query<GetAllAnnouncementsResponse, void>({
-      query: () => ({ url: GET_ALL_ANNOUNCEMENTS }),
+    getAllAnnouncements: build.query<
+      GetAllAnnouncementsResponse,
+      GetAllAnnouncementsRequest
+    >({
+      query: ({ page, limit }) => ({
+        url: GET_ALL_ANNOUNCEMENTS,
+        params: { page, limit },
+      }),
       providesTags: ["Announcements"],
+    }),
+    deleteAnnouncement: build.mutation<DeleteAnnouncementResponse, string>({
+      query: (id) => ({
+        url: DELETE_ANNOUNCEMENT,
+        method: "DELETE",
+        params: { id },
+      }),
+      invalidatesTags: ["Announcements"],
     }),
   }),
   overrideExisting: true,
 });
+
+type DeleteAnnouncementResponse = {
+  code: number;
+  message: string;
+};
 
 type SendAnnouncementResponse = {
   message: string;
@@ -58,7 +81,25 @@ type GetAllAnnouncementsResponse = {
     createdAt: string;
     updatedAt: string;
   }[];
+  pagination: Pagination;
 };
 
-export const { useSendAnnouncementMutation, useGetAllAnnouncementsQuery } =
-  notificationService;
+type Pagination = {
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  limit: number;
+  totalAnnouncement: number;
+  totalPages: number;
+};
+
+type GetAllAnnouncementsRequest = {
+  page: number;
+  limit: number;
+};
+
+export const {
+  useSendAnnouncementMutation,
+  useGetAllAnnouncementsQuery,
+  useDeleteAnnouncementMutation,
+} = notificationService;

@@ -1,12 +1,15 @@
-import { Plus } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import Modal from "@/components/dashboard/Modal";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
+import { useDeleteArticleMutation } from "@/Redux/Services/articleService";
+import { useDeleteAnnouncementMutation } from "@/Redux/Services/notificationService";
 
-type Tab = "announcement" | "article";
+export type Tab = "announcement" | "article";
 
 interface Announcement {
+  _id: string;
   title: string;
   content: string;
   sentBy: { name: string };
@@ -14,16 +17,32 @@ interface Announcement {
 }
 
 interface Article {
+  _id: string;
   title: string;
   description: string;
   sourceLink: string | null;
   createdAt: string;
 }
 
+export interface Pagination {
+  totalArticles?: number;
+  totalAnnouncements?: number;
+  totalPages: number;
+  currentPage: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
 interface Props {
   announcement?: Announcement[];
   article?: Article[];
   isLoading?: boolean;
+  activeTab: Tab;
+  onTabChange: (tab: Tab) => void;
+  pagination?: Pagination;
+  page: number;
+  onPageChange: (page: number) => void;
 }
 
 const SkeletonRow = () => (
@@ -38,7 +57,8 @@ const SkeletonRow = () => (
       <div className="h-2 bg-gray-200 rounded-full w-16" />
     </div>
     {/* Desktop skeleton */}
-    <div className="hidden lg:grid grid-cols-[80px_200px_1fr_180px_180px] px-2 gap-4">
+    <div className="hidden lg:grid grid-cols-[80px_200px_1fr_180px_180px_60px] px-2 gap-4">
+      <div className="h-3 bg-gray-200 rounded-full" />
       <div className="h-3 bg-gray-200 rounded-full" />
       <div className="h-3 bg-gray-200 rounded-full" />
       <div className="h-3 bg-gray-200 rounded-full" />
@@ -48,13 +68,48 @@ const SkeletonRow = () => (
   </div>
 );
 
-export default function Table({ announcement, article, isLoading }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>("announcement");
+export default function Table({
+  announcement,
+  article,
+  isLoading,
+  activeTab,
+  onTabChange,
+  pagination,
+  page,
+  onPageChange,
+}: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.auth.user);
   const isRescuer = user?.role === "rescuer";
 
   const activeData = activeTab === "announcement" ? announcement : article;
+  const limit = pagination?.limit ?? 5;
+
+  //rtk
+
+  const [deleteArticle, { isLoading: isDeletingArticle }] =
+    useDeleteArticleMutation();
+  const [deleteAnnouncement, { isLoading: isDeletingAnnouncement }] =
+    useDeleteAnnouncementMutation();
+
+  const handleDeleteArticle = async (id: string) => {
+    try {
+      await deleteArticle(id).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteAnnouncement = async (id: string) => {
+    try {
+      await deleteAnnouncement(id).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const isDeleting =
+    activeTab === "announcement" ? isDeletingAnnouncement : isDeletingArticle;
 
   return (
     <div className="mt-5 pb-5 lg:mt-7">
@@ -62,7 +117,7 @@ export default function Table({ announcement, article, isLoading }: Props) {
       <div className="flex items-center justify-between">
         <div className="flex items-center border-b w-fit">
           <button
-            onClick={() => setActiveTab("announcement")}
+            onClick={() => onTabChange("announcement")}
             className={`tab-btn text-[12px] transition-colors px-4 py-2.5 md:text-[14px] ${
               activeTab === "announcement"
                 ? "active text-[#1A5EFD] font-semibold"
@@ -72,7 +127,7 @@ export default function Table({ announcement, article, isLoading }: Props) {
             Announcements
           </button>
           <button
-            onClick={() => setActiveTab("article")}
+            onClick={() => onTabChange("article")}
             className={`tab-btn text-[12px] transition-colors px-4 py-2.5 md:text-[14px] ${
               activeTab === "article"
                 ? "active text-[#1A5EFD] font-semibold"
@@ -105,26 +160,28 @@ export default function Table({ announcement, article, isLoading }: Props) {
       <div className="rounded-md max-h-200 overflow-y-auto lg:shadow-[0px_1px_4.5px_-1px_rgba(0,0,0,0.25)] lg:mt-5">
         {/* Header */}
         {activeTab === "announcement" ? (
-          <div className="hidden grid-cols-[80px_1fr_1fr_180px_180px] border-b border-gray-200 pb-3 px-4 w-full text-[#848484] font-medium bg-gray-100 lg:grid lg:py-5">
+          <div className="hidden grid-cols-[80px_1fr_1fr_180px_180px_60px] border-b border-gray-200 pb-3 px-4 w-full text-[#848484] font-medium bg-gray-100 lg:grid lg:py-5">
             <div className="text-xs">No.</div>
             <div className="text-xs">Title</div>
             <div className="text-xs">Content</div>
             <div className="text-xs">Author</div>
             <div className="text-xs">Created at</div>
+            <div className="text-xs">Action</div>
           </div>
         ) : (
-          <div className="hidden grid-cols-[100px_1fr_400px_300px_180px] border-b border-gray-200 pb-3 px-4 w-full text-[#848484] font-medium bg-gray-100 lg:grid lg:py-5">
+          <div className="hidden grid-cols-[100px_1fr_400px_300px_180px_60px] border-b border-gray-200 pb-3 px-4 w-full text-[#848484] font-medium bg-gray-100 lg:grid lg:py-5">
             <div className="text-xs">No.</div>
             <div className="text-xs">Title</div>
             <div className="text-xs">Description</div>
             <div className="text-xs">Source Link</div>
             <div className="text-xs">Created at</div>
+            <div className="text-xs">Action</div>
           </div>
         )}
 
         {/* Skeleton */}
         {isLoading ? (
-          Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
+          Array.from({ length: limit }).map((_, i) => <SkeletonRow key={i} />)
         ) : /* Empty state */
         !activeData || activeData.length === 0 ? (
           <div className="text-center text-gray-400 py-10">
@@ -135,7 +192,7 @@ export default function Table({ announcement, article, isLoading }: Props) {
         activeTab === "announcement" ? (
           (activeData as Announcement[]).map((item, index) => (
             <div
-              key={index}
+              key={item._id}
               className="py-4 px-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-100 transition-colors"
             >
               {/* Mobile layout - stacked */}
@@ -161,8 +218,10 @@ export default function Table({ announcement, article, isLoading }: Props) {
               </div>
 
               {/* Desktop layout - grid */}
-              <div className="hidden lg:grid grid-cols-[80px_200px_1fr_180px_180px] px-2">
-                <div className="text-[#303030] text-xs">{index + 1}</div>
+              <div className="hidden lg:grid grid-cols-[80px_200px_1fr_180px_180px_60px] px-2 items-center">
+                <div className="text-[#303030] text-xs">
+                  {(page - 1) * limit + index + 1}
+                </div>
                 <div className="text-[#303030] line-clamp-2 pr-4 text-xs">
                   {item.title}
                 </div>
@@ -179,6 +238,18 @@ export default function Table({ announcement, article, isLoading }: Props) {
                     year: "numeric",
                   })}
                 </div>
+                <div className="text-xs">
+                  {!isRescuer && (
+                    <button
+                      onClick={() => handleDeleteAnnouncement(item._id)}
+                      disabled={isDeleting}
+                      title="Delete announcement"
+                      className="inline-flex items-center px-2 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))
@@ -186,7 +257,7 @@ export default function Table({ announcement, article, isLoading }: Props) {
           /* Article rows */
           (activeData as Article[]).map((item, index) => (
             <div
-              key={index}
+              key={item._id}
               className="py-4 px-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors"
             >
               {/* Mobile layout - stacked */}
@@ -219,8 +290,10 @@ export default function Table({ announcement, article, isLoading }: Props) {
               </div>
 
               {/* Desktop layout - grid */}
-              <div className="hidden lg:grid grid-cols-[100px_1fr_400px_300px_180px] px-2">
-                <div className="text-[#303030] text-xs">{index + 1}</div>
+              <div className="hidden lg:grid grid-cols-[100px_1fr_400px_300px_180px_60px] px-2 items-center">
+                <div className="text-[#303030] text-xs">
+                  {(page - 1) * limit + index + 1}
+                </div>
                 <div className="text-[#303030] line-clamp-2 pr-4 text-xs">
                   {item.title}
                 </div>
@@ -250,11 +323,50 @@ export default function Table({ announcement, article, isLoading }: Props) {
                     minute: "2-digit",
                   })}
                 </div>
+                <div className="text-xs">
+                  {!isRescuer && (
+                    <button
+                      onClick={() => handleDeleteArticle(item._id)}
+                      disabled={isDeleting}
+                      title="Delete article"
+                      className="inline-flex items-center px-2 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))
         )}
       </div>
+
+      {/* Pagination controls */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 px-2">
+          <p className="text-xs text-gray-400">
+            Page {pagination.currentPage} of {pagination.totalPages}
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onPageChange(page - 1)}
+              disabled={!pagination.hasPrevPage}
+              className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+              Prev
+            </button>
+            <button
+              onClick={() => onPageChange(page + 1)}
+              disabled={!pagination.hasNextPage}
+              className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

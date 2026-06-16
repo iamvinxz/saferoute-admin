@@ -1,5 +1,5 @@
 import { api } from "./APIService";
-import { CREATE_ARTICLE, GET_ALL_ARTICLES } from "./Endpoints";
+import { CREATE_ARTICLE, DELETE_ARTICLE, GET_ALL_ARTICLES } from "./Endpoints";
 
 const articleService = api.injectEndpoints({
   endpoints: (build) => ({
@@ -11,9 +11,20 @@ const articleService = api.injectEndpoints({
       }),
       invalidatesTags: ["Articles"],
     }),
-    getAllArticles: build.query<GetAllArticlesResponse, void>({
-      query: () => ({ url: GET_ALL_ARTICLES }),
+    getAllArticles: build.query<GetAllArticlesResponse, GetAllArticleRequest>({
+      query: ({ page, limit }) => ({
+        url: GET_ALL_ARTICLES,
+        params: { page, limit },
+      }),
       providesTags: ["Articles"],
+    }),
+    deleteArticle: build.mutation<DeleteArticleResponse, string>({
+      query: (id) => ({
+        url: DELETE_ARTICLE,
+        method: "DELETE",
+        params: { id },
+      }),
+      invalidatesTags: ["Articles"],
     }),
   }),
   overrideExisting: true,
@@ -21,6 +32,15 @@ const articleService = api.injectEndpoints({
 
 type CreateArticleResponse = {
   message: string;
+};
+
+type DeleteArticleResponse = {
+  code: number;
+  message: string;
+};
+
+type DeleteArticleRequest = {
+  id: string;
 };
 
 type CreateArticleRequest = {
@@ -40,7 +60,25 @@ type GetAllArticlesResponse = {
     createdAt: string;
     updatedAt: string;
   }[];
+  pagination: Pagination;
 };
 
-export const { useCreateArticleMutation, useGetAllArticlesQuery } =
-  articleService;
+type GetAllArticleRequest = {
+  page: number;
+  limit: number;
+};
+
+type Pagination = {
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  limit: number;
+  totalArticles: number;
+  totalPages: number;
+};
+
+export const {
+  useCreateArticleMutation,
+  useGetAllArticlesQuery,
+  useDeleteArticleMutation,
+} = articleService;

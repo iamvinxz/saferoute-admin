@@ -34,6 +34,8 @@ import {
 } from "@/Redux/Services/userService";
 import { RootState } from "@/state/store";
 
+type Tab = "announcement" | "article";
+
 const Dashboard = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -41,13 +43,21 @@ const Dashboard = () => {
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.auth.user);
   const isRescuer = user?.role === "rescuer";
+  const [activeTab, setActiveTab] = useState<Tab>("announcement");
+  const [page, setPage] = useState<number>(1);
 
   //rtk query
   const [logout] = useLogoutMutation();
   const { data: announcementResponse, isLoading: announcementLoading } =
-    useGetAllAnnouncementsQuery();
+    useGetAllAnnouncementsQuery(
+      { page, limit: 5 },
+      { skip: activeTab !== "announcement" },
+    );
   const { data: articleResponse, isLoading: articleLoading } =
-    useGetAllArticlesQuery();
+    useGetAllArticlesQuery(
+      { page, limit: 5 },
+      { skip: activeTab !== "article" },
+    );
   const { data: sosResponse, isLoading: sosLoading } = useGetAllSosAlertQuery();
   const { data: floodReportResponse, isLoading: floodReportLoading } =
     useGetAllFloodReportQuery();
@@ -69,7 +79,14 @@ const Dashboard = () => {
   const segment = segmentsResponse?.segments;
   const admins = adminUserResponse?.admins;
   const residents = residentUserResponse?.users;
-  const tableLoading = announcementLoading || articleLoading;
+  const tableLoading =
+    activeTab === "announcement" ? announcementLoading : articleLoading;
+
+  const tablePagination =
+    activeTab === "announcement"
+      ? announcementResponse?.pagination
+      : articleResponse?.pagination;
+
   const loading =
     announcementLoading ||
     articleLoading ||
@@ -212,6 +229,11 @@ const Dashboard = () => {
         },
       ];
 
+  const handleTabChange = (tab: "announcement" | "article") => {
+    setActiveTab(tab);
+    setPage(1);
+  };
+
   const handleLogout = async () => {
     try {
       await logout().unwrap();
@@ -312,9 +334,14 @@ const Dashboard = () => {
       </div>
 
       <Table
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
         announcement={announcement}
         article={article}
         isLoading={tableLoading}
+        pagination={tablePagination}
+        page={page}
+        onPageChange={setPage}
       />
     </div>
   );
