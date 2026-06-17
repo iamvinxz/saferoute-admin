@@ -86,12 +86,24 @@ const SidebarContent = () => {
 
       {/**for drawer*/}
       <div className="lg:hidden flex gap-3 items-center border-b border-gray-200 pb-2">
-        <div className="bg-gray-300 w-12 h-9 rounded-full" />
+        {user?.photoUrl ? (
+          <img
+            src={user.photoUrl}
+            alt={user.name}
+            className="w-10 h-10 rounded-full object-cover shrink-0"
+          />
+        ) : (
+          <div className="bg-[#598bff] w-10 h-10 rounded-full flex items-center justify-center shrink-0">
+            <span className="text-white text-sm font-semibold uppercase">
+              {user?.name?.charAt(0)}
+            </span>
+          </div>
+        )}
         <div className="flex items-center justify-between cursor-pointer w-full">
           <div>
-            <p className="text-sm">John Doe</p>
+            <p className="text-sm">{user.name}</p>
             <span className="text-[12px] text-[#848484] relative -top-2">
-              Admin
+              {user.role}
             </span>
           </div>
           <button onClick={handleLogout}>
