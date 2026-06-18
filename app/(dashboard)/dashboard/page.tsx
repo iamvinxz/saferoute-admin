@@ -66,9 +66,9 @@ const Dashboard = () => {
   const { data: segmentsResponse, isLoading: segmentLoading } =
     useGetAllSegmentQuery();
   const { data: adminUserResponse, isLoading: adminLoading } =
-    useGetAllAdminsQuery(undefined, { skip: isRescuer });
+    useGetAllAdminsQuery({ limit: 10, page }, { skip: isRescuer });
   const { data: residentUserResponse, isLoading: residentLoading } =
-    useGetAllUsersQuery(undefined, { skip: isRescuer });
+    useGetAllUsersQuery({ limit: 10, page }, { skip: isRescuer });
 
   //var
   const announcement = announcementResponse?.announcements;
