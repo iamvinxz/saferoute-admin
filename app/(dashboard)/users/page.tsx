@@ -43,16 +43,38 @@ const UsersPage = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [roleOpen, setRoleOpen] = useState(false);
+  const [adminPage, setAdminPage] = useState<number>(1);
+  const [userPage, setUserPage] = useState<number>(1);
+  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "rescuer">(
+    "all",
+  );
+  const [roleFilterOpen, setRoleFilterOpen] = useState(false);
 
   //rtk
   const [createAdmin, { isLoading }] = useCreateAdminMutation();
   const { data: adminResponse, isLoading: adminsLoading } =
-    useGetAllAdminsQuery();
-  const { data: userResponse, isLoading: usersLoading } = useGetAllUsersQuery();
+    useGetAllAdminsQuery({ page: adminPage, limit: 10 });
+  const { data: userResponse, isLoading: usersLoading } = useGetAllUsersQuery({
+    page: userPage,
+    limit: 10,
+  });
+
+  //var
+  const totalAdmins = adminResponse?.pagination.totalAdmins;
+  const totalResidents = userResponse?.pagination.totalUsers;
+  const currentPage = activeTab === "admins" ? adminPage : userPage;
+  const totalRescuers = adminResponse?.admins.filter(
+    (a) => a.role === "rescuer",
+  ).length;
 
   const handleClose = () => {
     dispatch(clearAccount());
     setIsOpen(false);
+  };
+
+  const handlePageChange = (page: number) => {
+    if (activeTab === "admins") setAdminPage(page);
+    else setUserPage(page);
   };
 
   const handleSubmit = async () => {
@@ -99,51 +121,95 @@ const UsersPage = () => {
       </div>
 
       {/* Stat Cards */}
-      <div className="flex gap-4 mb-4 lg:mb-8">
+      <div className="mb-4 lg:mb-8">
         {adminsLoading || usersLoading ? (
           <>
-            {/**skeleton */}
-            <div className="stat-card flex-1 min-w-0 px-2 py-2 lg:px-5 lg:py-5">
-              <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
-              <div className="space-y-2">
-                <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
-                <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
+            {/* top row */}
+            <div className="flex gap-4 mb-4">
+              <div className="stat-card flex-1 min-w-0 px-2 py-2 lg:px-5 lg:py-5">
+                <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
+                <div className="space-y-2">
+                  <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
+                  <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
+                </div>
+              </div>
+              <div className="stat-card flex-1 min-w-0 px-2 py-2 lg:px-5 lg:py-5">
+                <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
+                <div className="space-y-2">
+                  <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
+                  <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
+                </div>
               </div>
             </div>
-            <div className="stat-card flex-1 min-w-0 px-2 py-2">
-              <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
-              <div className="space-y-2">
-                <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
-                <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
+            {/* bottom row */}
+            <div className="flex gap-4 lg:hidden">
+              <div className="stat-card flex-1 min-w-0 px-2 py-2">
+                <div className="stat-icon bg-slate-200 animate-pulse-fast"></div>
+                <div className="space-y-2">
+                  <div className="bg-slate-200 w-20 h-3 rounded-lg animate-pulse-fast" />
+                  <div className="bg-slate-200 w-10 h-5 rounded-md animate-pulse-fast" />
+                </div>
               </div>
             </div>
           </>
         ) : (
           <>
-            <div className="stat-card flex-1 px-3 py-3 lg:px-5 lg:py-5">
-              <div className="stat-icon bg-blue-50 h-10 w-10">
-                <ShieldCheck size={20} color="#3b82f6" />
+            {/* On desktop: all 3 in a row. On mobile: 2 above, 1 below */}
+            <div className="flex gap-4 mb-4 lg:mb-0">
+              <div className="stat-card flex-1 px-3 py-3 lg:px-5 lg:py-5">
+                <div className="stat-icon bg-blue-50 h-10 w-10">
+                  <ShieldCheck size={20} color="#3b82f6" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 font-medium max-lg:text-[10px]">
+                    Total Admins
+                  </p>
+                  <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
+                    {totalAdmins}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-slate-400 font-medium max-lg:text-[10px]">
-                  Total Admins
-                </p>
-                <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
-                  {adminResponse?.admins?.length}
-                </p>
+              <div className="stat-card flex-1 px-3 py-3 lg:px-5 lg:py-5">
+                <div className="stat-icon bg-emerald-50 h-10 w-10">
+                  <Users size={20} color="#10b981" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 font-medium max-lg:text-[10px]">
+                    Residents
+                  </p>
+                  <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
+                    {totalResidents}
+                  </p>
+                </div>
+              </div>
+              {/* Rescuers card — hidden on mobile, shown inline on desktop */}
+              <div className="stat-card hidden lg:flex flex-1 px-3 py-3 lg:px-5 lg:py-5">
+                <div className="stat-icon bg-purple-50 h-10 w-10">
+                  <ShieldCheck size={20} color="#a855f7" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 font-medium">Rescuers</p>
+                  <p className="text-xl font-bold text-slate-800">
+                    {totalRescuers ?? "—"}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="stat-card flex-1 px-3 py-3 lg:px-5 lgpy-5">
-              <div className="stat-icon bg-emerald-50 h-10 w-10">
-                <Users size={20} color="#10b981" />
-              </div>
-              <div>
-                <p className="text-xs text-slate-400 font-medium max-lg:text-[10px]">
-                  Residents
-                </p>
-                <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
-                  {userResponse?.users?.length}
-                </p>
+
+            {/* Rescuers card — mobile only, full width below */}
+            <div className="flex gap-4 mt-4 lg:hidden">
+              <div className="stat-card flex-1 px-3 py-3">
+                <div className="stat-icon bg-purple-50 h-10 w-10">
+                  <ShieldCheck size={20} color="#a855f7" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 font-medium max-lg:text-[10px]">
+                    Rescuers
+                  </p>
+                  <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
+                    {totalRescuers ?? "—"}
+                  </p>
+                </div>
               </div>
             </div>
           </>
@@ -156,6 +222,7 @@ const UsersPage = () => {
 
       {/* Tabs + Search */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
+        {/* LEFT — tabs + mobile add button */}
         <div className="flex justify-between">
           <div className="flex gap-1 border-b border-slate-200 w-fit">
             {(["admins", "users"] as const).map((tab) => (
@@ -164,6 +231,8 @@ const UsersPage = () => {
                 onClick={() => {
                   setActiveTab(tab);
                   setSearch("");
+                  setAdminPage(1);
+                  setUserPage(1);
                 }}
                 className={`tab-btn px-4 py-2.5 text-sm font-medium transition-colors max-lg:text-[11px] ${
                   activeTab === tab
@@ -180,7 +249,7 @@ const UsersPage = () => {
             {activeTab === "admins" && (
               <button
                 onClick={() => setIsOpen(true)}
-                className="flex items-center  bg-blue-400 hover:bg-blue-500 text-white text-sm font-medium transition-all rounded-md px-1 py-1 lg:px-4 lg:py-2 lg:rounded-lg "
+                className="flex items-center bg-blue-400 hover:bg-blue-500 text-white text-sm font-medium transition-all rounded-md px-1 py-1 lg:px-4 lg:py-2 lg:rounded-lg"
               >
                 <Plus size={16} strokeWidth={2.5} />
                 <span className="hidden lg:inline">Add Admin</span>
@@ -188,15 +257,63 @@ const UsersPage = () => {
             )}
           </div>
         </div>
-        <div className="lg:w-70 relative">
-          <Search size={15} className="absolute left-3 top-2" color="#94a3b8" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={`Search ${activeTab === "admins" ? "admins" : "residents"}`}
-            className="w-full border border-[#e2e9f0] outline-none rounded-md pl-9.5 pr-2 py-1 text-[0.87rem] bg-[#fafbfc] text-[#303030]"
-          />
+
+        {/* RIGHT — filter + search grouped together */}
+        <div className="flex items-center gap-2">
+          {activeTab === "admins" && (
+            <>
+              <span className="text-[#848484] text-[10px] lg:text-xs shrink-0">
+                Role:
+              </span>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setRoleFilterOpen((prev) => !prev)}
+                  className="flex items-center justify-between gap-2 border border-[#e2e9f0] rounded-md px-3 py-1.5 text-[10px] lg:text-[12px] bg-white text-[#303030] min-w-28 hover:border-[#1A5EFD] transition-colors"
+                >
+                  <span className="capitalize">{roleFilter}</span>
+                  <ChevronDown size={13} className="text-slate-400" />
+                </button>
+                {roleFilterOpen && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-[#e2e9f0] rounded-md shadow-md">
+                    {(["all", "admin", "rescuer"] as const).map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => {
+                          setRoleFilter(option);
+                          setRoleFilterOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-[10px] lg:text-[12px] capitalize hover:bg-slate-50 transition-colors ${
+                          roleFilter === option
+                            ? "text-[#1A5EFD] font-medium"
+                            : "text-[#303030]"
+                        }`}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Search */}
+          <div className="relative lg:w-70">
+            <Search
+              size={15}
+              className="absolute left-3 top-2"
+              color="#94a3b8"
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={`Search ${activeTab === "admins" ? "admins" : "residents"}`}
+              className="w-full border border-[#e2e9f0] outline-none rounded-md pl-9.5 pr-2 py-1 text-[0.87rem] bg-[#fafbfc] text-[#303030] placeholder:text-[10px] lg:placeholder:text-sm"
+            />
+          </div>
         </div>
       </div>
       <Table
@@ -206,6 +323,11 @@ const UsersPage = () => {
         adminsLoading={adminsLoading}
         userIsLoading={usersLoading}
         search={search}
+        page={currentPage}
+        onPageChange={handlePageChange}
+        adminPagination={adminResponse?.pagination}
+        userPagination={userResponse?.pagination}
+        roleFilter={roleFilter}
       />
 
       {/* Modal */}
