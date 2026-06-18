@@ -1,11 +1,14 @@
 import {
   Admin,
+  AdminPagination,
   useDeleteAdminMutation,
   useDeleteUserMutation,
   User,
+  UserPagination,
 } from "@/Redux/Services/userService";
 import { Fragment, useState } from "react";
 import EditAdminModal from "./EditAdminModal";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface TableProp {
   activeTab: string;
@@ -14,6 +17,11 @@ interface TableProp {
   admins: Admin[] | undefined;
   users: User[] | undefined;
   search: string;
+  page: number;
+  onPageChange: (page: number) => void;
+  adminPagination?: AdminPagination;
+  userPagination?: UserPagination;
+  roleFilter?: "all" | "admin" | "rescuer";
 }
 
 const Table = ({
@@ -23,6 +31,11 @@ const Table = ({
   adminsLoading,
   userIsLoading,
   search,
+  page,
+  onPageChange,
+  adminPagination,
+  userPagination,
+  roleFilter,
 }: TableProp) => {
   const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
 
@@ -31,12 +44,16 @@ const Table = ({
   const [deleteUser] = useDeleteUserMutation();
 
   //handlers;
-  const filteredAdmins = admins?.filter(
-    (admin) =>
-      admin.name.toLowerCase().includes(search.toLowerCase()) ||
-      admin.email.toLowerCase().includes(search.toLowerCase()) ||
-      admin.department?.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredAdmins = admins
+    ?.filter((admin) =>
+      roleFilter && roleFilter !== "all" ? admin.role === roleFilter : true,
+    )
+    .filter(
+      (admin) =>
+        admin.name.toLowerCase().includes(search.toLowerCase()) ||
+        admin.email.toLowerCase().includes(search.toLowerCase()) ||
+        admin.department?.toLowerCase().includes(search.toLowerCase()),
+    );
 
   const filteredUsers = users?.filter(
     (user) =>
@@ -137,7 +154,11 @@ const Table = ({
                       className="hover:bg-[#f1f5f9]"
                       onClick={() => setSelectedAdmin(admin)}
                     >
-                      <td className="px-5 py-4 text-[#585858]">{index + 1}</td>
+                      <td className="px-5 py-4 text-[#585858]">
+                        {(page - 1) * (adminPagination?.limit ?? 10) +
+                          index +
+                          1}
+                      </td>
                       <td className="px-5 py-4 text-[#585858]">{admin.name}</td>
                       <td className="px-5 py-4 text-[#585858]">
                         {admin.email}
@@ -243,7 +264,9 @@ const Table = ({
                 ) : (
                   filteredUsers?.map((user, index) => (
                     <tr key={user._id} className="hover:bg-[#f1f5f9]">
-                      <td className="px-5 py-4 text-[#848484]">{index + 1}</td>
+                      <td className="px-5 py-4 text-[#848484]">
+                        {(page - 1) * (userPagination?.limit ?? 10) + index + 1}
+                      </td>
                       <td className="px-5 py-4 text-[#848484]">{user.phone}</td>
                       <td className="px-5 py-4 text-[#848484]">{user.age}</td>
                       <td className="px-5 py-4 text-[#848484]">
@@ -400,6 +423,38 @@ const Table = ({
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {(() => {
+        const pagination =
+          activeTab === "admins" ? adminPagination : userPagination;
+        if (!pagination || pagination.totalPages <= 1) return null;
+        return (
+          <div className="flex items-center justify-between mt-4 px-2">
+            <p className="text-xs text-gray-400">
+              Page {pagination.currentPage} of {pagination.totalPages}
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onPageChange(page - 1)}
+                disabled={!pagination.hasPrevPage}
+                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                Prev
+              </button>
+              <button
+                onClick={() => onPageChange(page + 1)}
+                disabled={!pagination.hasNextPage}
+                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Next
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        );
+      })()}
     </Fragment>
   );
 };
