@@ -9,29 +9,47 @@ import {
 import { Fragment, useState } from "react";
 import ReportDetails from "./ReportDetails";
 import { createPortal } from "react-dom";
-import { Trash } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash } from "lucide-react";
 import formatRequestedTime from "@/lib/formatRequestedTime";
 
 interface FloodReportTableProps {
   activeTab: string;
   search: string;
+  sortBy: "status" | "floodDepth";
+  filterValue: string;
 }
 
-const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
+const FloodReportTable = ({
+  search,
+  activeTab,
+  filterValue,
+  sortBy,
+}: FloodReportTableProps) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
 
   //rtk query
   const { data: floodReportResponse, isLoading: loadingFloodReports } =
-    useGetAllFloodReportQuery();
+    useGetAllFloodReportQuery({ page, limit: 10 });
   const [deleteFloodReport] = useDeleteFloodReportMutation();
 
   //handlers
   const filteredFloodReports = floodReportResponse?.reports?.filter(
-    (report) =>
-      report.streetName.toLowerCase().includes(search.toLowerCase()) || //filter by streetname, status, and flood depth
-      report.floodDepth.toLowerCase().includes(search.toLowerCase()) ||
-      report.status.toLowerCase().includes(search.toLowerCase()),
+    (report) => {
+      const matchesSearch =
+        report.streetName.toLowerCase().includes(search.toLowerCase()) ||
+        report.floodDepth.toLowerCase().includes(search.toLowerCase()) ||
+        report.status.toLowerCase().includes(search.toLowerCase());
+
+      const matchesFilter =
+        filterValue === "all" ||
+        (sortBy === "status"
+          ? report.status.toLowerCase() === filterValue
+          : report.floodDepth.toLowerCase() === filterValue);
+
+      return matchesSearch && matchesFilter;
+    },
   );
 
   const handleDeleteFloodReport = async (id: string) => {
@@ -139,7 +157,12 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
                     setShowModal(true);
                   }}
                 >
-                  <td className="px-5 py-4 text-[#585858]">{index + 1}</td>
+                  <td className="px-5 py-4 text-[#585858]">
+                    {(page - 1) *
+                      (floodReportResponse?.pagination.limit ?? 10) +
+                      index +
+                      1}
+                  </td>
                   <td className="px-5 py-4 text-[#585858]">
                     <Image
                       src={report.photoUrl}
@@ -289,6 +312,37 @@ const FloodReportTable = ({ search, activeTab }: FloodReportTableProps) => {
           })
         )}
       </div>
+
+      {/* Pagination */}
+      {(() => {
+        const pagination = floodReportResponse?.pagination;
+        if (!pagination || pagination.totalPages <= 1) return null;
+        return (
+          <div className="flex items-center justify-between mt-4 px-2">
+            <p className="text-xs text-gray-400">
+              Page {pagination.currentPage} of {pagination.totalPages}
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage((p) => p - 1)}
+                disabled={!pagination.hasPrevPage}
+                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                Prev
+              </button>
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={!pagination.hasNextPage}
+                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Next
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        );
+      })()}
     </Fragment>
   );
 };
