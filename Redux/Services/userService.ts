@@ -19,8 +19,11 @@ const userService = api.injectEndpoints({
       }),
       invalidatesTags: ["Admins"],
     }),
-    getAllAdmins: build.query<GetAllAdminsResponse, void>({
-      query: () => ({ url: GET_ALL_ADMINS }),
+    getAllAdmins: build.query<GetAllAdminsResponse, GetAllAdminsRequest>({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: GET_ALL_ADMINS,
+        params: { page, limit },
+      }),
       providesTags: ["Admins"],
     }),
     editAdmin: build.mutation<EditAdminResponse, EditAdminRequest>({
@@ -47,8 +50,11 @@ const userService = api.injectEndpoints({
         params: { id },
       }),
     }),
-    getAllUsers: build.query<GetAllUsersResponse, void>({
-      query: () => ({ url: GET_ALL_USERS }),
+    getAllUsers: build.query<GetAllUsersResponse, GetAllUsersRequest>({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: GET_ALL_USERS,
+        params: { page, limit },
+      }),
       providesTags: ["Users"],
     }),
   }),
@@ -121,14 +127,44 @@ export type User = {
   updatedAt: string;
 };
 
+type GetAllAdminsRequest = {
+  limit?: number;
+  page: number;
+};
+
+type GetAllUsersRequest = {
+  limit?: number;
+  page?: number;
+};
+
 type GetAllAdminsResponse = {
   message: string;
   admins: Admin[];
+  pagination: AdminPagination;
+};
+
+export type AdminPagination = {
+  totalAdmins: number;
+  totalPages: number;
+  currentPage: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+};
+
+export type UserPagination = {
+  totalUsers: number;
+  totalPages: number;
+  limit: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  currentPage: number;
 };
 
 type GetAllUsersResponse = {
   message: string;
   users: User[];
+  pagination: UserPagination;
 };
 
 export const {
