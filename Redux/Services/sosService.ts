@@ -3,6 +3,8 @@ import {
   DELETE_SOS,
   ENABLE_SOS,
   GET_ALL_SOS,
+  GET_ALL_SOS_BY_DEPTH,
+  GET_ALL_SOS_BY_STATUS,
   GET_SOS_AVAILABILITY,
   UPDATE_SOS_STATUS,
 } from "./Endpoints";
@@ -16,6 +18,26 @@ const sosService = api.injectEndpoints({
       query: ({ limit, page }) => ({
         url: GET_ALL_SOS,
         params: { limit, page },
+      }),
+      providesTags: ["SosAlerts"],
+    }),
+    getAllSosByDepth: build.query<
+      SosControllerGetAllResponse,
+      SosControllerGetAllByDepth
+    >({
+      query: ({ depth, limit, page }) => ({
+        url: GET_ALL_SOS_BY_DEPTH,
+        params: { depth, page, limit },
+      }),
+      providesTags: ["SosAlerts"],
+    }),
+    getAllSosByStatus: build.query<
+      SosControllerGetAllResponse,
+      SosControllerGetAllByStatus
+    >({
+      query: ({ status, limit, page }) => ({
+        url: GET_ALL_SOS_BY_STATUS,
+        params: { status, limit, page },
       }),
       providesTags: ["SosAlerts"],
     }),
@@ -56,6 +78,18 @@ const sosService = api.injectEndpoints({
 type SosControllerGetAllRequest = {
   limit: number;
   page: number;
+};
+
+type SosControllerGetAllByStatus = {
+  status: string;
+  page: number;
+  limit: number;
+};
+
+type SosControllerGetAllByDepth = {
+  depth: string;
+  page: number;
+  limit: number;
 };
 
 export type SosControllerGetAllResponse = {
@@ -139,4 +173,6 @@ export const {
   useUpdateSosStatusMutation,
   useDeleteSosMutation,
   useGetSosAvailabilityQuery,
+  useGetAllSosByDepthQuery,
+  useGetAllSosByStatusQuery,
 } = sosService;
