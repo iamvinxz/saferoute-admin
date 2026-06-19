@@ -28,3 +28,7 @@ export const DELETE_ANNOUNCEMENT =
 export const EDIT_ADMIN = "/api/user/editAdminById";
 export const DELETE_ADMIN = "/api/user/deleteAdminById";
 export const DELETE_USER = "/api/user/deleteUserById";
+export const GET_ALL_FLOOD_REPORT_BY_STATUS = "/api/floods/getReportsByStatus";
+export const GET_ALL_FLOOD_REPORT_BY_DEPTH = "/api/floods/getReportsByDepth";
+export const GET_ALL_SOS_BY_STATUS = "/api/sos/alerts/status";
+export const GET_ALL_SOS_BY_DEPTH = "/api/sos/getSOSbyDepth/";
