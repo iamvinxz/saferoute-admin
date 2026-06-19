@@ -1,6 +1,8 @@
 import {
   useDeleteSosMutation,
   useGetAllSosAlertQuery,
+  useGetAllSosByDepthQuery,
+  useGetAllSosByStatusQuery,
 } from "@/Redux/Services/sosService";
 import { getDepthColors, getStatusColors } from "@/lib/colorHelper";
 import { Fragment, useState } from "react";
@@ -8,14 +10,17 @@ import ReportDetails from "./ReportDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { setSosReport } from "@/state/slices/sosSignalReportSlice";
-import { Trash } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash } from "lucide-react";
 import formatRequestedTime from "@/lib/formatRequestedTime";
+import { createPortal } from "react-dom";
 
 interface SosSignalProps {
   activeTab: string;
   search: string;
   sortBy: string;
   filterValue: string;
+  page: number;
+  onPageChange: (page: number) => void;
 }
 
 const SOSsignalTable = ({
@@ -23,42 +28,66 @@ const SOSsignalTable = ({
   activeTab,
   sortBy,
   filterValue,
+  page,
+  onPageChange,
 }: SosSignalProps) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
   const user = useSelector((state: RootState) => state.auth.user);
+
+  const isFiltering = filterValue !== "all";
+
+  //rtk
+  const { data: allAlertsResponse, isLoading: allLoading } =
+    useGetAllSosAlertQuery({ page, limit: 10 }, { skip: isFiltering });
+
+  const { data: statusResponse, isLoading: statusLoading } =
+    useGetAllSosByStatusQuery(
+      { status: filterValue, page, limit: 5 },
+      { skip: !isFiltering || sortBy !== "status" },
+    );
+
+  const { data: depthResponse, isLoading: depthLoading } =
+    useGetAllSosByDepthQuery(
+      { depth: filterValue, page, limit: 10 },
+      { skip: !isFiltering || sortBy !== "floodDepth" },
+    );
+  const [deleteSosAlert] = useDeleteSosMutation();
 
   //var
   const isAdmin = user?.role === "admin";
 
-  //rtk
-  const { data: sosAlertsResponse, isLoading: alertsLoading } =
-    useGetAllSosAlertQuery();
-  const [deleteSosAlert] = useDeleteSosMutation();
+  const sosAlertsResponse = !isFiltering
+    ? allAlertsResponse
+    : sortBy === "status"
+      ? statusResponse
+      : depthResponse;
+
+  const alertsLoading = !isFiltering
+    ? allLoading
+    : sortBy === "status"
+      ? statusLoading
+      : depthLoading;
+
+  //handlers
+  const filteredSosSignals = sosAlertsResponse?.alerts.filter(
+    (alert) =>
+      alert.streetName.toLowerCase().includes(search.toLowerCase()) ||
+      alert.condition.toLowerCase().includes(search.toLowerCase()) ||
+      alert.status.toLowerCase().includes(search.toLowerCase()),
+  );
 
   const handleDeleteSos = async (id: string) => {
     try {
-      await deleteSosAlert({ id }).unwrap;
+      await deleteSosAlert({ id }).unwrap();
     } catch (error) {
       console.error(error);
+    } finally {
+      setConfirmDeleteId(null);
     }
   };
-
-  //handlers
-  const filteredSosSignals = sosAlertsResponse?.alerts.filter((alert) => {
-    const matchesSearch =
-      alert.streetName.toLowerCase().includes(search.toLowerCase()) ||
-      alert.condition.toLowerCase().includes(search.toLowerCase()) ||
-      alert.status.toLowerCase().includes(search.toLowerCase());
-
-    const matchesFilter =
-      filterValue === "all" ||
-      (sortBy === "status"
-        ? alert.status.toLowerCase() === filterValue
-        : alert.condition.toLowerCase() === filterValue);
-
-    return matchesSearch && matchesFilter;
-  });
 
   return (
     <Fragment>
@@ -76,7 +105,7 @@ const SOSsignalTable = ({
                 Street name
               </th>
               <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Condition
+                Flood Depth
               </th>
               <th className="px-5 py-3.5 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Number of Person
@@ -160,7 +189,11 @@ const SOSsignalTable = ({
                     setShowModal(true);
                   }}
                 >
-                  <td className="px-5 py-4 text-[#585858]">{index + 1}</td>
+                  <td className="px-5 py-4 text-[#585858]">
+                    {(page - 1) * (sosAlertsResponse?.pagination.limit ?? 10) +
+                      index +
+                      1}
+                  </td>
                   <td className="px-5 py-4 text-[#585858]">
                     {alert.userId?.phone}
                   </td>
@@ -195,13 +228,13 @@ const SOSsignalTable = ({
                   {isAdmin && (
                     <td className="px-5 py-4 text-[#fa4242]">
                       <button
-                        className="hover:cursor-pointer"
+                        className="inline-flex items-center px-3 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDeleteSos(alert._id);
+                          setConfirmDeleteId(alert._id);
                         }}
                       >
-                        <Trash size={18} />
+                        Delete
                       </button>
                     </td>
                   )}
@@ -320,6 +353,72 @@ const SOSsignalTable = ({
           })
         )}
       </div>
+      {/* Pagination */}
+      {(() => {
+        const pagination = sosAlertsResponse?.pagination;
+        if (!pagination || pagination.totalPages <= 1) return null;
+        return (
+          <div className="flex items-center justify-between mt-4 px-2">
+            <p className="text-xs text-gray-400">
+              Page {pagination.currentPage} of {pagination.totalPages}
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onPageChange(page - 1)}
+                disabled={!pagination.hasPrevPage}
+                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                Prev
+              </button>
+              <button
+                onClick={() => onPageChange(page + 1)}
+                disabled={!pagination.hasNextPage}
+                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Next
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Delete Confirmation Modal */}
+      {confirmDeleteId &&
+        createPortal(
+          <div
+            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center z-[9999] p-4"
+            onClick={(e) =>
+              e.target === e.currentTarget && setConfirmDeleteId(null)
+            }
+          >
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+              <h2 className="text-base font-semibold text-[#303030] mb-1">
+                Confirm Delete
+              </h2>
+              <p className="text-xs text-[#848484] mb-6">
+                Are you sure you want to delete this SOS alert? This action
+                cannot be undone.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setConfirmDeleteId(null)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDeleteSos(confirmDeleteId)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-red-500 hover:bg-red-600 active:scale-95 transition-all"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </Fragment>
   );
 };
