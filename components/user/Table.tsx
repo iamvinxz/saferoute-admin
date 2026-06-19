@@ -9,6 +9,7 @@ import {
 import { Fragment, useState } from "react";
 import EditAdminModal from "./EditAdminModal";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { createPortal } from "react-dom";
 
 interface TableProp {
   activeTab: string;
@@ -38,6 +39,10 @@ const Table = ({
   roleFilter,
 }: TableProp) => {
   const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{
+    id: string;
+    type: "admin" | "user";
+  } | null>(null);
 
   //rtk
   const [deleteAdmin] = useDeleteAdminMutation();
@@ -61,21 +66,18 @@ const Table = ({
       user.role?.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const handleDeleteAdmin = async (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
+  const handleConfirmDelete = async () => {
+    if (!confirmDelete) return;
     try {
-      await deleteAdmin(id).unwrap();
+      if (confirmDelete.type === "admin") {
+        await deleteAdmin(confirmDelete.id).unwrap();
+      } else {
+        await deleteUser(confirmDelete.id).unwrap();
+      }
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const handleDeleteUser = async (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    try {
-      await deleteUser(id).unwrap();
-    } catch (error) {
-      console.log(error);
+    } finally {
+      setConfirmDelete(null);
     }
   };
 
@@ -178,7 +180,10 @@ const Table = ({
                       </td>
                       <td className="px-5 py-4">
                         <button
-                          onClick={(e) => handleDeleteUser(e, admin._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setConfirmDelete({ id: admin._id, type: "admin" });
+                          }}
                           className="inline-flex items-center px-3 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
                         >
                           Delete
@@ -284,7 +289,10 @@ const Table = ({
                       </td>
                       <td className="px-5 py-4">
                         <button
-                          onClick={(e) => handleDeleteUser(e, user._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setConfirmDelete({ id: user._id, type: "user" });
+                          }}
                           className="inline-flex items-center px-3 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
                         >
                           Delete
@@ -423,6 +431,37 @@ const Table = ({
           </div>
         )}
       </div>
+
+      {confirmDelete &&
+        createPortal(
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center z-[9999] p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+              <h2 className="text-base font-semibold text-[#303030] mb-1">
+                Confirm Delete
+              </h2>
+              <p className="text-xs text-[#848484] mb-6">
+                Are you sure you want to delete this{" "}
+                {confirmDelete.type === "admin" ? "admin" : "user"}? This action
+                cannot be undone.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setConfirmDelete(null)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-red-500 hover:bg-red-600 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
 
       {/* Pagination */}
       {(() => {
