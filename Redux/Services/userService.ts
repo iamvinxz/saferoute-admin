@@ -5,6 +5,7 @@ import {
   DELETE_USER,
   EDIT_ADMIN,
   GET_ALL_ADMINS,
+  GET_ALL_ADMINS_BY_ROLE,
   GET_ALL_USERS,
 } from "./Endpoints";
 
@@ -23,6 +24,16 @@ const userService = api.injectEndpoints({
       query: ({ page = 1, limit = 10 }) => ({
         url: GET_ALL_ADMINS,
         params: { page, limit },
+      }),
+      providesTags: ["Admins"],
+    }),
+    getAllAdminsByRole: build.query<
+      GetAllAdminByRoleResponse,
+      GetAllAdminByRoleRequest
+    >({
+      query: ({ limit = 10, page, role }) => ({
+        url: GET_ALL_ADMINS_BY_ROLE,
+        params: { page, limit, role },
       }),
       providesTags: ["Admins"],
     }),
@@ -128,7 +139,7 @@ export type User = {
 };
 
 type GetAllAdminsRequest = {
-  limit?: number;
+  limit: number;
   page: number;
 };
 
@@ -139,12 +150,25 @@ type GetAllUsersRequest = {
 
 type GetAllAdminsResponse = {
   message: string;
-  admins: Admin[];
+  data: Admin[];
   pagination: AdminPagination;
 };
 
+type GetAllAdminByRoleResponse = {
+  message: string;
+  pagination: AdminPagination;
+  admins: Admin[];
+};
+
+type GetAllAdminByRoleRequest = {
+  role: string;
+  page: number;
+  limit: number;
+};
+
 export type AdminPagination = {
-  totalAdmins: number;
+  totalAdminsOrRescuers?: number;
+  total?: number;
   totalPages: number;
   currentPage: number;
   limit: number;
@@ -174,4 +198,5 @@ export const {
   useEditAdminMutation,
   useDeleteAdminMutation,
   useDeleteUserMutation,
+  useGetAllAdminsByRoleQuery,
 } = userService;
