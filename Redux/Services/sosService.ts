@@ -9,9 +9,13 @@ import {
 
 const sosService = api.injectEndpoints({
   endpoints: (build) => ({
-    getAllSosAlert: build.query<SosControllerGetAllResponse, void>({
-      query: () => ({
+    getAllSosAlert: build.query<
+      SosControllerGetAllResponse,
+      SosControllerGetAllRequest
+    >({
+      query: ({ limit, page }) => ({
         url: GET_ALL_SOS,
+        params: { limit, page },
       }),
       providesTags: ["SosAlerts"],
     }),
@@ -49,6 +53,11 @@ const sosService = api.injectEndpoints({
   overrideExisting: true,
 });
 
+type SosControllerGetAllRequest = {
+  limit: number;
+  page: number;
+};
+
 export type SosControllerGetAllResponse = {
   alerts: [
     {
@@ -81,6 +90,7 @@ export type SosControllerGetAllResponse = {
       } | null;
     },
   ];
+  pagination: SOSPagination;
 };
 
 type EnableSosSignalResponse = {
@@ -112,6 +122,15 @@ type DeleteSOSRequest = {
 
 type GetSosAvailabilityResponse = {
   isSosEnabled: boolean;
+};
+
+type SOSPagination = {
+  totalAlerts: number;
+  totalPages: number;
+  currentPage: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 };
 
 export const {
