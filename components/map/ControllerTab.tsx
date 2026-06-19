@@ -54,8 +54,6 @@ const ControllerTab = ({ onFocus, onToggle }: Props) => {
   );
 
   const { data: sos } = useGetSosAvailabilityQuery();
-
-  console.log(sos?.isSosEnabled);
   return (
     <div className="absolute top-3 z-400 flex items-center justify-between w-full px-5">
       <div className="flex gap-4">
