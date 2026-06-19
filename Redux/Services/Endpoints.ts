@@ -13,6 +13,7 @@ export const SEND_ANNOUNCEMENT = "/api/notifications/announcement";
 export const CREATE_ARTICLE = "/api/article/createArticle";
 export const CREATE_ADMIN = "/api/user/createAdminAccount";
 export const GET_ALL_ADMINS = "/api/user/all/admin";
+export const GET_ALL_ADMINS_BY_ROLE = "api/user/getAdminByRole";
 export const GET_ALL_USERS = "/api/user/all";
 export const GET_ALL_ANNOUNCEMENTS = "/api/notifications/all/announcement";
 export const GET_ALL_ARTICLES = "/api/article/all";
