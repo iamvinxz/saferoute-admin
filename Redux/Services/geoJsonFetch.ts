@@ -5,8 +5,6 @@ const GeoJsonFetch = async () => {
 
   const data = await response.json();
 
-  console.log("data: ", data);
-
   const tinajeros = {
     ...data,
     features: data.features.filter((f: any) =>
