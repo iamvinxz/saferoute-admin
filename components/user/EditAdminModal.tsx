@@ -18,7 +18,7 @@ const EditAdminModal = ({ admin, onClose }: EditAdminModalProps) => {
     role: "",
   });
 
-  const roles = ["admin", "moderator", "superadmin"];
+  const roles = ["admin", "rescuer"];
   const [roleOpen, setRoleOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
