@@ -13,19 +13,14 @@ export const useWebSocket = () => {
 
     const connect = () => {
       if (!isMounted.current) return;
-
-      console.log("Connecting to WebSocket...");
       const socket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL!);
       ws.current = socket;
 
-      socket.onopen = () => {
-        console.log("✅ WebSocket connected");
-      };
+      socket.onopen = () => {};
 
       socket.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          console.log("📨 WS message received:", message);
 
           if (
             message.type === "sos_alert" ||
