@@ -2,6 +2,7 @@
 import { useState } from "react";
 import {
   useCreateAdminMutation,
+  useGetAllAdminsByRoleQuery,
   useGetAllAdminsQuery,
   useGetAllUsersQuery,
 } from "@/Redux/Services/userService";
@@ -53,23 +54,64 @@ const UsersPage = () => {
   //rtk
   const [createAdmin, { isLoading }] = useCreateAdminMutation();
   const { data: adminResponse, isLoading: adminsLoading } =
-    useGetAllAdminsQuery({ page: adminPage, limit: 10 });
+    useGetAllAdminsQuery(
+      {
+        page: adminPage,
+        limit: 10,
+      },
+      { skip: roleFilter !== "all" },
+    );
+
+  const { data: adminCountResponse } = useGetAllAdminsByRoleQuery({
+    page: 1,
+    limit: 10,
+    role: "admin",
+  });
+
+  const { data: rescuerCountResponse } = useGetAllAdminsByRoleQuery({
+    page: 1,
+    limit: 10,
+    role: "rescuer",
+  });
+
+  const { data: roleFilteredResponse, isLoading: roleFilteredLoading } =
+    useGetAllAdminsByRoleQuery(
+      { page: adminPage, limit: 10, role: roleFilter as "admin" | "rescuer" },
+      { skip: roleFilter === "all" },
+    );
+
   const { data: userResponse, isLoading: usersLoading } = useGetAllUsersQuery({
     page: userPage,
     limit: 10,
   });
 
   //var
-  const totalAdmins = adminResponse?.pagination.totalAdmins;
+  const totalAdmin = adminCountResponse?.pagination.totalAdminsOrRescuers;
+  const totalRescuers = rescuerCountResponse?.pagination.totalAdminsOrRescuers;
   const totalResidents = userResponse?.pagination.totalUsers;
   const currentPage = activeTab === "admins" ? adminPage : userPage;
-  const totalRescuers = adminResponse?.admins.filter(
-    (a) => a.role === "rescuer",
-  ).length;
 
+  const activeAdmins =
+    roleFilter === "all" ? adminResponse?.data : roleFilteredResponse?.admins;
+
+  const activeAdminPagination =
+    roleFilter === "all"
+      ? adminResponse?.pagination
+      : roleFilteredResponse?.pagination;
+
+  const activeAdminsLoading =
+    roleFilter === "all" ? adminsLoading : roleFilteredLoading;
+
+  //handlers
   const handleClose = () => {
     dispatch(clearAccount());
     setIsOpen(false);
+  };
+
+  const handleRoleFilterChange = (value: "all" | "admin" | "rescuer") => {
+    setRoleFilter(value);
+    setAdminPage(1);
+    setRoleFilterOpen(false);
   };
 
   const handlePageChange = (page: number) => {
@@ -162,10 +204,10 @@ const UsersPage = () => {
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 font-medium max-lg:text-[10px]">
-                    Total Admins
+                    Admins
                   </p>
                   <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
-                    {totalAdmins}
+                    {totalAdmin ?? 0}
                   </p>
                 </div>
               </div>
@@ -178,7 +220,7 @@ const UsersPage = () => {
                     Residents
                   </p>
                   <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
-                    {totalResidents}
+                    {totalResidents ?? 0}
                   </p>
                 </div>
               </div>
@@ -190,7 +232,7 @@ const UsersPage = () => {
                 <div>
                   <p className="text-xs text-slate-400 font-medium">Rescuers</p>
                   <p className="text-xl font-bold text-slate-800">
-                    {totalRescuers ?? "—"}
+                    {totalRescuers ?? 0}
                   </p>
                 </div>
               </div>
@@ -207,7 +249,7 @@ const UsersPage = () => {
                     Rescuers
                   </p>
                   <p className="text-xl font-bold text-slate-800 max-lg:text-[20px]">
-                    {totalRescuers ?? "—"}
+                    {totalRescuers ?? 0}
                   </p>
                 </div>
               </div>
@@ -280,10 +322,7 @@ const UsersPage = () => {
                       <button
                         key={option}
                         type="button"
-                        onClick={() => {
-                          setRoleFilter(option);
-                          setRoleFilterOpen(false);
-                        }}
+                        onClick={() => handleRoleFilterChange(option)}
                         className={`w-full text-left px-3 py-2 text-[10px] lg:text-[12px] capitalize hover:bg-slate-50 transition-colors ${
                           roleFilter === option
                             ? "text-[#1A5EFD] font-medium"
@@ -318,14 +357,14 @@ const UsersPage = () => {
       </div>
       <Table
         activeTab={activeTab}
-        admins={adminResponse?.admins}
+        admins={activeAdmins}
         users={userResponse?.users}
-        adminsLoading={adminsLoading}
+        adminsLoading={activeAdminsLoading}
         userIsLoading={usersLoading}
         search={search}
         page={currentPage}
         onPageChange={handlePageChange}
-        adminPagination={adminResponse?.pagination}
+        adminPagination={activeAdminPagination}
         userPagination={userResponse?.pagination}
         roleFilter={roleFilter}
       />
