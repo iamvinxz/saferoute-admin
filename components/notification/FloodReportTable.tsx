@@ -4,6 +4,8 @@ import { setReport } from "@/state/slices/selectedReport";
 import { getDepthColors, getStatusColors } from "@/lib/colorHelper";
 import {
   useDeleteFloodReportMutation,
+  useGetAllFloodReportByDepthQuery,
+  useGetAllFloodReportByStatusQuery,
   useGetAllFloodReportQuery,
 } from "@/Redux/Services/floodReportService";
 import { Fragment, useState } from "react";
@@ -17,6 +19,8 @@ interface FloodReportTableProps {
   search: string;
   sortBy: "status" | "floodDepth";
   filterValue: string;
+  page: number;
+  onPageChange: (page: number) => void;
 }
 
 const FloodReportTable = ({
@@ -24,32 +28,53 @@ const FloodReportTable = ({
   activeTab,
   filterValue,
   sortBy,
+  page,
+  onPageChange,
 }: FloodReportTableProps) => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  const isFiltering = filterValue !== "all";
 
   //rtk query
-  const { data: floodReportResponse, isLoading: loadingFloodReports } =
-    useGetAllFloodReportQuery({ page, limit: 10 });
+  const { data: allReportsResponse, isLoading: allLoading } =
+    useGetAllFloodReportQuery({ page, limit: 10 }, { skip: isFiltering });
+
   const [deleteFloodReport] = useDeleteFloodReportMutation();
+
+  const { data: depthResponse, isLoading: depthLoading } =
+    useGetAllFloodReportByDepthQuery(
+      { depth: filterValue, page, limit: 10 },
+      { skip: !isFiltering || sortBy !== "floodDepth" },
+    );
+
+  // status-filtered query
+  const { data: statusResponse, isLoading: statusLoading } =
+    useGetAllFloodReportByStatusQuery(
+      { status: filterValue, page, limit: 10 },
+      { skip: !isFiltering || sortBy !== "status" },
+    );
+
+  //var
+  const floodReportResponse = !isFiltering
+    ? allReportsResponse
+    : sortBy === "floodDepth"
+      ? depthResponse
+      : statusResponse;
+
+  const loadingFloodReports = !isFiltering
+    ? allLoading
+    : sortBy === "floodDepth"
+      ? depthLoading
+      : statusLoading;
 
   //handlers
   const filteredFloodReports = floodReportResponse?.reports?.filter(
-    (report) => {
-      const matchesSearch =
-        report.streetName.toLowerCase().includes(search.toLowerCase()) ||
-        report.floodDepth.toLowerCase().includes(search.toLowerCase()) ||
-        report.status.toLowerCase().includes(search.toLowerCase());
-
-      const matchesFilter =
-        filterValue === "all" ||
-        (sortBy === "status"
-          ? report.status.toLowerCase() === filterValue
-          : report.floodDepth.toLowerCase() === filterValue);
-
-      return matchesSearch && matchesFilter;
-    },
+    (report) =>
+      report.streetName.toLowerCase().includes(search.toLowerCase()) ||
+      report.floodDepth.toLowerCase().includes(search.toLowerCase()) ||
+      report.status.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleDeleteFloodReport = async (id: string) => {
@@ -57,6 +82,8 @@ const FloodReportTable = ({
       await deleteFloodReport({ id });
     } catch (error) {
       console.error(error);
+    } finally {
+      setConfirmDeleteId(null);
     }
   };
 
@@ -201,13 +228,13 @@ const FloodReportTable = ({
                   </td>
                   <td className="px-5 py-4 text-red-500">
                     <button
-                      className="hover:cursor-pointer"
+                      className="inline-flex items-center px-3 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDeleteFloodReport(report._id);
+                        setConfirmDeleteId(report._id);
                       }}
                     >
-                      <Trash size={18} />
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -324,7 +351,7 @@ const FloodReportTable = ({
             </p>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setPage((p) => p - 1)}
+                onClick={() => onPageChange(page - 1)}
                 disabled={!pagination.hasPrevPage}
                 className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
               >
@@ -332,7 +359,7 @@ const FloodReportTable = ({
                 Prev
               </button>
               <button
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => onPageChange(page + 1)}
                 disabled={!pagination.hasNextPage}
                 className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
               >
@@ -343,6 +370,42 @@ const FloodReportTable = ({
           </div>
         );
       })()}
+
+      {/* Delete Confirmation Modal */}
+      {confirmDeleteId &&
+        createPortal(
+          <div
+            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center z-[9999] p-4"
+            onClick={(e) =>
+              e.target === e.currentTarget && setConfirmDeleteId(null)
+            }
+          >
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+              <h2 className="text-base font-semibold text-[#303030] mb-1">
+                Confirm Delete
+              </h2>
+              <p className="text-xs text-[#848484] mb-6">
+                Are you sure you want to delete this flood report? This action
+                cannot be undone.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setConfirmDeleteId(null)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDeleteFloodReport(confirmDeleteId)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-red-500 hover:bg-red-600 active:scale-95 transition-all"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </Fragment>
   );
 };
