@@ -23,7 +23,7 @@ const filterOptions = {
 };
 
 const floodFilterOptions = {
-  status: ["all", "pending", "approved"],
+  status: ["all", "pending", "verified"],
   floodDepth: ["all", "ankle-deep", "knee-deep", "chest-deep", "critical"],
 };
 
@@ -41,22 +41,26 @@ const Notification = () => {
   const [sortByOpen, setSortByOpen] = useState<boolean>(false);
   const [filterValueOpen, setFilterValueOpen] = useState<boolean>(false);
 
+  const [floodPage, setFloodPage] = useState(1);
   const [floodSortBy, setFloodSortBy] = useState<SortBy>("status");
   const [floodFilterValue, setFloodFilterValue] = useState<string>("all");
   const [floodSortByOpen, setFloodSortByOpen] = useState<boolean>(false);
   const [floodFilterValueOpen, setFloodFilterValueOpen] =
     useState<boolean>(false);
+  const [sosPage, setSosPage] = useState(1);
 
   const handleSortByChange = (value: SortBy) => {
     setSortBy(value);
     setFilterValue("all");
     setSortByOpen(false);
+    setSosPage(1);
   };
 
   const handleFloodSortByChange = (value: "status" | "floodDepth") => {
     setFloodSortBy(value);
     setFloodFilterValue("all");
     setFloodSortByOpen(false);
+    setFloodPage(1);
   };
 
   return (
@@ -177,6 +181,7 @@ const Notification = () => {
                           onClick={() => {
                             setFloodFilterValue(option);
                             setFloodFilterValueOpen(false);
+                            setFloodPage(1);
                           }}
                           className={`w-full text-left px-3 py-2 text-[12px] capitalize hover:bg-slate-50 transition-colors ${
                             floodFilterValue === option
@@ -253,6 +258,7 @@ const Notification = () => {
                           onClick={() => {
                             setFilterValue(option);
                             setFilterValueOpen(false);
+                            setSosPage(1);
                           }}
                           className={`w-full text-left px-3 py-2 text-[12px] capitalize hover:bg-slate-50 transition-colors ${
                             filterValue === option
@@ -295,6 +301,8 @@ const Notification = () => {
               activeTab={activeTab}
               sortBy={floodSortBy}
               filterValue={floodFilterValue}
+              page={floodPage}
+              onPageChange={setFloodPage}
             />
           ) : (
             <SOSsignalTable
@@ -302,6 +310,8 @@ const Notification = () => {
               activeTab={activeTab}
               sortBy={sortBy}
               filterValue={filterValue}
+              page={sosPage}
+              onPageChange={setSosPage}
             />
           )}
         </div>
