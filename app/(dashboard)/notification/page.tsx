@@ -23,7 +23,7 @@ const filterOptions = {
 };
 
 const floodFilterOptions = {
-  status: ["all", "pending", "verified"],
+  status: ["all", "pending", "verified", "rejected"],
   floodDepth: ["all", "ankle-deep", "knee-deep", "chest-deep", "critical"],
 };
 
