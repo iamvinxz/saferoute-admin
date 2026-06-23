@@ -15,10 +15,13 @@ const RescuePanel = () => {
 
   const [updateSosStatus, { isLoading: updateSosIsLoading }] =
     useUpdateSosStatusMutation();
-  const { data: sosResponse } = useGetAllSosAlertQuery(undefined, {
-    pollingInterval: 10000,
-    skip: !user,
-  });
+  const { data: sosResponse } = useGetAllSosAlertQuery(
+    { limit: 100, page: 1 },
+    {
+      pollingInterval: 10000,
+      skip: !user,
+    },
+  );
 
   // read directly from backend instead of Redux
   const activeSosReportOnRescue = sosResponse?.alerts?.find(
