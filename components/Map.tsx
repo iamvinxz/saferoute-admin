@@ -82,7 +82,10 @@ export default function Map() {
   //rtk query
   const { data: geoData } = useGetGeoJsonQuery();
   const [enableSOS] = useEnableSosSignalMutation();
-  const { data: sosResponse, isSuccess: sosSuccess } = useGetAllSosAlertQuery();
+  const { data: sosResponse, isSuccess: sosSuccess } = useGetAllSosAlertQuery({
+    limit: 10,
+    page: 1,
+  });
   const [updateSosStatus] = useUpdateSosStatusMutation();
   const { isSuccess: meSuccess, data: meData } = useGetMeQuery();
   const { data: sos } = useGetSosAvailabilityQuery();
@@ -176,8 +179,6 @@ export default function Map() {
     }
     dispatch(addSegment());
   };
-
-  console.log("user here", user?.coordinates);
 
   return (
     <div className="relative w-full h-full z-0">
