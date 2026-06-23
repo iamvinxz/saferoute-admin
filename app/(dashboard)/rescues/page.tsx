@@ -23,7 +23,10 @@ const RescuesPage = () => {
 
   //rtk
   const { data: meData } = useGetMeQuery();
-  const { data: sosResponse, isLoading } = useGetAllSosAlertQuery();
+  const { data: sosResponse, isLoading } = useGetAllSosAlertQuery({
+    limit: 100,
+    page: 1,
+  });
 
   const respondedTo = meData?.user?.respondedTo ?? [];
 
