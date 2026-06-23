@@ -58,15 +58,19 @@ const Dashboard = () => {
       { page, limit: 5 },
       { skip: activeTab !== "article" },
     );
-  const { data: sosResponse, isLoading: sosLoading } = useGetAllSosAlertQuery();
+  const { data: sosResponse, isLoading: sosLoading } = useGetAllSosAlertQuery({
+    limit: 10,
+    page,
+  });
   const { data: floodReportResponse, isLoading: floodReportLoading } =
-    useGetAllFloodReportQuery();
+    useGetAllFloodReportQuery({ limit: 10, page });
   const { data: pinnedLocationResponse, isLoading: pinLoading } =
     useGetAllPinQuery();
   const { data: segmentsResponse, isLoading: segmentLoading } =
     useGetAllSegmentQuery();
   const { data: adminUserResponse, isLoading: adminLoading } =
     useGetAllAdminsQuery({ limit: 10, page }, { skip: isRescuer });
+
   const { data: residentUserResponse, isLoading: residentLoading } =
     useGetAllUsersQuery({ limit: 10, page }, { skip: isRescuer });
 
@@ -74,11 +78,8 @@ const Dashboard = () => {
   const announcement = announcementResponse?.announcements;
   const article = articleResponse?.articles;
   const sos = sosResponse?.alerts;
-  const floodReport = floodReportResponse?.reports;
   const pin = pinnedLocationResponse?.pins;
   const segment = segmentsResponse?.segments;
-  const admins = adminUserResponse?.admins;
-  const residents = residentUserResponse?.users;
   const tableLoading =
     activeTab === "announcement" ? announcementLoading : articleLoading;
 
@@ -96,6 +97,11 @@ const Dashboard = () => {
     segmentLoading ||
     adminLoading ||
     residentLoading;
+
+  const totalSosReports = sosResponse?.pagination.totalAlerts;
+  const totalFloodReports = floodReportResponse?.pagination.totalReports;
+  const totalResidents = residentUserResponse?.pagination.totalUsers;
+  const totalAdmins = adminUserResponse?.pagination.total;
 
   const topCards = isRescuer
     ? [
@@ -130,7 +136,7 @@ const Dashboard = () => {
       ]
     : [
         {
-          count: sos?.length,
+          count: totalSosReports,
           label: "SOS Signals",
           desc: "Active emergency alerts requiring attention",
           icon: TriangleAlert,
@@ -138,7 +144,7 @@ const Dashboard = () => {
           iconColor: "text-red-400",
         },
         {
-          count: floodReport?.length,
+          count: totalFloodReports,
           label: "Flood Reports",
           desc: "Incoming flood reports from residents",
           icon: Waves,
@@ -212,15 +218,15 @@ const Dashboard = () => {
           iconColor: "text-red-400",
         },
         {
-          count: admins?.length,
-          label: "Admin Users",
-          desc: "Active admin users",
+          count: totalAdmins ?? 0,
+          label: "Admins & Rescuers",
+          desc: "Active admins and rescuers",
           icon: ShieldUser,
           iconBg: "bg-green-100",
           iconColor: "text-green-400",
         },
         {
-          count: residents?.length,
+          count: totalResidents ?? 0,
           label: "Residents Users",
           desc: "Active residents users",
           icon: Users,
