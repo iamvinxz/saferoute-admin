@@ -4,6 +4,7 @@ import {
   GET_ALL_FLOOD_REPORT_BY_DEPTH,
   GET_ALL_FLOOD_REPORT_BY_STATUS,
   GET_ALL_FLOOD_REPORTS,
+  VERIFY_FLOOD_REPORT,
 } from "./Endpoints";
 
 const floodReport = api.injectEndpoints({
@@ -49,9 +50,30 @@ const floodReport = api.injectEndpoints({
       }),
       invalidatesTags: ["FloodReports"],
     }),
+    verifyFloodReport: build.mutation<
+      VerifyFloodReportResponse,
+      VerifyFloodReportRequest
+    >({
+      query: ({ id, action }) => ({
+        url: VERIFY_FLOOD_REPORT,
+        method: "PATCH",
+        params: { id },
+        body: { action },
+      }),
+      invalidatesTags: ["FloodReports"],
+    }),
   }),
   overrideExisting: true,
 });
+
+type VerifyFloodReportRequest = {
+  id: string;
+  action: string;
+};
+
+type VerifyFloodReportResponse = {
+  message: string;
+};
 
 type FloodReportControllerGetAllByDepth = {
   depth: string;
@@ -105,4 +127,5 @@ export const {
   useDeleteFloodReportMutation,
   useGetAllFloodReportByDepthQuery,
   useGetAllFloodReportByStatusQuery,
+  useVerifyFloodReportMutation,
 } = floodReport;
