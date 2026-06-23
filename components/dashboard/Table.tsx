@@ -20,6 +20,7 @@ interface Article {
   _id: string;
   title: string;
   description: string;
+  photoUrl: string | null;
   sourceLink: string | null;
   createdAt: string;
 }
@@ -169,8 +170,9 @@ export default function Table({
             <div className="text-xs">Action</div>
           </div>
         ) : (
-          <div className="hidden grid-cols-[100px_1fr_400px_300px_180px_60px] border-b border-gray-200 pb-3 px-4 w-full text-[#848484] font-medium bg-gray-100 lg:grid lg:py-5">
+          <div className="hidden grid-cols-[60px_70px_1fr_1fr_160px_150px_70px] border-b border-gray-200 pb-3 px-4 w-full text-[#848484] font-medium bg-gray-100 lg:grid lg:py-5">
             <div className="text-xs">No.</div>
+            <div className="text-xs">Photo</div>
             <div className="text-xs">Title</div>
             <div className="text-xs">Description</div>
             <div className="text-xs">Source Link</div>
@@ -260,12 +262,37 @@ export default function Table({
               key={item._id}
               className="py-4 px-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors"
             >
-              {/* Mobile layout - stacked */}
-              <div className="flex items-start justify-between lg:hidden">
-                <div className="flex-1 pr-4">
-                  <p className="text-[#303030] font-medium text-xs mb-1">
-                    {item.title}
-                  </p>
+              {/* Mobile layout — photo on left, content on right */}
+              <div className="flex items-start gap-3 lg:hidden">
+                {/* Photo */}
+                <div className="shrink-0">
+                  {item.photoUrl ? (
+                    <img
+                      src={item.photoUrl}
+                      alt={item.title}
+                      className="w-12 h-12 rounded-md object-cover border border-gray-100"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center">
+                      <span className="text-gray-300 text-[10px]">No img</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-[#303030] font-medium text-xs mb-1 truncate">
+                      {item.title}
+                    </p>
+                    <p className="text-gray-400 text-[9px] whitespace-nowrap shrink-0">
+                      {new Date(item.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
                   <p className="text-gray-400 text-[10px] line-clamp-2">
                     {item.description}
                   </p>
@@ -274,39 +301,45 @@ export default function Table({
                       href={item.sourceLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="max-w-35 text-blue-500 text-[10px] hover:underline truncate block mt-1"
+                      className="text-blue-500 text-[10px] hover:underline truncate block mt-1 max-w-[180px]"
                     >
                       {item.sourceLink}
                     </a>
                   )}
                 </div>
-                <p className="text-gray-400 text-[9px] whitespace-nowrap">
-                  {new Date(item.createdAt).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </p>
               </div>
 
-              {/* Desktop layout - grid */}
-              <div className="hidden lg:grid grid-cols-[100px_1fr_400px_300px_180px_60px] px-2 items-center">
+              {/* Desktop layout — grid, must match header exactly */}
+              <div className="hidden lg:grid grid-cols-[60px_70px_1fr_1fr_160px_150px_70px] px-2 items-center gap-2">
                 <div className="text-[#303030] text-xs">
                   {(page - 1) * limit + index + 1}
                 </div>
-                <div className="text-[#303030] line-clamp-2 pr-4 text-xs">
+                <div className="flex items-center">
+                  {item.photoUrl ? (
+                    <img
+                      src={item.photoUrl}
+                      alt={item.title}
+                      className="w-9 h-9 rounded-md object-cover border border-gray-100 shrink-0"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-md bg-gray-100 flex items-center justify-center shrink-0">
+                      <span className="text-gray-300 text-[8px]">—</span>
+                    </div>
+                  )}
+                </div>
+                <div className="text-[#303030] line-clamp-2 pr-2 text-xs">
                   {item.title}
                 </div>
-                <div className="text-[#303030] line-clamp-2 pr-4 text-xs">
+                <div className="text-[#303030] line-clamp-2 pr-2 text-xs">
                   {item.description}
                 </div>
-                <div className="text-[#303030] text-xs">
+                <div className="text-[#303030] text-xs truncate pr-2">
                   {item.sourceLink ? (
                     <a
                       href={item.sourceLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline truncate block pr-5"
+                      className="text-blue-500 hover:underline truncate block"
                     >
                       {item.sourceLink}
                     </a>
@@ -316,7 +349,7 @@ export default function Table({
                 </div>
                 <div className="text-[#303030] text-xs">
                   {new Date(item.createdAt).toLocaleDateString("en-US", {
-                    month: "long",
+                    month: "short",
                     day: "numeric",
                     year: "numeric",
                     hour: "2-digit",

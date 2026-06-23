@@ -3,11 +3,12 @@ import { CREATE_ARTICLE, DELETE_ARTICLE, GET_ALL_ARTICLES } from "./Endpoints";
 
 const articleService = api.injectEndpoints({
   endpoints: (build) => ({
-    createArticle: build.mutation<CreateArticleResponse, CreateArticleRequest>({
-      query: (body) => ({
+    createArticle: build.mutation<CreateArticleResponse, FormData>({
+      query: (formData) => ({
         url: CREATE_ARTICLE,
         method: "POST",
-        body,
+        body: formData,
+        formData: true,
       }),
       invalidatesTags: ["Articles"],
     }),

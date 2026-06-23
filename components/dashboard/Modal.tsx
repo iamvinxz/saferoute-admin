@@ -1,5 +1,5 @@
 "use client";
-import { X } from "lucide-react";
+import { ImageIcon, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useSendAnnouncementMutation } from "@/Redux/Services/notificationService";
 import { useCreateArticleMutation } from "@/Redux/Services/articleService";
@@ -29,6 +29,9 @@ const Modal = ({ setIsOpen, activeTab }: ModalProps) => {
   const announcement = useSelector((state: RootState) => state.announcement);
   const article = useSelector((state: RootState) => state.article);
 
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string>("");
+
   const [error, setError] = useState("");
 
   const [sendAnnouncement, { isLoading: announcementLoading }] =
@@ -57,19 +60,28 @@ const Modal = ({ setIsOpen, activeTab }: ModalProps) => {
 
         dispatch(clearAnnouncement());
       } else if (activeTab === "article") {
-        await createArticle({
-          title: article.articleTitle,
-          description: article.description,
-          sourceLink: article.sourceLink,
-          photoUrl: article.photoUrl || null,
-        }).unwrap();
+        const formData = new FormData();
+        formData.append("title", article.articleTitle);
+        formData.append("description", article.description);
+        if (article.sourceLink)
+          formData.append("sourceLink", article.sourceLink);
+        if (photoFile) formData.append("photo", photoFile); // "photo" must match multer field name
 
+        await createArticle(formData).unwrap();
         dispatch(clearArticle());
       }
       setIsOpen(false);
     } catch (err) {
       setError("Something went wrong. Please try again.");
       console.error(err);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhotoFile(file);
+      setPhotoPreview(URL.createObjectURL(file));
     }
   };
 
@@ -169,16 +181,45 @@ const Modal = ({ setIsOpen, activeTab }: ModalProps) => {
             </div>
             <div className="mb-4">
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                Photo URL{" "}
+                Photo{" "}
                 <span className="text-gray-400 font-normal">(optional)</span>
               </label>
-              <input
-                type="url"
-                value={article.photoUrl}
-                onChange={(e) => dispatch(setPhotoUrl(e.target.value))}
-                placeholder="https://..."
-                className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-blue-400 transition-colors"
-              />
+              <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors overflow-hidden relative">
+                {photoPreview ? (
+                  <img
+                    src={photoPreview}
+                    alt="Preview"
+                    className="absolute inset-0 w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 text-slate-400">
+                    <ImageIcon className="w-6 h-6" />{" "}
+                    {/* import ImageIcon from lucide-react */}
+                    <span className="text-xs">Click to upload image</span>
+                    <span className="text-[10px] text-gray-300">
+                      PNG, JPG, WEBP
+                    </span>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="sr-only"
+                />
+              </label>
+              {photoPreview && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPhotoFile(null);
+                    setPhotoPreview("");
+                  }}
+                  className="mt-1 text-[10px] text-red-400 hover:text-red-500"
+                >
+                  Remove photo
+                </button>
+              )}
             </div>
           </>
         )}

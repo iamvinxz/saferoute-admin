@@ -50,12 +50,12 @@ const Dashboard = () => {
   const [logout] = useLogoutMutation();
   const { data: announcementResponse, isLoading: announcementLoading } =
     useGetAllAnnouncementsQuery(
-      { page, limit: 5 },
+      { page, limit: 10 },
       { skip: activeTab !== "announcement" },
     );
   const { data: articleResponse, isLoading: articleLoading } =
     useGetAllArticlesQuery(
-      { page, limit: 5 },
+      { page, limit: 10 },
       { skip: activeTab !== "article" },
     );
   const { data: sosResponse, isLoading: sosLoading } = useGetAllSosAlertQuery({
