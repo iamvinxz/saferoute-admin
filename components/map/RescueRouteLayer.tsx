@@ -18,10 +18,13 @@ const RescueRouteLayer = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   //rtk
-  const { data: sosResponse } = useGetAllSosAlertQuery({ limit: 100, page: 1 },, {
-    pollingInterval: 10000, // refetch every 10s
-    skip: !user,
-  });
+  const { data: sosResponse } = useGetAllSosAlertQuery(
+    { limit: 100, page: 1 },
+    {
+      pollingInterval: 10000, // refetch every 10s
+      skip: !user,
+    },
+  );
   const { data: segmentResponse } = useGetAllSegmentQuery();
 
   const activeSosReportOnRescue = sosResponse?.alerts?.find(
