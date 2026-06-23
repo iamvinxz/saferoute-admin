@@ -24,9 +24,11 @@ import {
 import { toast } from "sonner";
 import { toggleIsPinMode, toggleIsRouting } from "@/state/slices/modeSlice";
 import { clearReport } from "@/state/slices/selectedReport";
+import { useVerifyFloodReportMutation } from "@/Redux/Services/floodReportService";
 
 const FloodReportSheet = () => {
   const dispatch = useDispatch();
+  const reportId = useSelector((state: RootState) => state.report.id);
   const segments = useSelector((state: RootState) => state.segment.segments);
   const isRoutingMode = useSelector((state: RootState) => state.mode.isRouting);
   const isPinMode = useSelector((state: RootState) => state.mode.isPinMode);
@@ -39,6 +41,8 @@ const FloodReportSheet = () => {
     useCreatePinMutation();
   const [createSegment, { isLoading: isCreatingSegmentLoading }] =
     useCreateSegmentMutation();
+
+  const [verifyReport] = useVerifyFloodReportMutation();
 
   useEffect(() => {
     if (isRoutingMode || isPinMode) {
@@ -136,6 +140,14 @@ const FloodReportSheet = () => {
         toast.success("Flood report created!", {
           style: { background: "#61b728", color: "white" },
         });
+
+        if (reportId) {
+          try {
+            await verifyReport({ id: reportId, action: "verify" }).unwrap();
+          } catch (error) {
+            console.error("Failed to verify flood report", error);
+          }
+        }
 
         dispatch(toggleIsRouting());
         dispatch(clearSegment());
