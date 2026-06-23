@@ -280,11 +280,14 @@ export default function Map() {
                   </svg>
                 </div>
                 <h2 className="text-base font-semibold text-gray-900">
-                  Enable SOS Signal?
+                  {sos?.isSosEnabled || sosSignal
+                    ? "Disable SOS Signal?"
+                    : "Enable SOS Signal?"}
                 </h2>
                 <p className="text-sm text-gray-500">
-                  This will alert nearby responders of your emergency. Only use
-                  in a real emergency.
+                  {sos?.isSosEnabled || sosSignal
+                    ? "This will deactivate your SOS alert and notify responders that you no longer need assistance."
+                    : "This will alert nearby responders of your emergency. Only use in a real emergency."}
                 </p>
               </div>
               <div className="flex gap-2 mt-2">
