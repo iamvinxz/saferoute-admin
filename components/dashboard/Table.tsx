@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { useDeleteArticleMutation } from "@/Redux/Services/articleService";
 import { useDeleteAnnouncementMutation } from "@/Redux/Services/notificationService";
+import { createPortal } from "react-dom";
 
 export type Tab = "announcement" | "article";
 
@@ -80,37 +81,36 @@ export default function Table({
   onPageChange,
 }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
   const user = useSelector((state: RootState) => state.auth.user);
   const isRescuer = user?.role === "rescuer";
 
   const activeData = activeTab === "announcement" ? announcement : article;
   const limit = pagination?.limit ?? 5;
 
-  //rtk
-
   const [deleteArticle, { isLoading: isDeletingArticle }] =
     useDeleteArticleMutation();
   const [deleteAnnouncement, { isLoading: isDeletingAnnouncement }] =
     useDeleteAnnouncementMutation();
 
-  const handleDeleteArticle = async (id: string) => {
-    try {
-      await deleteArticle(id).unwrap();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDeleteAnnouncement = async (id: string) => {
-    try {
-      await deleteAnnouncement(id).unwrap();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const isDeleting =
     activeTab === "announcement" ? isDeletingAnnouncement : isDeletingArticle;
+
+  const handleConfirmDelete = async () => {
+    if (!confirmDeleteId) return;
+    try {
+      if (activeTab === "article") {
+        await deleteArticle(confirmDeleteId).unwrap();
+      } else {
+        await deleteAnnouncement(confirmDeleteId).unwrap();
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setConfirmDeleteId(null);
+    }
+  };
 
   return (
     <div className="mt-5 pb-5 lg:mt-7">
@@ -184,14 +184,14 @@ export default function Table({
         {/* Skeleton */}
         {isLoading ? (
           Array.from({ length: limit }).map((_, i) => <SkeletonRow key={i} />)
-        ) : /* Empty state */
-        !activeData || activeData.length === 0 ? (
+        ) : !activeData || activeData.length === 0 ? (
+          /* Empty state */
           <div className="text-center text-gray-400 py-10">
             No {activeTab === "announcement" ? "announcements" : "articles"}{" "}
             found.
           </div>
-        ) : /* Announcement rows */
-        activeTab === "announcement" ? (
+        ) : activeTab === "announcement" ? (
+          /* Announcement rows */
           (activeData as Announcement[]).map((item, index) => (
             <div
               key={item._id}
@@ -243,10 +243,9 @@ export default function Table({
                 <div className="text-xs">
                   {!isRescuer && (
                     <button
-                      onClick={() => handleDeleteAnnouncement(item._id)}
-                      disabled={isDeleting}
+                      onClick={() => setConfirmDeleteId(item._id)}
                       title="Delete announcement"
-                      className="inline-flex items-center px-2 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
+                      className="inline-flex items-center px-2 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition"
                     >
                       Delete
                     </button>
@@ -264,7 +263,6 @@ export default function Table({
             >
               {/* Mobile layout — photo on left, content on right */}
               <div className="flex items-start gap-3 lg:hidden">
-                {/* Photo */}
                 <div className="shrink-0">
                   {item.photoUrl ? (
                     <img
@@ -279,7 +277,6 @@ export default function Table({
                   )}
                 </div>
 
-                {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <p className="text-[#303030] font-medium text-xs mb-1 truncate">
@@ -359,10 +356,9 @@ export default function Table({
                 <div className="text-xs">
                   {!isRescuer && (
                     <button
-                      onClick={() => handleDeleteArticle(item._id)}
-                      disabled={isDeleting}
+                      onClick={() => setConfirmDeleteId(item._id)}
                       title="Delete article"
-                      className="inline-flex items-center px-2 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition disabled:opacity-50"
+                      className="inline-flex items-center px-2 py-1 rounded-md text-[0.72rem] font-medium bg-red-50 text-red-500 hover:bg-red-100 transition"
                     >
                       Delete
                     </button>
@@ -400,6 +396,44 @@ export default function Table({
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      {confirmDeleteId &&
+        createPortal(
+          <div
+            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center z-[9999] p-4"
+            onClick={(e) =>
+              e.target === e.currentTarget && setConfirmDeleteId(null)
+            }
+          >
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+              <h2 className="text-base font-semibold text-[#303030] mb-1">
+                Confirm Delete
+              </h2>
+              <p className="text-xs text-[#848484] mb-6">
+                Are you sure you want to delete this{" "}
+                {activeTab === "article" ? "article" : "announcement"}? This
+                action cannot be undone.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setConfirmDeleteId(null)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  disabled={isDeleting}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-red-500 hover:bg-red-600 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
