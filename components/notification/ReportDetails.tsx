@@ -8,7 +8,10 @@ import { toggleIsRouting } from "@/state/slices/modeSlice";
 import { RootState } from "@/state/store";
 import { clearReport } from "@/state/slices/selectedReport";
 import dynamic from "next/dynamic";
-import { useDeleteFloodReportMutation } from "@/Redux/Services/floodReportService";
+import {
+  useDeleteFloodReportMutation,
+  useVerifyFloodReportMutation,
+} from "@/Redux/Services/floodReportService";
 import { getDepthColors, getStatusColors } from "@/lib/colorHelper";
 import { clearSosReport } from "@/state/slices/sosSignalReportSlice";
 import {
@@ -37,6 +40,7 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
   const sosReport = useSelector((state: RootState) => state.sosReport);
   const user = useSelector((state: RootState) => state.auth.user);
   const watchId = useSelector((state: RootState) => state.auth.watchId);
+  const reportId = useSelector((state: RootState) => state.report.id);
 
   //var
   const isAdmin = user?.role === "admin";
@@ -57,6 +61,8 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
   const [updateSosStatus, { isLoading: updateSosIsLoading }] =
     useUpdateSosStatusMutation();
   const [deleteSOS] = useDeleteSosMutation();
+
+  const [VerifyReport] = useVerifyFloodReportMutation();
 
   const handleViewResponse = () => {
     setShowModal(false);
@@ -98,7 +104,6 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
     );
     if (!isRouting) dispatch(toggleIsRouting());
     router.push("/maps");
-    dispatch(clearReport());
   };
 
   const handleDeleteSos = async (id: string) => {
@@ -256,16 +261,20 @@ const ReportDetails = ({ setShowModal, activeTab }: ReportDetailsProps) => {
                   onClick={handleCreateSegment}
                   className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-[#1A5EFD] text-white text-xs transition-colors hover:cursor-pointer hover:bg-[#5183f8] max-lg:text-[10px]"
                 >
-                  <Navigation size={14} /> Create segment
+                  <Navigation size={14} /> Verify Report
                 </button>
                 <button
-                  onClick={() => {
-                    handleDeleteFloodReport(report.id);
-                    setShowModal(false);
+                  onClick={async () => {
+                    try {
+                      await VerifyReport({ id: reportId, action: "reject" });
+                      setShowModal(false);
+                    } catch (error) {
+                      console.error("Failed to reject the report", error);
+                    }
                   }}
                   className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-md bg-white border text-red-400 text-xs hover:bg-[#dfdfdf] hover:cursor-pointer transition-colors max-lg:text-[10px]"
                 >
-                  <Trash2 size={14} /> Delete report
+                  <X size={14} /> Reject Report
                 </button>
               </div>
             </div>
