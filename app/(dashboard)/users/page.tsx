@@ -129,7 +129,6 @@ const UsersPage = () => {
         (err as { data?: { error?: string } })?.data?.error ??
         "Something went wrong. Please try again.";
       dispatch(setError(message));
-      console.error(err);
     }
   };
 
