@@ -125,7 +125,10 @@ const UsersPage = () => {
       dispatch(clearAccount());
       setIsOpen(false);
     } catch (err) {
-      dispatch(setError("Something went wrong. Please try again."));
+      const message =
+        (err as { data?: { error?: string } })?.data?.error ??
+        "Something went wrong. Please try again.";
+      dispatch(setError(message));
       console.error(err);
     }
   };
@@ -437,7 +440,7 @@ const UsersPage = () => {
                       className="absolute right-3 top-1/2 -translate-y-1/2  text-gray-500 hover:cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                      {!showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
                   </div>
                 </div>
@@ -475,6 +478,14 @@ const UsersPage = () => {
                   )}
                 </div>
               </div>
+
+              {error && (
+                <div className="px-6 pb-2">
+                  <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-md px-3 py-2">
+                    {error}
+                  </p>
+                </div>
+              )}
 
               <div className="px-6 pb-6 flex justify-end gap-2">
                 <button
