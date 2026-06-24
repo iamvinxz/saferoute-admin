@@ -13,6 +13,7 @@ import { setSosReport } from "@/state/slices/sosSignalReportSlice";
 import { ChevronLeft, ChevronRight, Trash } from "lucide-react";
 import formatRequestedTime from "@/lib/formatRequestedTime";
 import { createPortal } from "react-dom";
+import { useNotificationSound } from "@/lib/useNotificationSound";
 
 interface SosSignalProps {
   activeTab: string;
@@ -74,9 +75,9 @@ const SOSsignalTable = ({
   //handlers
   const filteredSosSignals = sosAlertsResponse?.alerts.filter(
     (alert) =>
-      alert.streetName.toLowerCase().includes(search.toLowerCase()) ||
-      alert.condition.toLowerCase().includes(search.toLowerCase()) ||
-      alert.status.toLowerCase().includes(search.toLowerCase()),
+      (alert.streetName ?? "").toLowerCase().includes(search.toLowerCase()) ||
+      (alert.condition ?? "").toLowerCase().includes(search.toLowerCase()) ||
+      (alert.status ?? "").toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleDeleteSos = async (id: string) => {
@@ -88,6 +89,8 @@ const SOSsignalTable = ({
       setConfirmDeleteId(null);
     }
   };
+
+  useNotificationSound(sosAlertsResponse?.pagination.totalAlerts, "SOS Alert");
 
   return (
     <Fragment>
