@@ -65,14 +65,23 @@ const Modal = ({ setIsOpen, activeTab }: ModalProps) => {
         formData.append("description", article.description);
         if (article.sourceLink)
           formData.append("sourceLink", article.sourceLink);
-        if (photoFile) formData.append("photo", photoFile); // "photo" must match multer field name
+        if (photoFile) formData.append("image", photoFile); // "photo" must match multer field name
 
         await createArticle(formData).unwrap();
         dispatch(clearArticle());
       }
       setIsOpen(false);
     } catch (err) {
-      setError("Something went wrong. Please try again.");
+      const error = err as {
+        data?: { error?: string; message?: string };
+        error?: string;
+      };
+      const backendMessage =
+        error?.data?.error ||
+        error?.data?.message ||
+        error?.error ||
+        "Something went wrong. Please try again.";
+      setError(backendMessage);
       console.error(err);
     }
   };
