@@ -120,7 +120,7 @@ const FormsField = () => {
                 tabIndex={-1}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? (
+                {!showPassword ? (
                   <svg
                     className="w-5 h-5"
                     fill="none"
