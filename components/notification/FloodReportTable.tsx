@@ -13,6 +13,7 @@ import ReportDetails from "./ReportDetails";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, Trash } from "lucide-react";
 import formatRequestedTime from "@/lib/formatRequestedTime";
+import { useNotificationSound } from "@/lib/useNotificationSound";
 
 interface FloodReportTableProps {
   activeTab: string;
@@ -86,6 +87,11 @@ const FloodReportTable = ({
       setConfirmDeleteId(null);
     }
   };
+
+  useNotificationSound(
+    floodReportResponse?.pagination.totalReports,
+    "Flood Report",
+  );
 
   return (
     <Fragment>
