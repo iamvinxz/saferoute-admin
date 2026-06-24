@@ -190,8 +190,7 @@ const Modal = ({ setIsOpen, activeTab }: ModalProps) => {
             </div>
             <div className="mb-4">
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                Photo{" "}
-                <span className="text-gray-400 font-normal">(optional)</span>
+                Photo
               </label>
               <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors overflow-hidden relative">
                 {photoPreview ? (
